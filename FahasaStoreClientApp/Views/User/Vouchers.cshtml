@@ -1,0 +1,30 @@
+﻿@using FahasaStoreClientApp.Components
+@using FahasaStoreClientApp.Models;
+@{
+    var voucher = new Voucher(1, "code 2025", "2025code", "giam 50%", 10, new DateTime(2024, 4, 30), 10000, 200000, 99);
+    var voucher2 = new Voucher(2, "new code 2025", "2025codenew", "giam 50%", 10, new DateTime(2024, 4, 30), 10000, 200000, 99);
+}
+<div class="bg-black bg-opacity-10">
+    <div class="container pt-4">
+        <div class="bg-white rounded-3 py-3">
+            <div class="row">
+                <div class="col-lg-3">
+                    @(await Html.RenderComponentAsync<SideBarUser>(RenderMode.ServerPrerendered, new { active = 3 }))
+                </div>
+                <div class="col-lg-9 px-4">
+                    <h5 class="text-uppercase">Ví voucher</h5><hr />
+                    <div class="row g-3">
+                        <div>
+                            @(await Html.RenderComponentAsync<VoucherComponent>(RenderMode.ServerPrerendered, new { voucher = voucher }))
+                        </div>
+                        <div>
+                            @(await Html.RenderComponentAsync<VoucherComponent>(RenderMode.ServerPrerendered, new { voucher = voucher2 }))
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

@@ -1,0 +1,37 @@
+﻿<button class="btn btn-danger d-lg-none m-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasResponsiveControlUser" aria-controls="offcanvasResponsiveControlUser"><i class="bi bi-layout-sidebar-inset"></i></button>
+<div class="offcanvas-lg offcanvas-start" tabindex="-1" id="offcanvasResponsiveControlUser" aria-labelledby="offcanvasResponsiveControlUserLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasResponsiveControlUserLabel">Trình điều khiển</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#offcanvasResponsiveControlUser" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="user_control">
+            <div class="list-group">
+                <a href="/User/ControlPanel" class="list-group-item">Bảng điều khiển tài khoản</a>
+                <a href="/User/Information" class="list-group-item">Thông tin tài khoàn</a>
+                <a href="/Address/List" class="list-group-item">Sổ địa chỉ</a>
+                <a href="/User/Vouchers" class="list-group-item">Ví voucher</a>
+                <a href="#" class="list-group-item">Đơn hàng của tôi</a>
+                <a href="#" class="list-group-item">Nhận xét của tôi</a>
+                <a href="#" class="list-group-item">Thông báo</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+<script>
+    $(document).ready(function () {
+        var currentLinks = $('.user_control a');
+        currentLinks.eq(@active).addClass('active');
+        // currentLinks.eq(@active).addClass('disabled');
+    });
+</script>
+
+
+
+@code {
+    [Parameter]
+    public int active { get; set; }
+}

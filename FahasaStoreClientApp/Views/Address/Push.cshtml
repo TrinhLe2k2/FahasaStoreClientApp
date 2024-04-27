@@ -1,0 +1,144 @@
+﻿@model FahasaStoreClientApp.Models.Address
+@using FahasaStoreClientApp.Components
+
+@{
+    var provinces = ViewData["Provinces"] as IEnumerable<Province>;
+}
+
+<div class="bg-black bg-opacity-10">
+    <div class="container pt-4">
+        <div class="bg-white rounded-3 py-3">
+            <div class="row">
+                <div class="col-lg-3">
+                    @(await Html.RenderComponentAsync<SideBarUser>(RenderMode.ServerPrerendered, new { active = 2 }))
+                </div>
+                <div class="col-lg-9 px-4">
+                    <h5 class="text-uppercase">Sổ địa chỉ</h5><hr />
+                    <form asp-action="AddressUpdate">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="row row-cols-1 row-cols-md-2">
+                            <div class="col">
+                                <div class="row row-cols-1 g-2">
+                                    <div class="form-group">
+                                        <label asp-for="ReceiverName" class="control-label"></label>
+                                        <input asp-for="ReceiverName" class="form-control" />
+                                        <span asp-validation-for="ReceiverName" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label asp-for="Phone" class="control-label"></label>
+                                        <input asp-for="Phone" class="form-control" />
+                                        <span asp-validation-for="Phone" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="row row-cols-1 g-2">
+                                    <div class="form-group">
+                                        <label asp-for="Province" class="control-label"></label>
+                                        <select asp-for="Province" class="form-control" id="Province">
+                                            <option value="">-- Chọn tỉnh/thành phố --</option>
+                                            @{
+                                                if (provinces != null)
+                                                {
+                                                    foreach (var province in provinces)
+                                                    {
+                                                        <option value="@province.PROVINCE_ID">@province.PROVINCE_NAME</option>
+                                                    }
+                                                }
+                                            }
+                                        </select>
+                                        <span asp-validation-for="Province" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label asp-for="District" class="control-label"></label>
+                                        <select asp-for="District" class="form-control" id="District">
+                                            <option value="">-- Chọn Quận/Huyện --</option>
+                                        </select>
+                                        <span asp-validation-for="District" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label asp-for="Ward" class="control-label"></label>
+                                        <select asp-for="Ward" class="form-control" id="Ward">
+                                            <option value="">-- Chọn Phường/Xã --</option>
+                                        </select>
+                                        <span asp-validation-for="Ward" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label asp-for="Detail" class="control-label"></label>
+                                        <input asp-for="Detail" class="form-control" />
+                                        <span asp-validation-for="Detail" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="checkbox" id="DefaultAddress" name="DefaultAddress" class="form-check-input" />
+                                        <label asp-for="DefaultAddress" class="control-label"></label>
+                                        @* <input asp-for="DefaultAddress" class="form-control" /> *@
+                                        <span asp-validation-for="DefaultAddress" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group mt-3">
+                            <input type="submit" value="Thêm mới" class="btn btn-danger" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        $(document).ready(function () {
+            $('#District').prop('disabled', true);
+            $('#Province').change(function () {
+                var provinceId = $(this).val();
+                $.ajax({
+                    url: '/Address/OnGetDistricts?provinceId=' + provinceId,
+                    type: 'GET',
+                    success: function (data) {
+                        $('#District').html(data);
+                    },
+                    error: function () {
+                        console.error('Error fetching districts');
+                    }
+                });
+
+                if (provinceId !== '') {
+                    $('#District').prop('disabled', false);
+                } else {
+                    $('#District').prop('disabled', true);
+                }
+            });
+
+            $('#Ward').prop('disabled', true);
+            $('#District').change(function () {
+                var districtId = $(this).val();
+                $.ajax({
+                    url: '/Address/OnGetWards?districtId=' + districtId,
+                    type: 'GET',
+                    success: function (data) {
+                        $('#Ward').html(data);
+                    },
+                    error: function () {
+                        console.error('Error fetching districts');
+                    }
+                });
+
+                if (districtId !== '') {
+                    $('#Ward').prop('disabled', false);
+                } else {
+                    $('#Ward').prop('disabled', true);
+                }
+            });
+
+        });
+    </script>
+
+}
+

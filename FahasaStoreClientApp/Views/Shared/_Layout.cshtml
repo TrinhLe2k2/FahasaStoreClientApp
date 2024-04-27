@@ -1,0 +1,509 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - FahasaBookstore</title>
+
+    @* bootstrap *@
+    <link href="~/js/bootstrapv53.min.css" rel="stylesheet" />
+    <link href="~/icon/bootstrap-icons-1.11.3/bootstrap-icons-1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+
+    @* slick *@
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick-theme.min.css" integrity="sha512-17EgCFERpgZKcm0j0fEq1YCJuyAWdz9KUtv1EjVuaOz8pDnh/0nZxmU6BBXwaaxqoi9PQXnRWqlcDB027hgv9A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.min.css" integrity="sha512-yHknP1/AwR+yx26cB1y0cjvQUMvEa2PFzt1c9LlS4pRQ5NOTZFWbhBig+X9G9eYW/8m0/4OXNx8pxJ6z57x0dw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    @* css *@
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/FahasaStoreClientApp.styles.css" asp-append-version="true" />
+
+    @* swiper *@
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+    @* custom css *@
+    <style id="dynamic-keyframes"></style>
+</head>
+<body>
+    <header class="pt-2">
+        <div class="container-xl position-relative d-lg-flex align-items-center">
+            <a class="navbar-brand" title="Fahasa" asp-area="" asp-controller="Home" asp-action="Index">
+                <img src="~/image/fahasa-logo.png" height="38" />
+            </a>
+            <div class="flex-grow-1">
+                <div class="d-flex w-100 align-items-center flex-wrap justify-content-center mt-3 mt-lg-0">
+                    <div class="category-box my-1">
+                        <div title="Category" role="button" class="category-btn py-2 px-3 d-flex flex-column align-items-center fw-bold text-black-50 text-decoration-none">
+                            <i class="bi bi-columns-gap"></i>
+                            <span class="dropdown-toggle d-none d-lg-block">Danh mục</span>
+                        </div>
+                        <div class="category-menu w-100 bg-light start-0 py-0 dropdown-menu overflow-hidden" style="display: none;">
+                            <div class="container">
+                                <div class="row p-4">
+                                    <div class="col-6 col-lg-4 col-xxl-3">
+                                        <h4 class="text-black-50 mb-3 text-truncate">Danh mục sản phẩm</h4>
+                                        <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                                            <a class="nav-link fw-bold fs-5 active" id="v-pills-home-tab" data-bs-toggle="pill" data-bs-target="#v-pills-home" role="button" aria-controls="v-pills-home" aria-selected="true">Sách trong nước</a>
+                                            <a class="nav-link fw-bold fs-5" id="v-pills-profile-tab" data-bs-toggle="pill" data-bs-target="#v-pills-profile" role="button" aria-controls="v-pills-profile" aria-selected="false">Sách nước ngoài</a>
+                                            <a class="nav-link fw-bold fs-5" id="v-pills-messages-tab" data-bs-toggle="pill" data-bs-target="#v-pills-messages" role="button" aria-controls="v-pills-messages" aria-selected="false">Hành trang đến trường</a>
+                                            <a class="nav-link fw-bold fs-5" id="v-pills-settings-tab" data-bs-toggle="pill" data-bs-target="#v-pills-settings" role="button" aria-controls="v-pills-settings" aria-selected="false">Sức khỏe và làm đẹp</a>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-lg-8 col-xxl-9">
+                                        <div class="tab-content" id="v-pills-tabContent">
+                                            <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab" tabindex="0">
+                                                <div class="mb-3 d-flex justify-content-between align-items-center">
+                                                    <h4 class="text-black mb-0 main-category"><i class="bi bi-globe-americas"></i> Sách nước ngoài</h4>
+                                                    <a class="nav-link text-truncate" href="/Home/Fillter">Xem thêm</a>
+                                                </div>
+                                                <div class="row g-3">
+                                                    <div class="col">
+                                                        <a class="text-truncate btn btn-outline-danger w-100" href="/Home/Fillter">Tiểu Thuyết</a>
+                                                    </div>
+                                                    <div class="col">
+                                                        <a class="text-truncate btn btn-outline-danger w-100" href="/Home/Fillter">Tiểu Thuyết - tản văn</a>
+                                                    </div>
+                                                    <div class="col">
+                                                        <a class="text-truncate btn btn-outline-danger w-100" href="/Home/Fillter">Light Novel</a>
+                                                    </div>
+                                                    <div class="col">
+                                                        <a class="text-truncate btn btn-outline-danger w-100" href="/Home/Fillter">Tiểu Thuyết</a>
+                                                    </div>
+                                                    <div class="col">
+                                                        <a class="text-truncate btn btn-outline-danger w-100" href="/Home/Fillter">Tiểu Thuyết</a>
+                                                    </div>
+                                                    <div class="col">
+                                                        <a class="text-truncate btn btn-outline-danger w-100" href="/Home/Fillter">Tiểu Thuyết - tản văn</a>
+                                                    </div>
+                                                    <div class="col">
+                                                        <a class="text-truncate btn btn-outline-danger w-100" href="/Home/Fillter">Light Novel</a>
+                                                    </div>
+                                                    <div class="col">
+                                                        <a class="text-truncate btn btn-outline-danger w-100" href="/Home/Fillter">Tiểu Thuyết</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab" tabindex="0">...</div>
+                                            <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab" tabindex="0">...</div>
+                                            <div class="tab-pane fade" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab" tabindex="0">...</div>
+                                        </div>
+
+
+                                        @* <div class="mb-3 d-flex justify-content-between align-items-center">
+                                        <h4 class="text-black mb-0 main-category"><i class="bi bi-globe-americas"></i> Sách nước ngoài</h4>
+                                        <a class="nav-link text-truncate" href="/Home/Fillter">Xem thêm</a>
+                                        </div>
+                                        <div class="row g-3">
+                                        <div class="col">
+                                        <a class="text-truncate btn btn-outline-danger w-100" href="/Home/Fillter">Tiểu Thuyết</a>
+                                        </div>
+                                        <div class="col">
+                                        <a class="text-truncate btn btn-outline-danger w-100" href="/Home/Fillter">Tiểu Thuyết - tản văn</a>
+                                        </div>
+                                        <div class="col">
+                                        <a class="text-truncate btn btn-outline-danger w-100" href="/Home/Fillter">Light Novel</a>
+                                        </div>
+                                        <div class="col">
+                                        <a class="text-truncate btn btn-outline-danger w-100" href="/Home/Fillter">Tiểu Thuyết</a>
+                                        </div>
+                                        <div class="col">
+                                        <a class="text-truncate btn btn-outline-danger w-100" href="/Home/Fillter">Tiểu Thuyết</a>
+                                        </div>
+                                        <div class="col">
+                                        <a class="text-truncate btn btn-outline-danger w-100" href="/Home/Fillter">Tiểu Thuyết - tản văn</a>
+                                        </div>
+                                        <div class="col">
+                                        <a class="text-truncate btn btn-outline-danger w-100" href="/Home/Fillter">Light Novel</a>
+                                        </div>
+                                        <div class="col">
+                                        <a class="text-truncate btn btn-outline-danger w-100" href="/Home/Fillter">Tiểu Thuyết</a>
+                                        </div>
+                                        </div> *@
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="shadowBox vh-100 vw-100 position-fixed start-0 mt-2 bg-opacity-50 bg-black" style="display: none; z-index: 998;"></div>
+                    </div>
+
+                    <div class="search-box pe-0 pe-sm-3 flex-grow-1 order-1 order-sm-0 my-1">
+                        <div class="border rounded-3 position-relative dropdown">
+                            <div class="p-1 d-flex">
+                                <input type="search" placeholder="Bạn muốn tìm kiếm gì?" class="border-0 flex-grow-1" style="outline: none;" />
+                                <button type="button" class="border-0 px-4 py-1 rounded-3 bg-primary-fahasa">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
+                            <div class="result-search position-absolute top-100 w-100 p-0 rounded-bottom dropdown-menu bg-white overflow-hidden">
+                                <div class="container py-2">
+                                    <div class="row g-0">
+                                        <div class="col-sm-6">
+                                            <a href="#" class="d-flex align-items-center text-decoration-none list-group-item-action">
+                                                <img src="https://cdn0.fahasa.com/media/catalog/product/b/_/b_a-tr_c-ph_p-y-3.jpg" width="50" height="80" class="me-2" style="object-fit: contain;" />
+                                                <span class="fw-light fs-7 text-truncatet-row-double text-black">Ghi Chép Pháp Y - Những Thi Thể Không Hoàn Chỉnh</span>
+                                            </a>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <a href="#" class="d-flex align-items-center text-decoration-none list-group-item-action">
+                                                <img src="https://cdn0.fahasa.com/media/catalog/product/b/_/b_a-tr_c-ph_p-y-3.jpg" width="50" height="80" class="me-2" style="object-fit: contain;" />
+                                                <span class="fw-light fs-7 text-truncatet-row-double text-black">Ghi Chép Pháp Y - Những Thi Thể Không Hoàn Chỉnh</span>
+                                            </a>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <a href="#" class="d-flex align-items-center text-decoration-none list-group-item-action">
+                                                <img src="https://cdn0.fahasa.com/media/catalog/product/b/_/b_a-tr_c-ph_p-y-3.jpg" width="50" height="80" class="me-2" style="object-fit: contain;" />
+                                                <span class="fw-light fs-7 text-truncatet-row-double text-black">Ghi Chép Pháp Y - Những Thi Thể Không Hoàn Chỉnh</span>
+                                            </a>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <a href="#" class="d-flex align-items-center text-decoration-none list-group-item-action">
+                                                <img src="https://cdn0.fahasa.com/media/catalog/product/b/_/b_a-tr_c-ph_p-y-3.jpg" width="50" height="80" class="me-2" style="object-fit: contain;" />
+                                                <span class="fw-light fs-7 text-truncatet-row-double text-black">Ghi Chép Pháp Y - Những Thi Thể Không Hoàn Chỉnh</span>
+                                            </a>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <a href="#" class="d-flex align-items-center text-decoration-none list-group-item-action">
+                                                <img src="https://cdn0.fahasa.com/media/catalog/product/b/_/b_a-tr_c-ph_p-y-3.jpg" width="50" height="80" class="me-2" style="object-fit: contain;" />
+                                                <span class="fw-light fs-7 text-truncatet-row-double text-black">Ghi Chép Pháp Y - Những Thi Thể Không Hoàn Chỉnh</span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="shadowBox vh-100 vw-100 position-fixed start-0 mt-2 bg-opacity-50 bg-black" style="display: none; z-index: 998;"></div>
+                        </div>
+                    </div>
+
+                    <div class="notification dropdown my-1">
+                        <div title="Notification" role="button" data-bs-toggle="dropdown" aria-expanded="false" class="notification-btn py-2 d-flex flex-column align-items-center fw-bold text-black-50 pe-3">
+                            <div class="position-relative">
+                                <i class="bi bi-bell"></i>
+                                <span class="position-absolute top-0 start-100 translate-middle-y translate-middle badge rounded-pill bg-danger ">
+                                    4
+                                    <span class="visually-hidden">unread messages</span>
+                                </span>
+                            </div>
+
+                            <span class="dropdown-toggle d-none d-lg-block">Thông báo</span>
+                        </div>
+                        <div class="dropdown-menu dropdown-menu-end shadow" style="width: 360px;">
+                            <div class="d-flex justify-content-between border-bottom align-items-center">
+                                <div class="px-3 py-2 fw-bold">
+                                    <i class="bi bi-bell"></i>
+                                    <span>Thông báo</span>
+                                </div>
+                                <a href="#" class="fw-bold text-decoration-none px-3 py-2">Xem tất cả</a>
+                            </div>
+                            <ul class="list-group">
+                                <li class="list-group-item border-0 p-0">
+                                    <a href="#" class="dropdown-item list-group-item rounded-3 border-0">
+                                        <div>
+                                            <h6 class="text-truncate">Khuyến Mãi</h6>
+                                            <p class="text-truncate m-0">Tặng bạn voucher</p>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li class="list-group-item border-0 p-0">
+                                    <a href="#" class="dropdown-item list-group-item rounded-3 border-0">
+                                        <div>
+                                            <h6 class="text-truncate">Khuyến Mãi</h6>
+                                            <p class="text-truncate m-0">Tặng bạn voucher</p>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li class="list-group-item border-0 p-0">
+                                    <a href="#" class="dropdown-item list-group-item rounded-3 border-0">
+                                        <div>
+                                            <h6 class="text-truncate">Khuyến Mãi</h6>
+                                            <p class="text-truncate m-0">Tặng bạn voucher</p>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li class="list-group-item border-0 p-0">
+                                    <a href="#" class="dropdown-item list-group-item rounded-3 border-0">
+                                        <div>
+                                            <h6 class="text-truncate">Khuyến Mãi</h6>
+                                            <p class="text-truncate m-0">Tặng bạn voucher</p>
+                                        </div>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="ps-3 d-block d-lg-none"> </div>
+
+                    <div class="dropdown cart my-1">
+                        <div title="Cart" data-bs-toggle="dropdown" aria-expanded="false" class="car-btn py-2 d-flex flex-column align-items-center fw-bold text-black-50 pe-3" role="button">
+                            <div class="position-relative">
+                                <i class="bi bi-cart"></i>
+                                <span class="position-absolute top-0 start-100 translate-middle-y translate-middle badge rounded-pill bg-danger ">
+                                    4
+                                    <span class="visually-hidden">unread messages</span>
+                                </span>
+                            </div>
+                            <span class="d-none d-lg-block">Giỏ hàng</span>
+                        </div>
+                        <div class="dropdown-menu dropdown-menu-end shadow" style="width: 360px;">
+                            <div class="d-flex justify-content-between border-bottom align-items-center">
+                                <div class="px-3 py-2 fw-bold">
+                                    <i class="bi bi-cart"></i>
+                                    <span>Giỏ hàng</span>
+                                </div>
+                                <a href="" class="px-3 py-2 text-decoration-none fw-bold">Xem giỏ hàng</a>
+                            </div>
+                            <ul class="list-group">
+                                <li class="list-group-item border-0 p-0">
+                                    <a href="#" class="dropdown-item list-group-item rounded-3 border-0">
+                                        <div class="d-flex align-items-center">
+                                            <img src="https://cdn0.fahasa.com/media/catalog/product/b/_/b_a-tr_c-ph_p-y-3.jpg" width="50" height="80" class="me-2" style="object-fit: contain;">
+                                            <div class="text-truncate">
+                                                <h6 class="text-truncate">Ghi Chép Pháp Y - Những Cái Chết Bí Ẩn Ghi Chép Pháp Y - Những Cái Chết Bí Ẩn</h6>
+                                                <span class="fw-bold">230000</span><span> x1</span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li class="list-group-item border-0 p-0">
+                                    <a href="#" class="dropdown-item list-group-item rounded-3 border-0">
+                                        <div class="d-flex align-items-center">
+                                            <img src="https://cdn0.fahasa.com/media/catalog/product/b/_/b_a-tr_c-ph_p-y-3.jpg" width="50" height="80" class="me-2" style="object-fit: contain;">
+                                            <div class="text-truncate">
+                                                <h6 class="text-truncate">Ghi Chép Pháp Y - Những Cái Chết Bí Ẩn Ghi Chép Pháp Y - Những Cái Chết Bí Ẩn</h6>
+                                                <span class="fw-bold">230000</span><span> x1</span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li class="list-group-item border-0 p-0">
+                                    <a href="#" class="dropdown-item list-group-item rounded-3 border-0">
+                                        <div class="d-flex align-items-center">
+                                            <img src="https://cdn0.fahasa.com/media/catalog/product/b/_/b_a-tr_c-ph_p-y-3.jpg" width="50" height="80" class="me-2" style="object-fit: contain;">
+                                            <div class="text-truncate">
+                                                <h6 class="text-truncate">Ghi Chép Pháp Y - Những Cái Chết Bí Ẩn Ghi Chép Pháp Y - Những Cái Chết Bí Ẩn</h6>
+                                                <span class="fw-bold">230000</span><span> x1</span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li class="list-group-item border-0 p-0">
+                                    <a href="#" class="dropdown-item list-group-item rounded-3 border-0">
+                                        <div class="d-flex align-items-center">
+                                            <img src="https://cdn0.fahasa.com/media/catalog/product/b/_/b_a-tr_c-ph_p-y-3.jpg" width="50" height="80" class="me-2" style="object-fit: contain;">
+                                            <div class="text-truncate">
+                                                <h6 class="text-truncate">Ghi Chép Pháp Y - Những Cái Chết Bí Ẩn Ghi Chép Pháp Y - Những Cái Chết Bí Ẩn</h6>
+                                                <span class="fw-bold">230000</span><span> x1</span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="ps-3 d-block d-lg-none"> </div>
+
+                    <div class="dropdown account d-none my-1">
+                        <div title="Cart" data-bs-toggle="dropdown" aria-expanded="false" class="account-btn py-2 pe-3 d-flex flex-column align-items-center fw-bold text-black-50" style="cursor:pointer;">
+                            <i class="bi bi-person-circle"></i>
+                            <span class="dropdown-toggle d-none d-lg-block">Tài khoản</span>
+                        </div>
+                        <ul class="dropdown-menu dropdown-menu-end shadow py-0">
+                            <li><a class="dropdown-item" href="#">Đăng nhập</a></li>
+                            <li><a class="dropdown-item" href="#">Đăng ký</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="dropdown user my-1">
+                        <div data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;" class="user-btn py-2 pe-3 d-flex flex-column align-items-center fw-bold text-black-50">
+                            <img src="~/image/Hinh-anh-anime-ngau.jpg" height="25" width="25" class="rounded-circle" style="object-fit: cover;" />
+                            <span class="dropdown-toggle d-none d-lg-block">Khánh Trình</span>
+                        </div>
+                        <ul class="dropdown-menu dropdown-menu-end shadow py-0">
+                            <li><a class="dropdown-item" href="#">Tài khoản</a></li>
+                            <li><a class="dropdown-item" href="#">Đăng xuất</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </header>
+
+
+    @RenderBody()
+
+    @* @await Html.PartialAsync("~/Views/PartialView/ChatLayout.cshtml") *@
+
+    @* chat *@
+    <div class="position-fixed bottom-0 end-0 z-3">
+        <div class="boxChat" style="display: none;">
+            <div class="shadow me-3 bg-white d-flex flex-column rounded-top-3 mb-3" style="width: 320px; height: 450px;">
+                <div class="header-boxChat bg-white rounded-top-3">
+                    <div class="d-flex align-items-center p-3 rounded-top-3 bg-primary-fahasa">
+                        <img src="/image/3.jpeg" width="50" height="50" class="object-fit-cover rounded-circle" />
+                        <div class="flex-grow-1 ms-2" style="width: 50px;">
+                            <h5 class="mb-0" style="font-size: 16px;">Chăm sóc khách hàng</h5>
+                            <div class="text-truncate" style="font-size: 13px;">Sẵn lòng giải đáp mọi thắc mắc</div>
+                        </div>
+                        <div id="close-boxChat" role="button">
+                            <i class="bi bi-x-lg"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-boxChat flex-grow-1 pt-2" style="overflow: auto;">
+                    <div class="d-flex mb-2 px-2">
+                        <div class="img_cont_msg mt-3 me-2">
+                            <img width="30" height="30" src="https://static.turbosquid.com/Preview/001292/481/WV/_D.jpg" class="rounded-circle object-fit-cover">
+                        </div>
+                        <div class="d-flex flex-column align-items-start">
+                            <div class="msg_cotainer rounded-3 p-2 bg-light" style="max-width: 75%;">
+                                I am looking for your next templates
+                                I am looking for your next templates
+                                I am looking for your next templates
+                            </div>
+                            <small class="msg_time ms-2">9:07 AM, Today</small>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-column align-items-end mb-2 px-2">
+                        <div class="msg_cotainer rounded-3 p-2 bg-primary text-white" style="max-width: 75%;">
+                            templates templates
+                            templates
+                            templates
+                        </div>
+                        <small class="msg_time">9:07 AM, Today</small>
+                    </div>
+                    <div class="d-flex mb-2 px-2">
+                        <div class="img_cont_msg mt-3 me-2">
+                            <img width="30" height="30" src="https://static.turbosquid.com/Preview/001292/481/WV/_D.jpg" class="rounded-circle object-fit-cover">
+                        </div>
+                        <div class="d-flex flex-column align-items-start">
+                            <div class="msg_cotainer rounded-3 p-2 bg-light" style="max-width: 75%;">
+                                I am looking for your next templates
+                                I am looking for your next templates
+                                I am looking for your next templates
+                            </div>
+                            <small class="msg_time ms-2">9:07 AM, Today</small>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-column align-items-end mb-2 px-2">
+                        <div class="msg_cotainer rounded-3 p-2 bg-primary text-white" style="max-width: 75%;">
+                            templates templates
+                            templates
+                            templates
+                        </div>
+                        <small class="msg_time">9:07 AM, Today</small>
+                    </div>
+                </div>
+                <div class="footer-boxChat d-flex" style="border-top: 1px solid #888;">
+                    <input type="text" placeholder="Nhập câu hỏi của bạn" class="border-0 flex-grow-1 px-3 py-2" style="outline: none;" />
+                    <button type="button" class="border-0 px-4 py-1 rounded-start-3 bg-primary-fahasa">
+                        <i class="bi bi-send"></i>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+        <div class="boxImg" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Chăm sóc khách hàng">
+            <img src="~/image/callmeIcon.png" width="50" height="50" role="button" id="showBoxChatBtn" class="object-fit-cover rounded-circle m-3 shadow" />
+        </div>
+    </div>
+
+    <footer class="bg-black bg-opacity-10 py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-6 col-md-5">
+                    <div>
+                        <img src="~/image/fahasa-logo.png" width="300" height="50" class="object-fit-contain mw-100" />
+                        <div class="my-2">
+                            <small>Công Ty Cổ Phần Phát Hành Sách TP HCM - FAHASA</small><br />
+                            <small>60 - 62 Lê Lợi, Quận 1, TP. HCM, Việt Nam</small>
+                        </div>
+                        <small class="my-2">
+                            Fahasa.com nhận đặt hàng trực tuyến và giao hàng tận nơi. KHÔNG hỗ trợ đặt mua và nhận hàng trực tiếp tại văn phòng cũng như tất cả Hệ Thống Fahasa trên toàn quốc.
+                        </small>
+                        <div>
+                            <a href="" class="p-2 fs-3"><i class="bi bi-facebook"></i></a>
+                            <a href="" class="p-2 fs-3 text-danger"><i class="bi bi-instagram"></i></a>
+                            <a href="" class="p-2 fs-3 text-danger"><i class="bi bi-youtube"></i></a>
+                            <a href="" class="p-2 fs-3 text-black"><i class="bi bi-twitter-x"></i></a>
+                            <a href="" class="p-2 fs-3 text-danger"><i class="bi bi-pinterest"></i></a>
+                        </div>
+                        <div>
+                            <img src="~/image/android1.png" width="100" height="50" class="object-fit-contain p-2" />
+                            <img src="~/image/appstore1.png" width="100" height="50" class="object-fit-contain p-2" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-7">
+                    <div class="row row-cols-auto row-cols-lg-2 g-4 justify-content-between">
+                        <div class="col">
+                            <h6 class="text-uppercase">dịch vụ</h6>
+                            <div class="list-group">
+                                <a href="" class="list-group-item list-group-item-action">Điều khoản sử dụng</a>
+                                <a href="" class="list-group-item list-group-item-action">Chính sách bảo mật thông tin cá nhân</a>
+                                <a href="" class="list-group-item list-group-item-action">Chính sách bảo mật thanh toán</a>
+                                <a href="" class="list-group-item list-group-item-action">Giới thiệu Fahasa</a>
+                                <a href="" class="list-group-item list-group-item-action">Hệ thống trung tâm - nhà sách</a>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <h6 class="text-uppercase">Hỗ trợ</h6>
+                            <div class="list-group">
+                                <a href="" class="list-group-item list-group-item-action">Điều khoản sử dụng</a>
+                                <a href="" class="list-group-item list-group-item-action">Chính sách bảo mật thông tin cá nhân</a>
+                                <a href="" class="list-group-item list-group-item-action">Chính sách bảo mật thanh toán</a>
+                                <a href="" class="list-group-item list-group-item-action">Giới thiệu Fahasa</a>
+                                <a href="" class="list-group-item list-group-item-action">Hệ thống trung tâm - nhà sách</a>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <h6 class="text-uppercase">tài khoản của tôi</h6>
+                            <div class="list-group">
+                                <a href="" class="list-group-item list-group-item-action">Điều khoản sử dụng</a>
+                                <a href="" class="list-group-item list-group-item-action">Chính sách bảo mật thông tin cá nhân</a>
+                                <a href="" class="list-group-item list-group-item-action">Chính sách bảo mật thanh toán</a>
+                                <a href="" class="list-group-item list-group-item-action">Giới thiệu Fahasa</a>
+                                <a href="" class="list-group-item list-group-item-action">Hệ thống trung tâm - nhà sách</a>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <h6 class="text-uppercase">liên hệ</h6>
+                            <div class="list-group">
+                                <a href="" class="list-group-item list-group-item-action">Điều khoản sử dụng</a>
+                                <a href="" class="list-group-item list-group-item-action">Chính sách bảo mật thông tin cá nhân</a>
+                                <a href="" class="list-group-item list-group-item-action">Chính sách bảo mật thanh toán</a>
+                                <a href="" class="list-group-item list-group-item-action">Giới thiệu Fahasa</a>
+                                <a href="" class="list-group-item list-group-item-action">Hệ thống trung tâm - nhà sách</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.min.js" integrity="sha512-HGOnQO9+SP1V92SrtZfjqxxtLmVzqZpjFFekvzZVWoiASSQgSr4cw9Kqd2+l8Llp4Gm0G8GIFJ4ddwZilcdb8A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+
+    @* swiper *@
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+    @* chat *@
+    <script>
+        $(document).ready(function () {
+            $('#showBoxChatBtn').click(function () {
+                $(this).hide();
+                $('.boxChat').show();
+            });
+            $('#close-boxChat').click(function () {
+                $('.boxChat').hide();
+                $('#showBoxChatBtn').show();
+            });
+        });
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,164 @@
+﻿
+<div id="Payment" class="bg-black bg-opacity-10">
+    <div class="container pt-4">
+        <div class="p-3 rounded-3 bg-white">
+            <h6 class="text-uppercase">Địa chỉ giao hàng</h6> <hr />
+            <div>
+                <div class="py-2 d-flex align-items-center flex-wrap">
+                    <div class="d-flex">
+                        <input class="" type="radio" checked name="address" id="address1">
+                        <label class="px-2" for="address1">
+                            Khánh Trình | C24/9 Lê văn việt, TP Thủ Đức | 0337880587
+                        </label>
+                    </div>
+                    <a href="#">Thay đổi</a>
+                </div>
+                <div class="py-2 d-flex align-items-center flex-wrap">
+                    <div class="d-flex">
+                        <input class="" type="radio" name="address" id="address1">
+                        <label class="px-2" for="address1">
+                            Khánh Trình | C24/9 Lê văn việt, TP Thủ Đức | 0337880587
+                        </label>
+                    </div>
+                    <a href="#">Thay đổi</a>
+                </div>
+            </div>
+            <div>
+                <a href="#" class="nav-link py-2"><i class="bi bi-plus-circle"></i> Giao hàng đến địa chỉ khác</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container pt-4">
+        <div class="p-3 rounded-3 bg-white">
+            <h6 class="text-uppercase">Phương thức thanh toán</h6> <hr />
+            <div>
+                <div class="py-2 d-flex align-items-center">
+                    <input class="" type="radio" checked name="paymentMethod" id="paymentMethod1">
+                    <label class="px-2" for="paymentMethod1">
+                        <img src="https://play-lh.googleusercontent.com/dQbjuW6Jrwzavx7UCwvGzA_sleZe3-Km1KISpMLGVf1Be5N6hN6-tdKxE5RDQvOiGRg" width="30" height="30" class="object-fit-contain mx-2" />
+                        Momo
+                    </label>
+                </div>
+                <div class="py-2 d-flex align-items-center">
+                    <input class="" type="radio" name="paymentMethod" id="paymentMethod2">
+                    <label class="px-2" for="paymentMethod2">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTz5ldDnp_AyQBZVfsCFGCTsl0Bm7VfqpuNMdwp7h8ElQ&s" width="30" height="30" class="object-fit-contain mx-2" />
+                        Thanh toán khi nhận hàng
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container pt-4">
+        <div class="p-3 rounded-3 bg-white">
+            <h6 class="text-uppercase">Khuyến mãi đã áp dụng</h6> <hr />
+            <div>
+                @* <span class="text-black text-opacity-75">Chưa sử dụng khuyến mãi nào</span> *@
+                <div class="row row-cols-md-2 g-3">
+                    <div class="">
+                        <div class="d-flex align-items-center bg-light border rounded-3 p-2">
+                            <img src="~/image/voucher.png" width="100" height="100" class="object-fit-contain me-2" />
+                            <div class="flex-grow-1">
+                                <div class="oneLine text-uppercase fw-bold">mã giảm giá 10k - đơn hàng từ 150k</div>
+                                <div class="d-flex justify-content-between align-items-center mt-2">
+                                    <small role="button" class="text-primary" data-bs-toggle="modal" data-bs-target="#voucher2Modal">Chi tiết</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal fade" id="voucher2Modal" tabindex="-1" aria-labelledby="voucher1ModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5 text-uppercase" id="voucher1ModalLabel">Chi tiết mã giảm giá</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p class="btn btn-outline-success">mã giảm giá 10k - đơn hàng từ 150k</p>
+                                        <p>- Điều kiện áp dụng: áp dụng cho đơn hàng từ 150K, không áp dụng cho đơn hàng có sản phẩm Phiếu Quà Tặng</p>
+                                        <p>- Thời gian áp dụng: Đến hết Tháng 3/2024</p>
+                                        <p>- Khách hàng có thể áp dụng cùng lúc với mã giảm phí vận chuyển</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="">
+                        <div class="d-flex align-items-center bg-light border rounded-3 p-2">
+                            <img src="~/image/voucher.png" width="100" height="100" class="object-fit-contain me-2" />
+                            <div class="flex-grow-1">
+                                <div class="oneLine text-uppercase fw-bold">mã giảm giá 10k - đơn hàng từ 150k</div>
+                                <div class="d-flex justify-content-between align-items-center mt-2">
+                                    <small role="button" class="text-primary" data-bs-toggle="modal" data-bs-target="#voucher2Modal">Chi tiết</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal fade" id="voucher2Modal" tabindex="-1" aria-labelledby="voucher1ModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5 text-uppercase" id="voucher1ModalLabel">Chi tiết mã giảm giá</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p class="btn btn-outline-success">mã giảm giá 10k - đơn hàng từ 150k</p>
+                                        <p>- Điều kiện áp dụng: áp dụng cho đơn hàng từ 150K, không áp dụng cho đơn hàng có sản phẩm Phiếu Quà Tặng</p>
+                                        <p>- Thời gian áp dụng: Đến hết Tháng 3/2024</p>
+                                        <p>- Khách hàng có thể áp dụng cùng lúc với mã giảm phí vận chuyển</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container pt-4">
+        <div class="p-3 rounded-3 bg-white">
+            <h6 class="text-uppercase">Kiểm tra lại đơn hàng</h6> <hr />
+            <div>
+                <div class="d-flex mb-3">
+                    <img src="~/image/fs1.jpg" width="120" height="120" class="object-fit-contain mx-2" />
+                    <div class="flex-grow-1">
+                        <div class="row">
+                            <div class="col-md-7">
+                                <span class="text-truncatet-row-double">Ghi Chép Pháp Y - Những Thi Thể Không Hoàn Chỉnh</span>
+                            </div>
+                            <div class="col-md-2">
+                                <span class="fw-bold">94.900 đ</span> <br class="d-none d-md-block" />
+                                <span class="text-decoration-line-through">130.000 đ</span>
+                            </div>
+                            <div class="col-md-1">
+                                x 1
+                            </div>
+                            <div class="col-md-2">
+                                <h6 class="text-danger fw-bold">94.900 đ</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container pt-4">
+        <div class="p-3 rounded-3 bg-white">
+            <h6 class="text-uppercase">Xác nhận thanh toán</h6> <hr />
+            <div class="d-flex justify-content-end">
+                <div>
+                    <div class="d-flex align-items-center">
+                        <span>Tổng tiền:</span>
+                        <h6 class="text-danger fw-bold mx-3 my-0 fs-5">190.000 đ</h6>
+                    </div>
+                    <div class="mt-3">
+                        <a href="#" class="btn btn-danger">Xác nhận thanh toán</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
