@@ -1,0 +1,78 @@
+﻿@using FahasaStoreClientApp.Components
+@using FahasaStoreClientApp.Models
+@model FahasaStoreClientApp.Models.StatusOrder
+@{
+    var order = new Order(1, new DateTime(2024, 4, 30), "Trình", 98000, "Hoàn thành", null, null, null);
+    var order2 = new Order(2, new DateTime(2024, 4, 30), "Trình", 98000, "Hoàn thành", null, null, null);
+    var order3 = new Order(3, new DateTime(2024, 4, 30), "Trình", 98000, "Hoàn thành", null, null, null);
+    var orders = new List<Order>();
+    orders.Add(order);
+    orders.Add(order2);
+    orders.Add(order3);
+
+    var status1 = new StatusOrder(1, "Hoàn thành");
+    var status2 = new StatusOrder(2, "Chưa Hoàn thành");
+    var statuses = new List<StatusOrder>();
+    statuses.Add(status2);
+    statuses.Add(status1);
+}
+<div class="bg-black bg-opacity-10">
+    <div class="container pt-4">
+        <div class="bg-white rounded-3 py-3">
+            <div class="row">
+                <div class="col-lg-3">
+                    @(await Html.RenderComponentAsync<SideBarUser>(RenderMode.ServerPrerendered, new { active = 4 }))
+                </div>
+                <div class="col-lg-9 px-4">
+                    <h5 class="text-uppercase">Đơn hàng của tôi</h5><hr />
+                    <div class="mb-3">
+                        <form asp-action="Order">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group">
+                                <label asp-for="StatusId" class="control-label"></label>
+                                <select asp-for="StatusId" class="form-control" id="Status">
+                                    <option value="">-- Tất cả --</option>
+                                    @{
+                                        if (statuses != null)
+                                        {
+                                            foreach (var s in statuses)
+                                            {
+                                                <option value="@s.StatusId">@s.Name</option>
+                                            }
+                                        }
+                                    }
+                                </select>
+                                <span asp-validation-for="StatusId" class="text-danger"></span>
+                            </div>
+                        </form>
+                    </div>
+                    <div>
+                        @(await Html.RenderComponentAsync<OrderComponent>(RenderMode.ServerPrerendered, new { orders = orders }))
+                    </div>
+                    <div>
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination justify-content-end">
+                                <li class="page-item disabled">
+                                    <a class="page-link">Previous</a>
+                                </li>
+                                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#">Next</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

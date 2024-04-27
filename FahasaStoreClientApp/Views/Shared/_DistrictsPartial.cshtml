@@ -1,0 +1,7 @@
+﻿@model IEnumerable<District>
+
+<option value="">-- Chọn Quận/Huyện --</option>
+@foreach (var district in Model)
+{
+    <option value="@district.DISTRICT_ID">@district.DISTRICT_NAME</option>
+}

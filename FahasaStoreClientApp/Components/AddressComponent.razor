@@ -1,0 +1,23 @@
+﻿
+<div>
+    <div class="row g-2">
+        <div>Trình Lê</div>
+        <div>Số điện thoại: 0337880587</div>
+        <div>C24/9 Lê Văn Việt, Phường Tăng Nhơn Phú A, Thành Phố Thủ Đức</div>
+    </div>
+    @{
+        if (allowEditor != null && allowEditor == true)
+        {
+            <div class="d-flex">
+                <a href="/Address/Update" class="nav-link text-danger">Sửa địa chỉ</a>
+                <div class="mx-2">|</div>
+                <a href="#" class="nav-link text-danger">xóa</a>
+            </div>
+        }
+    }
+</div>
+
+@code {
+    [Parameter]
+    public bool? allowEditor { get; set; }
+}
