@@ -37,5 +37,21 @@ namespace FahasaStoreClientApp.Controllers
         {
             return View();
         }
+
+        public IActionResult Reviews()
+        {
+            return View();
+        }
+
+        public IActionResult ReviewsUpdate()
+        {
+            return View();
+        }
+
+        public IActionResult Notifications()
+        {
+            return View();
+        }
+
     }
 }
