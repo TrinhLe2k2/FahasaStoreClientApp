@@ -41,6 +41,11 @@ namespace FahasaStoreClientApp.DataTemp.DataVM
             return Books;
         }
 
+        public IEnumerable<BookVM> ListLimitedBooks(int number)
+        {
+            return Books.Take(number).ToList();
+        }
+
         public BookVM? Book(int id)
         {
             var Book = Books.SingleOrDefault(b => b.BookId == id);
