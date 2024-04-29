@@ -1,204 +1,134 @@
-﻿@{
+﻿@using FahasaStoreClientApp.Components
+@using FahasaStoreClientApp.Models.Entities
+@using FahasaStoreClientApp.Models.ViewModels
+@{
     ViewData["Title"] = "Home Page";
+    var banners = ViewData["Banners"] as List<BannerVM>;
+    var banners5 = new List<BannerVM>();
+    var banners2 = new List<BannerVM>();
+    var banners4 = new List<BannerVM>();
+    if (banners != null && banners.Count > 0)
+    {
+        var bannersCount = banners.Count;
+        banners5 = bannersCount >= 6 ? banners.Skip(1).Take(5).ToList() : banners.Skip(1).Take(5).ToList();
+        banners2 = bannersCount >= 8 ? banners.Skip(6).Take(2).ToList() : banners.Take(2).ToList();
+        banners4 = bannersCount >= 12 ? banners.Skip(8).Take(4).ToList() : banners.Take(4).ToList();
+    }
+
+    var menus = ViewData["Menus"] as List<MenuVM>;
+
+    var flashSale = ViewData["FlashSale"] as FlashSaleEntities;
+
 }
 <div class="bg-black bg-opacity-10 rounded-3">
     @* banner top *@
     <div class="container pt-3">
         <div class="row g-2">
             <div class="col-sm-8">
-                <div id="carouselNews" class="carousel slide" data-bs-ride="carousel">
+                <div id="carouselBanner" class="carousel slide" data-bs-ride="carousel">
                     <div class="carousel-indicators">
-                        <button type="button" data-bs-target="#carouselNews" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                        <button type="button" data-bs-target="#carouselNews" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                        <button type="button" data-bs-target="#carouselNews" data-bs-slide-to="2" aria-label="Slide 3"></button>
-                        <button type="button" data-bs-target="#carouselNews" data-bs-slide-to="3" aria-label="Slide 3"></button>
-                        <button type="button" data-bs-target="#carouselNews" data-bs-slide-to="4" aria-label="Slide 3"></button>
-                        <button type="button" data-bs-target="#carouselNews" data-bs-slide-to="5" aria-label="Slide 3"></button>
+                        @if(banners != null && banners.Count > 0) {
+                            <button type="button" data-bs-target="#carouselBanner" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide @banners[0].BannerId"></button>
+                        }
+                        @{
+                            if(banners5 != null && banners5.Count > 0) {
+                                int slideTo = 0;
+                                foreach(var item in banners5) {
+                                    slideTo++;
+                                    <button type="button" data-bs-target="#carouselBanner" data-bs-slide-to="@slideTo" aria-label="Slide @item.BannerId"></button>
+                                }
+                            }
+                        }
                     </div>
                     <div class="carousel-inner rounded-3 overflow-hidden w-100">
-                        <div class="carousel-item active" style="padding-bottom: 38%;">
-                            <a href="/Home/News">
-                                <img src="~/image/3.jpeg" class="w-100 h-100 position-absolute" alt="slide 1" style="object-fit: cover;">
-                            </a>
-                        </div>
-                        <div class="carousel-item" style="padding-bottom: 38%;">
-                            <a href="/Home/News">
-                                <img src="~/image/2.jpg" class="w-100 h-100 position-absolute" alt="slide 2" style="object-fit: cover;">
-                            </a>
-                        </div>
-                        <div class="carousel-item" style="padding-bottom: 38%;">
-                            <a href="/Home/News">
-                                <img src="~/image/1.jpg" class="w-100 h-100 position-absolute" alt="slide 3" style="object-fit: cover;">
-                            </a>
-                        </div>
-                        <div class="carousel-item" style="padding-bottom: 38%;">
-                            <a href="">
-                                <img src="~/image/1.jpg" class="w-100 h-100 position-absolute" alt="slide 4" style="object-fit: cover;">
-                            </a>
-                        </div>
-                        <div class="carousel-item" style="padding-bottom: 38%;">
-                            <a href="/Home/News">
-                                <img src="~/image/2.jpg" class="w-100 h-100 position-absolute" alt="slide 5" style="object-fit: cover;">
-                            </a>
-                        </div>
-                        <div class="carousel-item" style="padding-bottom: 38%;">
-                            <a href="/Home/News">
-                                <img src="~/image/1.jpg" class="w-100 h-100 position-absolute" alt="slide 6" style="object-fit: cover;">
-                            </a>
-                        </div>
+                        @if (banners != null && banners.Count > 0)
+                        {
+                            <div class="carousel-item active" style="padding-bottom: 38%;">
+                                <a href="/Home/Banner/@banners[0].BannerId">
+                                    <img src="@banners[0].ImageUrl" class="w-100 h-100 position-absolute" alt="slide @banners[0].BannerId" style="object-fit: cover;">
+                                </a>
+                            </div>
+                        }
+                        
+                        @{
+                            if (banners5 != null && banners5.Count > 0)
+                            {
+                                foreach (var item in banners5)
+                                {
+                                    <div class="carousel-item" style="padding-bottom: 38%;">
+                                        <a href="/Home/Banner/@item.BannerId">
+                                            <img src="@item.ImageUrl" class="w-100 h-100 position-absolute" alt="slide @item.BannerId" style="object-fit: cover;">
+                                        </a>
+                                    </div>
+                                }
+                            }
+                        }
                     </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselNews" data-bs-slide="prev">
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselBanner" data-bs-slide="prev">
                         <span class="bi-arrow-left-circle-fill" aria-hidden="true"></span>
                         <span class="visually-hidden">Previous</span>
                     </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#carouselNews" data-bs-slide="next">
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselBanner" data-bs-slide="next">
                         <span class="bi-arrow-right-circle-fill" aria-hidden="true"></span>
                         <span class="visually-hidden">Next</span>
                     </button>
                 </div>
             </div>
             <div class="d-none d-sm-block col-sm-4">
-                <div class="h-50 w-100 pb-1">
-                    <div class="position-relative w-100 h-100">
-                        <a href=""><img src="~/image/4.jpg" class="rounded-3 w-100 h-100 position-absolute" style="object-fit: cover;" /></a>
-                    </div>
-                </div>
-                <div class="h-50 w-100 pt-1">
-                    <div class="position-relative w-100 h-100">
-                        <a href=""><img src="~/image/5.jpg" class="rounded-3 w-100 h-100 position-absolute" style="object-fit: cover;" /></a>
-                    </div>
-                </div>
+                @{
+                    if (banners2 != null && banners2.Count > 0)
+                    {
+                        foreach(var item in banners2) {
+                            <div class="h-50 w-100 pb-1">
+                                <div class="position-relative w-100 h-100">
+                                    <a href="/Home/Banner/@item.BannerId"><img src="@item.ImageUrl" class="rounded-3 w-100 h-100 position-absolute" style="object-fit: cover;" /></a>
+                                </div>
+                            </div>
+                        }
+                    }
+                }
             </div>
         </div>
     </div>
     @* banner bottom *@
     <div class="container mt-4 d-none d-sm-block">
         <div class="row g-2">
-            <div class="col-3">
-                <a href="" class="d-block position-relative h-100 w-100" style="padding-bottom: 66.67%;">
-                    <img src="~/image/Banner1_310x210.png" class="w-100 h-100 rounded-3 position-absolute" style="object-fit: cover;" />
-                </a>
-            </div>
-            <div class="col-3">
-                <a href="" class="d-block position-relative h-100 w-100" style="padding-bottom: 66.67%;">
-                    <img src="~/image/Hinh-anh-anime-ngau.jpg" class="w-100 h-100 rounded-3 position-absolute" style="object-fit: cover;" />
-                </a>
-            </div>
-            <div class="col-3">
-                <a href="" class="d-block position-relative h-100 w-100" style="padding-bottom: 66.67%;">
-                    <img src="~/image/banner3_310x210.jpg" class="w-100 h-100 rounded-3 position-absolute" style="object-fit: cover;" />
-                </a>
-            </div>
-            <div class="col-3">
-                <a href="" class="d-block position-relative h-100 w-100" style="padding-bottom: 66.67%;">
-                    <img src="~/image/banner4_310x210.png" class="w-100 h-100 rounded-3 position-absolute" style="object-fit: cover;" />
-                </a>
-            </div>
+            @{
+                if (banners4 != null && banners4.Count > 0)
+                {
+                    foreach (var item in banners4)
+                    {
+                        <div class="col-3">
+                            <a href="/Home/Banner/@item.BannerId" class="d-block position-relative h-100 w-100" style="padding-bottom: 66.67%;">
+                                <img src="@item.ImageUrl" class="w-100 h-100 rounded-3 position-absolute" style="object-fit: cover;" />
+                            </a>
+                        </div>
+                    }
+                }
+            }
         </div>
     </div>
-    @* fast link *@
+    @* Menu *@
     <div class="container mt-4">
-        <div class="fast-link bg-white rounded-3 py-4">
-            <div>
-                <div class="fast-link__item">
-                    <a href="#" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Tết Năm Rồng">
-                        <div class="w-50 position-relative mx-auto" style="padding-bottom: 50%;">
-                            <img src="~/image/lf1.png" class="w-100 h-100 rounded-3 position-absolute" style="object-fit: cover;" />
+        <div class="menu bg-white rounded-3 py-4">
+            @{
+                if(menus != null && menus.Count > 0)
+                {
+                    foreach(var item in menus)
+                    {
+                        <div>
+                            <div class="menu__item">
+                                <a href="@item.link" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="@item.Title">
+                                    <div class="w-50 position-relative mx-auto" style="padding-bottom: 50%;">
+                                        <img src="@item.ImageUrl" class="w-100 h-100 rounded-3 position-absolute" style="object-fit: cover;" />
+                                    </div>
+                                    <p class="m-0 text-center">@item.Title</p>
+                                </a>
+                            </div>
                         </div>
-                        <p class="m-0 text-center">Tết Năm Rồng</p>
-                    </a>
-                </div>
-            </div>
-            <div>
-                <div class="fast-link__item">
-                    <a href="#" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Máy Tính">
-                        <div class="w-50 position-relative mx-auto" style="padding-bottom: 50%;">
-                            <img src="~/image/lf2.png" class="w-100 h-100 rounded-3 position-absolute" style="object-fit: cover;" />
-                        </div>
-                        <p class="m-0 text-center">Máy Tính</p>
-                    </a>
-                </div>
-            </div>
-            <div>
-                <div class="fast-link__item">
-                    <a href="#" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Nhã Nam">
-                        <div class="w-50 position-relative mx-auto" style="padding-bottom: 50%;">
-                            <img src="~/image/lf3.png" class="w-100 h-100 rounded-3 position-absolute" style="object-fit: cover;" />
-                        </div>
-                        <p class="m-0 text-center">Nhã Nam</p>
-                    </a>
-                </div>
-            </div>
-            <div>
-                <div class="fast-link__item">
-                    <a href="#" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Alpha Books">
-                        <div class="w-50 position-relative mx-auto" style="padding-bottom: 50%;">
-                            <img src="~/image/lf4.png" class="w-100 h-100 rounded-3 position-absolute" style="object-fit: cover;" />
-                        </div>
-                        <p class="m-0 text-center">Alpha Books</p>
-                    </a>
-                </div>
-            </div>
-            <div>
-                <div class="fast-link__item">
-                    <a href="#" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="manga">
-                        <div class="w-50 position-relative mx-auto" style="padding-bottom: 50%;">
-                            <img src="~/image/lf5.png" class="w-100 h-100 rounded-3 position-absolute" style="object-fit: cover;" />
-                        </div>
-                        <p class="m-0 text-center">Manga</p>
-                    </a>
-                </div>
-            </div>
-            <div>
-                <div class="fast-link__item">
-                    <a href="#" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Flash Sale">
-                        <div class="w-50 position-relative mx-auto" style="padding-bottom: 50%;">
-                            <img src="~/image/lf6.png" class="w-100 h-100 rounded-3 position-absolute" style="object-fit: cover;" />
-                        </div>
-                        <p class="m-0 text-center">Flash Sale</p>
-                    </a>
-                </div>
-            </div>
-            <div>
-                <div class="fast-link__item">
-                    <a href="#" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Mã Giảm Giá">
-                        <div class="w-50 position-relative mx-auto" style="padding-bottom: 50%;">
-                            <img src="~/image/lf7.png" class="w-100 h-100 rounded-3 position-absolute" style="object-fit: cover;" />
-                        </div>
-                        <p class="m-0 text-center">Mã Giảm Giá</p>
-                    </a>
-                </div>
-            </div>
-            <div>
-                <div class="fast-link__item">
-                    <a href="#" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Đồ Chơi">
-                        <div class="w-50 position-relative mx-auto" style="padding-bottom: 50%;">
-                            <img src="~/image/lf8.png" class="w-100 h-100 rounded-3 position-absolute" style="object-fit: cover;" />
-                        </div>
-                        <p class="m-0 text-center">Đồ Chơi</p>
-                    </a>
-                </div>
-            </div>
-            <div>
-                <div class="fast-link__item">
-                    <a href="#" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Phiên Chợ Cũ">
-                        <div class="w-50 position-relative mx-auto" style="padding-bottom: 50%;">
-                            <img src="~/image/lf9.png" class="w-100 h-100 rounded-3 position-absolute" style="object-fit: cover;" />
-                        </div>
-                        <p class="m-0 text-center">Phiên Chợ Cũ Phiên Chợ Cũ</p>
-                    </a>
-                </div>
-            </div>
-            <div>
-                <div class="fast-link__item">
-                    <a href="#" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Sản Phẩm Mới">
-                        <div class="w-50 position-relative mx-auto" style="padding-bottom: 50%;">
-                            <img src="~/image/lf10.png" class="w-100 h-100 rounded-3 position-absolute" style="object-fit: cover;" />
-                        </div>
-                        <p class="m-0 text-center">Sản Phẩm Mới</p>
-                    </a>
-                </div>
-            </div>
+                    }
+                }
+            }
         </div>
     </div>
     @* flash sale *@
@@ -217,307 +147,16 @@
                 </div>
                 <a href="" class="ms-auto d-flex text-decoration-none"><span class="d-none d-md-block">Xem tất cả</span> <i class="bi bi-chevron-right"></i></a>
             </div>
-            <div class="flashSaleMenu mt-4">
-                <div>
-                    <div class="card mx-2 position-relative">
-                        <a href="" class="text-decoration-none mx-2" style="color: #000;" title="Đắc Tâm Nhân (Tái Bản 2021)">
-                            <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                <img src="~/image/fs1.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                            </div>
-                            <div class="card-body p-1">
-                                <h6 class="card-title twoLine">Đắc Tâm Nhân (Tái Bản 2021)</h6>
-                                <div class="d-flex flex-column justify-content-start">
-                                    <div>
-                                        <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                        <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                    </div>
-                                    <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                </div>
-                                <div>
-                                    <span>★</span>
-                                    <span>★</span>
-                                    <span>★</span>
-                                    <span>★</span>
-                                    <span>★</span>
-                                </div>
-                                <div class="progress position-relative">
-                                    <div class="progress-bar bg-danger" style="width:70%"></div>
-                                    <div class="position-absolute text-white w-100 text-center"><span>106 đã bán</span></div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div>
-                    <div class="card mx-2 position-relative">
-                        <a href="" class="text-decoration-none mx-2" style="color: #000;" title="Nói Chuyện Là Bản Năng, Giữ Miệng Là Tu Dưỡng, Im Lặng Là Trí Tuệ (Tái Bản)">
-                            <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                <img src="~/image/fs2.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                            </div>
-                            <div class="card-body p-1">
-                                <h6 class="card-title twoLine">Nói Chuyện Là Bản Năng, Giữ Miệng Là Tu Dưỡng, Im Lặng Là Trí Tuệ (Tái Bản)</h6>
-                                <div class="d-flex flex-column justify-content-start">
-                                    <div>
-                                        <span class="card-text text-danger fw-bold">126.630đ</span>
-                                        <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                    </div>
-                                    <small class="card-text text-decoration-line-through">189.000đ</small>
-                                </div>
-                                <div>
-                                    <span class="text-warning">★</span>
-                                    <span class="text-warning">★</span>
-                                    <span class="text-warning">★</span>
-                                    <span class="text-warning">★</span>
-                                    <span>★</span>
-                                </div>
-                                <div class="progress position-relative">
-                                    <div class="progress-bar bg-danger" style="width:70%"></div>
-                                    <div class="position-absolute text-white w-100 text-center"><span>106 đã bán</span></div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div>
-                    <div class="card mx-2 position-relative">
-                        <a href="" class="text-decoration-none mx-2" style="color: #000;" title="Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội">
-                            <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                <img src="~/image/fs3.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                            </div>
-                            <div class="card-body p-1">
-                                <h6 class="card-title twoLine">Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội</h6>
-                                <div class="d-flex flex-column justify-content-start">
-                                    <div>
-                                        <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                        <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                    </div>
-                                    <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                </div>
-                                <div>
-                                    <span>★</span>
-                                    <span>★</span>
-                                    <span>★</span>
-                                    <span>★</span>
-                                    <span>★</span>
-                                </div>
-                                <div class="progress position-relative">
-                                    <div class="progress-bar bg-danger" style="width:70%"></div>
-                                    <div class="position-absolute text-white w-100 text-center"><span>106 đã bán</span></div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div>
-                    <div class="card mx-2 position-relative">
-                        <a href="" class="text-decoration-none mx-2" style="color: #000;" title="Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)">
-                            <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                <img src="~/image/fs4.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                            </div>
-                            <div class="card-body p-1">
-                                <h6 class="card-title twoLine">Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)</h6>
-                                <div class="d-flex flex-column justify-content-start">
-                                    <div>
-                                        <span class="card-text text-danger fw-bold">999.999đ</span>
-                                        <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                    </div>
-                                    <small class="card-text text-decoration-line-through">999.999đ</small>
-                                </div>
-                                <div>
-                                    <span>★</span>
-                                    <span>★</span>
-                                    <span>★</span>
-                                    <span>★</span>
-                                    <span>★</span>
-                                </div>
-                                <div class="progress position-relative">
-                                    <div class="progress-bar bg-danger" style="width:70%"></div>
-                                    <div class="position-absolute text-white w-100 text-center"><span>106 đã bán</span></div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div>
-                    <div class="card mx-2 position-relative">
-                        <a href="" class="text-decoration-none mx-2" style="color: #000;" title="Chiến Tranh Tiền Tệ - Phần 1 - Ai Thực Sự Là Người Giàu Nhất Thế Giới? (Tái bản 2022)">
-                            <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                <img src="~/image/fs5.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                            </div>
-                            <div class="card-body p-1">
-                                <h6 class="card-title twoLine">Chiến Tranh Tiền Tệ - Phần 1 - Ai Thực Sự Là Người Giàu Nhất Thế Giới? (Tái bản 2022)</h6>
-                                <div class="d-flex flex-column justify-content-start">
-                                    <div>
-                                        <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                        <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                    </div>
-                                    <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                </div>
-                                <div>
-                                    <span>★</span>
-                                    <span>★</span>
-                                    <span>★</span>
-                                    <span>★</span>
-                                    <span>★</span>
-                                </div>
-                                <div class="progress position-relative">
-                                    <div class="progress-bar bg-danger" style="width:70%"></div>
-                                    <div class="position-absolute text-white w-100 text-center"><span>106 đã bán</span></div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div>
-                    <div class="card mx-2 position-relative">
-                        <a href="" class="text-decoration-none mx-2" style="color: #000;" title="Tư Duy Chiến Lược - Lý Thuyết Trò Chơi Thực Hành">
-                            <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                <img src="~/image/fs6.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                            </div>
-                            <div class="card-body p-1">
-                                <h6 class="card-title twoLine">Tư Duy Chiến Lược - Lý Thuyết Trò Chơi Thực Hành</h6>
-                                <div class="d-flex flex-column justify-content-start">
-                                    <div>
-                                        <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                        <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                    </div>
-                                    <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                </div>
-                                <div>
-                                    <span>★</span>
-                                    <span>★</span>
-                                    <span>★</span>
-                                    <span>★</span>
-                                    <span>★</span>
-                                </div>
-                                <div class="progress position-relative">
-                                    <div class="progress-bar bg-danger" style="width:70%"></div>
-                                    <div class="position-absolute text-white w-100 text-center"><span>106 đã bán</span></div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div>
-                    <div class="card mx-2 position-relative">
-                        <a href="" class="text-decoration-none mx-2" style="color: #000;" title="Tư Duy Ngược Dịch Chuyển Thế Giới - Originals: How Non-Conformists Move The World">
-                            <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                <img src="~/image/fs7.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                            </div>
-                            <div class="card-body p-1">
-                                <h6 class="card-title twoLine">Tư Duy Ngược Dịch Chuyển Thế Giới - Originals: How Non-Conformists Move The World</h6>
-                                <div class="d-flex flex-column justify-content-start">
-                                    <div>
-                                        <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                        <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                    </div>
-                                    <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                </div>
-                                <div>
-                                    <span>★</span>
-                                    <span>★</span>
-                                    <span>★</span>
-                                    <span>★</span>
-                                    <span>★</span>
-                                </div>
-                                <div class="progress position-relative">
-                                    <div class="progress-bar bg-danger" style="width:70%"></div>
-                                    <div class="position-absolute text-white w-100 text-center"><span>106 đã bán</span></div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div>
-                    <div class="card mx-2 position-relative">
-                        <a href="" class="text-decoration-none mx-2" style="color: #000;" title="Ghi Chép Pháp Y - Tập 2 - Khi Tử Thi Biết Nói">
-                            <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                <img src="~/image/fs8.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                            </div>
-                            <div class="card-body p-1">
-                                <h6 class="card-title twoLine">Ghi Chép Pháp Y - Tập 2 - Khi Tử Thi Biết Nói</h6>
-                                <div class="d-flex flex-column justify-content-start">
-                                    <div>
-                                        <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                        <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                    </div>
-                                    <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                </div>
-                                <div>
-                                    <span>★</span>
-                                    <span>★</span>
-                                    <span>★</span>
-                                    <span>★</span>
-                                    <span>★</span>
-                                </div>
-                                <div class="progress position-relative">
-                                    <div class="progress-bar bg-danger" style="width:70%"></div>
-                                    <div class="position-absolute text-white w-100 text-center"><span>106 đã bán</span></div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div>
-                    <div class="card mx-2 position-relative">
-                        <a href="" class="text-decoration-none mx-2" style="color: #000;" title="Cambridge IELTS 18 Academic - With Answer + Audio">
-                            <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                <img src="~/image/fs9.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                            </div>
-                            <div class="card-body p-1">
-                                <h6 class="card-title twoLine">Cambridge IELTS 18 Academic - With Answer + Audio</h6>
-                                <div class="d-flex flex-column justify-content-start">
-                                    <div>
-                                        <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                        <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                    </div>
-                                    <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                </div>
-                                <div>
-                                    <span>★</span>
-                                    <span>★</span>
-                                    <span>★</span>
-                                    <span>★</span>
-                                    <span>★</span>
-                                </div>
-                                <div class="progress position-relative">
-                                    <div class="progress-bar bg-danger" style="width:70%"></div>
-                                    <div class="position-absolute text-white w-100 text-center"><span>106 đã bán</span></div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div>
-                    <div class="card mx-2 position-relative">
-                        <a href="" class="text-decoration-none mx-2" style="color: #000;" title="Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)">
-                            <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                <img src="~/image/fs10.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                            </div>
-                            <div class="card-body p-1">
-                                <h6 class="card-title twoLine">Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)</h6>
-                                <div class="d-flex flex-column justify-content-start">
-                                    <div>
-                                        <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                        <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                    </div>
-                                    <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                </div>
-                                <div>
-                                    <span>★</span>
-                                    <span>★</span>
-                                    <span>★</span>
-                                    <span>★</span>
-                                    <span>★</span>
-                                </div>
-                                <div class="progress position-relative">
-                                    <div class="progress-bar bg-danger" style="width:70%"></div>
-                                    <div class="position-absolute text-white w-100 text-center"><span>106 đã bán</span></div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
+            <div class="flashSaleMenu mt-4" countDownDate="@flashSale?.FlashSale?.EndDate">
+                @{
+                    var bookFs = flashSale?.FlashSaleBook?.ToList();
+                    if(bookFs != null && bookFs.Count > 0) {
+                        foreach (var item in bookFs)
+                        {
+                            @(await Html.RenderComponentAsync<BookComponent>(RenderMode.ServerPrerendered, new { FlashSaleBook = item, Book = item.Book }))
+                        }
+                    }
+                }
             </div>
         </div>
     </div>
@@ -3353,7 +2992,7 @@
 
         // fast link
         $(document).ready(function () {
-            $('.fast-link').slick({
+            $('.menu').slick({
                 infinite: true,
                 slidesToShow: 10,
                 slidesToScroll: 10,
@@ -3388,7 +3027,8 @@
         });
         // flash sale time diff
         $(document).ready(function () {
-            var countDownDate = new Date("Oct 30, 2024 00:00:00").getTime();
+            var endDate = $(".flashSaleMenu").attr("countDownDate");
+            var countDownDate = new Date(endDate).getTime();
             var x = setInterval(function () {
                 var now = new Date().getTime();
                 var distance = countDownDate - now;

@@ -1,5 +1,5 @@
 ﻿
-#carouselNews .carousel-indicators button {
+#carouselBanner .carousel-indicators button {
     width: 8px;
     height: 8px;
     border-radius: 4px;
@@ -8,48 +8,48 @@
     margin: 0 4px;
 }
 
-#carouselNews .carousel-indicators button.active {
+#carouselBanner .carousel-indicators button.active {
     width: 24px;
     background-color: var(--primary-color-fahasa);
 }
 
-#carouselNews span::before {
+#carouselBanner span::before {
     background-color: #000;
     border-radius: 50%;
 }
 
-#carouselNews .carousel-control-next,
-#carouselNews .carousel-control-prev {
+#carouselBanner .carousel-control-next,
+#carouselBanner .carousel-control-prev {
     width: 10%;
     font-size: 1.5rem;
     opacity: 1;
     transition: all linear 1s;
 }
 
-#carouselNews .carousel-control-next:hover span,
-#carouselNews .carousel-control-prev:hover span {
+#carouselBanner .carousel-control-next:hover span,
+#carouselBanner .carousel-control-prev:hover span {
     transform: scale(1.5);
     transition: transform .5s;
 }
 
-#carouselNews .carousel-control-prev {
+#carouselBanner .carousel-control-prev {
     left: -12px;
     justify-content: start;
 }
 
-#carouselNews .carousel-control-next {
+#carouselBanner .carousel-control-next {
     right: -12px;
     justify-content: end;
 }
 
-.fast-link__item {
+.menu__item {
     display: flex;
     flex-direction: column;
     align-items: center;
     position: relative;
 }
 
-.fast-link__item a {
+.menu__item a {
     color: #000;
     text-decoration: none;
     width: 100%;
