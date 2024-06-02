@@ -11,7 +11,7 @@ namespace FahasaStoreClientApp.DataTemp.DataVM
             FlashSales = [];
             for (int i = 1; i < 13; i++)
             {
-                FlashSaleVM FlashSale = new(i, new DateTime(2024, 4, 28), new DateTime(2024, 5, 5));
+                FlashSaleVM FlashSale = new(i, new DateTime(2024, 4, 28), new DateTime(2024, 11, 11));
                 FlashSales.Add(FlashSale);
             }
         }

@@ -3,7 +3,7 @@
     var DiscountPercentage = FlashSaleBook != null ? FlashSaleBook.DiscountPercentage : Book?.DiscountPercentage;
     <div>
         <div class="card mx-2 position-relative overflow-hidden">
-            <a href="" class="text-decoration-none mx-2" style="color: #000;" title="@Book?.Name">
+            <a href="/Home/Product/@Book?.BookId" class="text-decoration-none mx-2" style="color: #000;" title="@Book?.Name">
                 <div class="w-100 position-relative" style="padding-bottom: 100%;">
                     <img src="@Book?.ImageUrl" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
                 </div>
