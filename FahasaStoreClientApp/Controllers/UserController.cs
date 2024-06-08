@@ -1,9 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FahasaStoreClientApp.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FahasaStoreClientApp.Controllers
 {
     public class UserController : Controller
     {
+
+        public UserController()
+        {
+            
+        }
+
         public IActionResult ControlPanel()
         {
             return View();

@@ -1,0 +1,50 @@
+﻿@model ICollection<FahasaStoreClientApp.Entities.CartItem>
+
+<div class="dropdown cart my-1">
+    <div title="Cart" data-bs-toggle="dropdown" aria-expanded="false" class="car-btn py-2 d-flex flex-column align-items-center fw-bold text-black-50 pe-3" role="button">
+        <div class="position-relative">
+            <i class="bi bi-cart"></i>
+            @if (Model.Count > 0)
+            {
+                <span class="position-absolute top-0 start-100 translate-middle-y translate-middle badge rounded-pill bg-danger ">
+                    @Model.Count
+                    <span class="visually-hidden">unread messages</span>
+                </span>
+            }
+        </div>
+        <span class="d-none d-lg-block">Giỏ hàng</span>
+    </div>
+    <div class="dropdown-menu dropdown-menu-end shadow" style="width: 360px;">
+        <div class="d-flex justify-content-between border-bottom align-items-center">
+            <div class="px-3 py-2 fw-bold">
+                <i class="bi bi-cart"></i>
+                <span>Giỏ hàng</span>
+            </div>
+            <a href="/User/Cart" class="px-3 py-2 text-decoration-none fw-bold">Xem giỏ hàng</a>
+        </div>
+        <ul class="list-group">
+
+            @{
+                if (Model.Count > 0)
+                {
+                    foreach (var item in Model)
+                    {
+                        <li class="list-group-item border-0 p-0">
+                            <a href="#" class="dropdown-item list-group-item rounded-3 border-0">
+                                <div class="d-flex align-items-center">
+                                    <img src="https://cdn0.fahasa.com/media/catalog/product/b/_/b_a-tr_c-ph_p-y-3.jpg" width="50" height="80" class="me-2" style="object-fit: contain;">
+                                    <div class="text-truncate">
+                                        <h6 class="text-truncate">@item.Book.Name</h6>
+                                        <span class="fw-bold">
+                                            @((item.Book.Price - (item.Book.Price * item.Book.DiscountPercentage)).ToString("0.##"))
+                                        </span><span> x @item.Quantity</span>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                    }
+                }
+            }
+        </ul>
+    </div>
+</div>

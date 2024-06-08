@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace FahasaStoreAPI.Entities
+namespace FahasaStoreClientApp.Entities
 {
     public partial class AspNetRole
     {

@@ -1,4 +1,10 @@
-﻿<!DOCTYPE html>
+﻿@inject IHttpContextAccessor HttpContextAccessor
+@using FahasaStoreClientApp.Helpers
+@{
+    var userLogin = new UserLogined(HttpContextAccessor);
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -13,12 +19,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick-theme.min.css" integrity="sha512-17EgCFERpgZKcm0j0fEq1YCJuyAWdz9KUtv1EjVuaOz8pDnh/0nZxmU6BBXwaaxqoi9PQXnRWqlcDB027hgv9A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.min.css" integrity="sha512-yHknP1/AwR+yx26cB1y0cjvQUMvEa2PFzt1c9LlS4pRQ5NOTZFWbhBig+X9G9eYW/8m0/4OXNx8pxJ6z57x0dw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
+    @* swiper *@
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
     @* css *@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/FahasaStoreClientApp.styles.css" asp-append-version="true" />
-
-    @* swiper *@
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
     @* custom css *@
     <style id="dynamic-keyframes"></style>
@@ -37,90 +43,7 @@
                             <span class="dropdown-toggle d-none d-lg-block">Danh mục</span>
                         </div>
                         <div class="category-menu w-100 bg-light start-0 py-0 dropdown-menu overflow-hidden" style="display: none;">
-                            <div class="container">
-                                <div class="row p-4">
-                                    <div class="col-6 col-lg-4 col-xxl-3">
-                                        <h4 class="text-black-50 mb-3 text-truncate">Danh mục sản phẩm</h4>
-                                        <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                                            <a class="nav-link fw-bold fs-5 active" id="v-pills-home-tab" data-bs-toggle="pill" data-bs-target="#v-pills-home" role="button" aria-controls="v-pills-home" aria-selected="true">Sách trong nước</a>
-                                            <a class="nav-link fw-bold fs-5" id="v-pills-profile-tab" data-bs-toggle="pill" data-bs-target="#v-pills-profile" role="button" aria-controls="v-pills-profile" aria-selected="false">Sách nước ngoài</a>
-                                            <a class="nav-link fw-bold fs-5" id="v-pills-messages-tab" data-bs-toggle="pill" data-bs-target="#v-pills-messages" role="button" aria-controls="v-pills-messages" aria-selected="false">Hành trang đến trường</a>
-                                            <a class="nav-link fw-bold fs-5" id="v-pills-settings-tab" data-bs-toggle="pill" data-bs-target="#v-pills-settings" role="button" aria-controls="v-pills-settings" aria-selected="false">Sức khỏe và làm đẹp</a>
-                                        </div>
-                                    </div>
-                                    <div class="col-6 col-lg-8 col-xxl-9">
-                                        <div class="tab-content" id="v-pills-tabContent">
-                                            <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab" tabindex="0">
-                                                <div class="mb-3 d-flex justify-content-between align-items-center">
-                                                    <h4 class="text-black mb-0 main-category"><i class="bi bi-globe-americas"></i> Sách nước ngoài</h4>
-                                                    <a class="nav-link text-truncate" href="/Home/Fillter">Xem thêm</a>
-                                                </div>
-                                                <div class="row g-3">
-                                                    <div class="col">
-                                                        <a class="text-truncate btn btn-outline-danger w-100" href="/Home/Fillter">Tiểu Thuyết</a>
-                                                    </div>
-                                                    <div class="col">
-                                                        <a class="text-truncate btn btn-outline-danger w-100" href="/Home/Fillter">Tiểu Thuyết - tản văn</a>
-                                                    </div>
-                                                    <div class="col">
-                                                        <a class="text-truncate btn btn-outline-danger w-100" href="/Home/Fillter">Light Novel</a>
-                                                    </div>
-                                                    <div class="col">
-                                                        <a class="text-truncate btn btn-outline-danger w-100" href="/Home/Fillter">Tiểu Thuyết</a>
-                                                    </div>
-                                                    <div class="col">
-                                                        <a class="text-truncate btn btn-outline-danger w-100" href="/Home/Fillter">Tiểu Thuyết</a>
-                                                    </div>
-                                                    <div class="col">
-                                                        <a class="text-truncate btn btn-outline-danger w-100" href="/Home/Fillter">Tiểu Thuyết - tản văn</a>
-                                                    </div>
-                                                    <div class="col">
-                                                        <a class="text-truncate btn btn-outline-danger w-100" href="/Home/Fillter">Light Novel</a>
-                                                    </div>
-                                                    <div class="col">
-                                                        <a class="text-truncate btn btn-outline-danger w-100" href="/Home/Fillter">Tiểu Thuyết</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab" tabindex="0">...</div>
-                                            <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab" tabindex="0">...</div>
-                                            <div class="tab-pane fade" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab" tabindex="0">...</div>
-                                        </div>
-
-
-                                        @* <div class="mb-3 d-flex justify-content-between align-items-center">
-                                        <h4 class="text-black mb-0 main-category"><i class="bi bi-globe-americas"></i> Sách nước ngoài</h4>
-                                        <a class="nav-link text-truncate" href="/Home/Fillter">Xem thêm</a>
-                                        </div>
-                                        <div class="row g-3">
-                                        <div class="col">
-                                        <a class="text-truncate btn btn-outline-danger w-100" href="/Home/Fillter">Tiểu Thuyết</a>
-                                        </div>
-                                        <div class="col">
-                                        <a class="text-truncate btn btn-outline-danger w-100" href="/Home/Fillter">Tiểu Thuyết - tản văn</a>
-                                        </div>
-                                        <div class="col">
-                                        <a class="text-truncate btn btn-outline-danger w-100" href="/Home/Fillter">Light Novel</a>
-                                        </div>
-                                        <div class="col">
-                                        <a class="text-truncate btn btn-outline-danger w-100" href="/Home/Fillter">Tiểu Thuyết</a>
-                                        </div>
-                                        <div class="col">
-                                        <a class="text-truncate btn btn-outline-danger w-100" href="/Home/Fillter">Tiểu Thuyết</a>
-                                        </div>
-                                        <div class="col">
-                                        <a class="text-truncate btn btn-outline-danger w-100" href="/Home/Fillter">Tiểu Thuyết - tản văn</a>
-                                        </div>
-                                        <div class="col">
-                                        <a class="text-truncate btn btn-outline-danger w-100" href="/Home/Fillter">Light Novel</a>
-                                        </div>
-                                        <div class="col">
-                                        <a class="text-truncate btn btn-outline-danger w-100" href="/Home/Fillter">Tiểu Thuyết</a>
-                                        </div>
-                                        </div> *@
-                                    </div>
-                                </div>
-                            </div>
+                            <div id="category-menu"></div>
                         </div>
                         <div class="shadowBox vh-100 vw-100 position-fixed start-0 mt-2 bg-opacity-50 bg-black" style="display: none; z-index: 998;"></div>
                     </div>
@@ -172,157 +95,35 @@
                             <div class="shadowBox vh-100 vw-100 position-fixed start-0 mt-2 bg-opacity-50 bg-black" style="display: none; z-index: 998;"></div>
                         </div>
                     </div>
-
-                    <div class="notification dropdown my-1">
-                        <div title="Notification" role="button" data-bs-toggle="dropdown" aria-expanded="false" class="notification-btn py-2 d-flex flex-column align-items-center fw-bold text-black-50 pe-3">
-                            <div class="position-relative">
-                                <i class="bi bi-bell"></i>
-                                <span class="position-absolute top-0 start-100 translate-middle-y translate-middle badge rounded-pill bg-danger ">
-                                    4
-                                    <span class="visually-hidden">unread messages</span>
-                                </span>
-                            </div>
-
-                            <span class="dropdown-toggle d-none d-lg-block">Thông báo</span>
-                        </div>
-                        <div class="dropdown-menu dropdown-menu-end shadow" style="width: 360px;">
-                            <div class="d-flex justify-content-between border-bottom align-items-center">
-                                <div class="px-3 py-2 fw-bold">
-                                    <i class="bi bi-bell"></i>
-                                    <span>Thông báo</span>
+                    
+                    @{
+                        if (!string.IsNullOrEmpty(userLogin.FullName))
+                        {
+                            <div id="notification"></div>
+                            <div class="ps-3 d-block d-lg-none"> </div>
+                            <div id="cart"></div>
+                            
+                            <div class="ps-3 d-block d-lg-none"> </div>
+                            <div class="dropdown user my-1">
+                                <div data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;" class="user-btn py-2 pe-3 d-flex flex-column align-items-center fw-bold text-black-50">
+                                    <img src="@userLogin.Avatar" height="25" width="25" class="rounded-circle" style="object-fit: cover;" />
+                                    <span class="dropdown-toggle d-none d-lg-block">@userLogin.FullName</span>
                                 </div>
-                                <a href="#" class="fw-bold text-decoration-none px-3 py-2">Xem tất cả</a>
+                                <ul class="dropdown-menu dropdown-menu-end shadow py-0">
+                                    <li><a class="dropdown-item" href="/User/ControlPanel">Tài khoản</a></li>
+                                    <li><a class="dropdown-item" href="/Accounts/LogOut">Đăng xuất</a></li>
+                                </ul>
                             </div>
-                            <ul class="list-group">
-                                <li class="list-group-item border-0 p-0">
-                                    <a href="#" class="dropdown-item list-group-item rounded-3 border-0">
-                                        <div>
-                                            <h6 class="text-truncate">Khuyến Mãi</h6>
-                                            <p class="text-truncate m-0">Tặng bạn voucher</p>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li class="list-group-item border-0 p-0">
-                                    <a href="#" class="dropdown-item list-group-item rounded-3 border-0">
-                                        <div>
-                                            <h6 class="text-truncate">Khuyến Mãi</h6>
-                                            <p class="text-truncate m-0">Tặng bạn voucher</p>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li class="list-group-item border-0 p-0">
-                                    <a href="#" class="dropdown-item list-group-item rounded-3 border-0">
-                                        <div>
-                                            <h6 class="text-truncate">Khuyến Mãi</h6>
-                                            <p class="text-truncate m-0">Tặng bạn voucher</p>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li class="list-group-item border-0 p-0">
-                                    <a href="#" class="dropdown-item list-group-item rounded-3 border-0">
-                                        <div>
-                                            <h6 class="text-truncate">Khuyến Mãi</h6>
-                                            <p class="text-truncate m-0">Tặng bạn voucher</p>
-                                        </div>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="ps-3 d-block d-lg-none"> </div>
-
-                    <div class="dropdown cart my-1">
-                        <div title="Cart" data-bs-toggle="dropdown" aria-expanded="false" class="car-btn py-2 d-flex flex-column align-items-center fw-bold text-black-50 pe-3" role="button">
-                            <div class="position-relative">
-                                <i class="bi bi-cart"></i>
-                                <span class="position-absolute top-0 start-100 translate-middle-y translate-middle badge rounded-pill bg-danger ">
-                                    4
-                                    <span class="visually-hidden">unread messages</span>
-                                </span>
+                        }
+                        else
+                        {
+                            <div class="account my-1">
+                                <a href="/Accounts/Account" onclick="HandlerCRUD(this, event)" class="btn btn-danger">
+                                    Tài khoản
+                                </a>
                             </div>
-                            <span class="d-none d-lg-block">Giỏ hàng</span>
-                        </div>
-                        <div class="dropdown-menu dropdown-menu-end shadow" style="width: 360px;">
-                            <div class="d-flex justify-content-between border-bottom align-items-center">
-                                <div class="px-3 py-2 fw-bold">
-                                    <i class="bi bi-cart"></i>
-                                    <span>Giỏ hàng</span>
-                                </div>
-                                <a href="/User/Cart" class="px-3 py-2 text-decoration-none fw-bold">Xem giỏ hàng</a>
-                            </div>
-                            <ul class="list-group">
-                                <li class="list-group-item border-0 p-0">
-                                    <a href="#" class="dropdown-item list-group-item rounded-3 border-0">
-                                        <div class="d-flex align-items-center">
-                                            <img src="https://cdn0.fahasa.com/media/catalog/product/b/_/b_a-tr_c-ph_p-y-3.jpg" width="50" height="80" class="me-2" style="object-fit: contain;">
-                                            <div class="text-truncate">
-                                                <h6 class="text-truncate">Ghi Chép Pháp Y - Những Cái Chết Bí Ẩn Ghi Chép Pháp Y - Những Cái Chết Bí Ẩn</h6>
-                                                <span class="fw-bold">230000</span><span> x1</span>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li class="list-group-item border-0 p-0">
-                                    <a href="#" class="dropdown-item list-group-item rounded-3 border-0">
-                                        <div class="d-flex align-items-center">
-                                            <img src="https://cdn0.fahasa.com/media/catalog/product/b/_/b_a-tr_c-ph_p-y-3.jpg" width="50" height="80" class="me-2" style="object-fit: contain;">
-                                            <div class="text-truncate">
-                                                <h6 class="text-truncate">Ghi Chép Pháp Y - Những Cái Chết Bí Ẩn Ghi Chép Pháp Y - Những Cái Chết Bí Ẩn</h6>
-                                                <span class="fw-bold">230000</span><span> x1</span>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li class="list-group-item border-0 p-0">
-                                    <a href="#" class="dropdown-item list-group-item rounded-3 border-0">
-                                        <div class="d-flex align-items-center">
-                                            <img src="https://cdn0.fahasa.com/media/catalog/product/b/_/b_a-tr_c-ph_p-y-3.jpg" width="50" height="80" class="me-2" style="object-fit: contain;">
-                                            <div class="text-truncate">
-                                                <h6 class="text-truncate">Ghi Chép Pháp Y - Những Cái Chết Bí Ẩn Ghi Chép Pháp Y - Những Cái Chết Bí Ẩn</h6>
-                                                <span class="fw-bold">230000</span><span> x1</span>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li class="list-group-item border-0 p-0">
-                                    <a href="#" class="dropdown-item list-group-item rounded-3 border-0">
-                                        <div class="d-flex align-items-center">
-                                            <img src="https://cdn0.fahasa.com/media/catalog/product/b/_/b_a-tr_c-ph_p-y-3.jpg" width="50" height="80" class="me-2" style="object-fit: contain;">
-                                            <div class="text-truncate">
-                                                <h6 class="text-truncate">Ghi Chép Pháp Y - Những Cái Chết Bí Ẩn Ghi Chép Pháp Y - Những Cái Chết Bí Ẩn</h6>
-                                                <span class="fw-bold">230000</span><span> x1</span>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="ps-3 d-block d-lg-none"> </div>
-
-                    <div class="dropdown account d-none my-1">
-                        <div title="Cart" data-bs-toggle="dropdown" aria-expanded="false" class="account-btn py-2 pe-3 d-flex flex-column align-items-center fw-bold text-black-50" style="cursor:pointer;">
-                            <i class="bi bi-person-circle"></i>
-                            <span class="dropdown-toggle d-none d-lg-block">Tài khoản</span>
-                        </div>
-                        <ul class="dropdown-menu dropdown-menu-end shadow py-0">
-                            <li><a class="dropdown-item" href="#">Đăng nhập</a></li>
-                            <li><a class="dropdown-item" href="#">Đăng ký</a></li>
-                        </ul>
-                    </div>
-
-                    <div class="dropdown user my-1">
-                        <div data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;" class="user-btn py-2 pe-3 d-flex flex-column align-items-center fw-bold text-black-50">
-                            <img src="~/image/Hinh-anh-anime-ngau.jpg" height="25" width="25" class="rounded-circle" style="object-fit: cover;" />
-                            <span class="dropdown-toggle d-none d-lg-block">Khánh Trình</span>
-                        </div>
-                        <ul class="dropdown-menu dropdown-menu-end shadow py-0">
-                            <li><a class="dropdown-item" href="/User/ControlPanel">Tài khoản</a></li>
-                            <li><a class="dropdown-item" href="#">Đăng xuất</a></li>
-                        </ul>
-                    </div>
+                        }
+                    }
                 </div>
             </div>
         </div>
@@ -408,6 +209,8 @@
         </div>
     </div>
 
+    <div id="modal-for-crud"></div>
+
     <footer class="bg-black bg-opacity-10 py-5">
         <div class="container">
             <div class="row">
@@ -481,8 +284,12 @@
             </div>
         </div>
     </footer>
+
+    @* Boostrap *@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/popper.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+    @* Slick *@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.min.js" integrity="sha512-HGOnQO9+SP1V92SrtZfjqxxtLmVzqZpjFFekvzZVWoiASSQgSr4cw9Kqd2+l8Llp4Gm0G8GIFJ4ddwZilcdb8A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script src="~/js/site.js" asp-append-version="true"></script>
@@ -505,5 +312,17 @@
         });
 
     </script>
+
+    @{
+        if (!string.IsNullOrEmpty(userLogin.FullName))
+        {
+            <script>
+                RenderPartialView("/Home/GetCart", "cart"); 
+                RenderPartialView("/Home/GetNotifications", "notification");
+                RenderPartialView("/Home/GetCategories", "category-menu");
+            </script>
+        }
+    }
+
 </body>
 </html>

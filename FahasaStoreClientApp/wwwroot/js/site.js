@@ -62,47 +62,37 @@ function activeTooltips() {
     const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
 }
 
+const HandlerCRUD = (e, event) => {
+    event.preventDefault();
+    var href = $(e).attr("href");
+    var id = $(e).attr("IdValue");
+    $.ajax({
+        url: `${href}/${id}`,
+        type: 'GET',
+        success: function (data) {
+            $('#modal-for-crud').html(data);
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            var errorMessage = `Error fetching data: ${jqXHR.status} ${jqXHR.statusText}`;
+            if (jqXHR.responseText) {
+                errorMessage += `\nResponse: ${jqXHR.responseText}`;
+            }
+            alert(errorMessage);
+        }
+    });
+}
+
+const RenderPartialView = (url, elementId) => {
+    $.ajax({
+        url: url,
+        type: 'GET',
+        success: function (data) {
+            $('#' + elementId).html(data);
+        },
+        error: function () {
+            console.log("Error: user login");
+        }
+    });
+}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//function SearchResultHandler() {
-//    $(document).click(function (event) {
-//        if (!$("#search-box").is(event.target) && $("#search-box").has(event.target).length === 0) {
-//            $("#result-search").hide();
-//            $("#shadow").hide();
-//        } else {
-//            $("#result-search").show();
-//            $("#shadow").show();
-//        }
-//    });
-//}
-
-//function CategoryHandler() {
-//    $("#category-box a[aria-expanded]").on('click', function () {
-//        if ($(this).attr('aria-expanded') === 'true') {
-//            $("#shadow").show();
-//        } else {
-//            $("#shadow").hide();
-//        }
-//    });
-//}
-
-//function ShadowHandler() {
-    
-//    $("#shadow").click(function (event) {
-//        $(this).hide();
-//    });
-//}

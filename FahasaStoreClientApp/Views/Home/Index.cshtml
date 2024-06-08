@@ -1,12 +1,13 @@
 ﻿@using FahasaStoreClientApp.Components
+@using FahasaStoreClientApp.Entities
 @using FahasaStoreClientApp.Models.Entities
 @using FahasaStoreClientApp.Models.ViewModels
 @{
     ViewData["Title"] = "Home Page";
-    var banners = ViewData["Banners"] as List<BannerVM>;
-    var banners5 = new List<BannerVM>();
-    var banners2 = new List<BannerVM>();
-    var banners4 = new List<BannerVM>();
+    var banners = ViewData["Banners"] as List<Banner>;
+    var banners5 = new List<Banner>();
+    var banners2 = new List<Banner>();
+    var banners4 = new List<Banner>();
     if (banners != null && banners.Count > 0)
     {
         var bannersCount = banners.Count;
@@ -15,7 +16,7 @@
         banners4 = bannersCount >= 12 ? banners.Skip(8).Take(4).ToList() : banners.Take(4).ToList();
     }
 
-    var menus = ViewData["Menus"] as List<MenuVM>;
+    var menus = ViewData["Menus"] as List<Menu>;
 
     var flashSale = ViewData["FlashSale"] as FlashSaleEntities;
 
@@ -34,14 +35,14 @@
                 <div id="carouselBanner" class="carousel slide" data-bs-ride="carousel">
                     <div class="carousel-indicators">
                         @if(banners != null && banners.Count > 0) {
-                            <button type="button" data-bs-target="#carouselBanner" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide @banners[0].BannerId"></button>
+                            <button type="button" data-bs-target="#carouselBanner" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide @banners[0].Id"></button>
                         }
                         @{
                             if(banners5 != null && banners5.Count > 0) {
                                 int slideTo = 0;
                                 foreach(var item in banners5) {
                                     slideTo++;
-                                    <button type="button" data-bs-target="#carouselBanner" data-bs-slide-to="@slideTo" aria-label="Slide @item.BannerId"></button>
+                                    <button type="button" data-bs-target="#carouselBanner" data-bs-slide-to="@slideTo" aria-label="Slide @item.Id"></button>
                                 }
                             }
                         }
@@ -50,8 +51,8 @@
                         @if (banners != null && banners.Count > 0)
                         {
                             <div class="carousel-item active" style="padding-bottom: 38%;">
-                                <a href="/Home/Banner/@banners[0].BannerId">
-                                    <img src="@banners[0].ImageUrl" class="w-100 h-100 position-absolute" alt="slide @banners[0].BannerId" style="object-fit: cover;">
+                                <a href="/Home/Banner/@banners[0].Id">
+                                    <img src="@banners[0].ImageUrl" class="w-100 h-100 position-absolute" alt="slide @banners[0].Id" style="object-fit: cover;">
                                 </a>
                             </div>
                         }
@@ -62,8 +63,8 @@
                                 foreach (var item in banners5)
                                 {
                                     <div class="carousel-item" style="padding-bottom: 38%;">
-                                        <a href="/Home/Banner/@item.BannerId">
-                                            <img src="@item.ImageUrl" class="w-100 h-100 position-absolute" alt="slide @item.BannerId" style="object-fit: cover;">
+                                        <a href="/Home/Banner/@item.Id">
+                                            <img src="@item.ImageUrl" class="w-100 h-100 position-absolute" alt="slide @item.Id" style="object-fit: cover;">
                                         </a>
                                     </div>
                                 }
@@ -87,7 +88,7 @@
                         foreach(var item in banners2) {
                             <div class="h-50 w-100 pb-1">
                                 <div class="position-relative w-100 h-100">
-                                    <a href="/Home/Banner/@item.BannerId"><img src="@item.ImageUrl" class="rounded-3 w-100 h-100 position-absolute" style="object-fit: cover;" /></a>
+                                    <a href="/Home/Banner/@item.Id"><img src="@item.ImageUrl" class="rounded-3 w-100 h-100 position-absolute" style="object-fit: cover;" /></a>
                                 </div>
                             </div>
                         }
@@ -105,7 +106,7 @@
                     foreach (var item in banners4)
                     {
                         <div class="col-3">
-                            <a href="/Home/Banner/@item.BannerId" class="d-block position-relative h-100 w-100" style="padding-bottom: 66.67%;">
+                            <a href="/Home/Banner/@item.Id" class="d-block position-relative h-100 w-100" style="padding-bottom: 66.67%;">
                                 <img src="@item.ImageUrl" class="w-100 h-100 rounded-3 position-absolute" style="object-fit: cover;" />
                             </a>
                         </div>
@@ -124,11 +125,11 @@
                     {
                         <div>
                             <div class="menu__item">
-                                <a href="@item.link" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="@item.Title">
+                                <a href="@item.Link" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="@item.Name">
                                     <div class="w-50 position-relative mx-auto" style="padding-bottom: 50%;">
                                         <img src="@item.ImageUrl" class="w-100 h-100 rounded-3 position-absolute" style="object-fit: cover;" />
                                     </div>
-                                    <p class="m-0 text-center">@item.Title</p>
+                                    <p class="m-0 text-center">@item.Name</p>
                                 </a>
                             </div>
                         </div>

@@ -1,0 +1,79 @@
+﻿@model ICollection<FahasaStoreClientApp.Entities.Category>
+
+<div class="container">
+    <div class="row p-4">
+        <div class="col-6 col-lg-4 col-xxl-3">
+            <h4 class="text-black-50 mb-3 text-truncate">Danh mục sản phẩm</h4>
+            <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                @{
+                    int index = 0;
+                    foreach (var item in Model)
+                    {
+                        if(index++ == 0)
+                        {
+                            <a class="nav-link fw-bold fs-5 active" id="v-pills-tab_@item.Id" data-bs-toggle="pill" data-bs-target="#v-pills_@item.Id" role="button" aria-controls="v-pills_@item.Id" aria-selected="true">@item.Name</a>
+                        }
+                        else
+                        {
+                            <a class="nav-link fw-bold fs-5" id="v-pills-tab_@item.Id" data-bs-toggle="pill" data-bs-target="#v-pills_@item.Id" role="button" aria-controls="v-pills_@item.Id" aria-selected="false">@item.Name</a>
+                        }
+                    }
+                }
+            </div>
+        </div>
+        <div class="col-6 col-lg-8 col-xxl-9">
+            <div class="tab-content" id="v-pills-tabContent">
+                @{
+                    int index2 = 0;
+                    foreach (var item in Model)
+                    {
+                        if (index2++ == 0)
+                        {
+                            <div class="tab-pane fade show active" id="v-pills_@item.Id" role="tabpanel" aria-labelledby="v-pills-tab_@item.Id" tabindex="0">
+                                <div class="mb-3 d-flex justify-content-between align-items-center">
+                                    <h4 class="text-black mb-0 main-category"><i class="bi bi-globe-americas"></i> @item.Name</h4>
+                                    <a class="nav-link text-truncate" href="/Home/Fillter">Xem thêm</a>
+                                </div>
+                                <div class="row g-3">
+                                    @{
+                                        if(item.Subcategories.Count > 0)
+                                        {
+                                            foreach (var subItem in item.Subcategories)
+                                            {
+                                                <div class="col">
+                                                    <a class="text-truncate btn btn-outline-danger w-100" href="/Home/Fillter">@subItem.Name</a>
+                                                </div>
+                                            }
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="tab-pane fade" id="v-pills_@item.Id" role="tabpanel" aria-labelledby="v-pills-tab_@item.Id" tabindex="0">
+                                <div class="mb-3 d-flex justify-content-between align-items-center">
+                                    <h4 class="text-black mb-0 main-category"><i class="bi bi-globe-americas"></i> @item.Name</h4>
+                                    <a class="nav-link text-truncate" href="/Home/Fillter">Xem thêm</a>
+                                </div>
+                                <div class="row g-3">
+                                    @{
+                                        if (item.Subcategories.Count > 0)
+                                        {
+                                            foreach (var subItem in item.Subcategories)
+                                            {
+                                                <div class="col">
+                                                    <a class="text-truncate btn btn-outline-danger w-100" href="/Home/Fillter">@subItem.Name</a>
+                                                </div>
+                                            }
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        }
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
