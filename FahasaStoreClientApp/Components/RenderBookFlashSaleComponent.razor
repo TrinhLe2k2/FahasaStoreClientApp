@@ -1,0 +1,68 @@
+﻿@using FahasaStoreClientApp.Models.DTO
+@{
+    var Book = FlashSaleBook.Book;
+    var DiscountPercentage = FlashSaleBook != null ? FlashSaleBook.DiscountPercentage : Book.DiscountPercentage;
+    <div>
+        <div class="card mx-2 position-relative overflow-hidden">
+            <a href="/Home/Product/@Book.Id" class="text-decoration-none mx-2" style="color: #000;" title="@Book.Name">
+                <div class="w-100 position-relative" style="padding-bottom: 100%;">
+                    <img src="@FlashSaleBook?.Poster" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
+                </div>
+                <div class="card-body p-1">
+                    <h6 class="card-title twoLine">@Book.Name</h6>
+                    <div class="d-flex flex-column justify-content-start">
+                        <div>
+                            <span class="card-text text-danger fw-bold">@((Book.Price - Book.Price * Book.DiscountPercentage / 100).ToString("N0")) đ</span>
+                            <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-@DiscountPercentage %</small>
+                        </div>
+                        <small class="card-text text-decoration-line-through">@Book.Price.ToString("N0") đ</small>
+                    </div>
+                    <div>
+                        @{
+                            // if (Book?.Reviews == null || Book?.Reviews.Count <= 0)
+                            // {
+                            //     <span>★</span>
+                            //     <span>★</span>
+                            //     <span>★</span>
+                            //     <span>★</span>
+                            //     <span>★</span>
+                            // }
+                            // else
+                            // {
+                            //     for (int i = 1; i <= 5; i++)
+                            //     {
+                            //         if (Book?.Rate >= i)
+                            //         {
+                            //             <span style="color: gold;">★</span>
+                            //         }
+                            //         else
+                            //         {
+                            //             <span>★</span>
+                            //         }
+                            //     }
+                            // }
+                        }
+
+                    </div>
+                    @{
+                        if (FlashSaleBook != null)
+                        {
+                            var progress = (FlashSaleBook?.Sold * 100 / FlashSaleBook?.Quantity);
+                            <div class="progress position-relative">
+                                <div class="progress-bar bg-danger" style="width: @progress%;"></div>
+                                <div class="position-absolute text-dark w-100 text-center"><span>đã bán @FlashSaleBook?.Sold</span></div>
+                            </div>
+                        }
+                    }
+                </div>
+            </a>
+        </div>
+    </div>
+}
+    
+
+@code {
+    [Parameter]
+    public FlashSaleBookDTO FlashSaleBook { get; set; } = null!;
+}
+ 

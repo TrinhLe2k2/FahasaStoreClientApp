@@ -1,10 +1,14 @@
-﻿namespace FahasaStoreClientApp.Models.EModels
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+
+namespace FahasaStoreClientApp.Models.EModels
 {
     public class AddressModel
     {
         public int Id { get; set; }
         public string UserId { get; set; } = null!;
         public string ReceiverName { get; set; } = null!;
+        public string Phone { get; set; } = null!;
         public string Province { get; set; } = null!;
         public string District { get; set; } = null!;
         public string Ward { get; set; } = null!;
@@ -67,6 +71,7 @@
         public int AuthorId { get; set; }
         public int CoverTypeId { get; set; }
         public int DimensionId { get; set; }
+        [Display(Name = "Tên Sách")]
         public string Name { get; set; } = null!;
         public string Description { get; set; } = null!;
         public decimal Price { get; set; }
@@ -91,7 +96,7 @@
         public int Id { get; set; }
         public int CartId { get; set; }
         public int BookId { get; set; }
-        public int? Quantity { get; set; }
+        public int Quantity { get; set; }
         public DateTime? CreatedAt { get; set; }
     }
 

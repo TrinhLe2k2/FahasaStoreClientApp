@@ -1,4 +1,5 @@
-﻿using FahasaStoreClientApp.Helpers;
+﻿using AutoMapper;
+using FahasaStoreClientApp.Helpers;
 using FahasaStoreClientApp.Interfaces;
 using FahasaStoreClientApp.Services;
 using System.Reflection;
@@ -16,6 +17,7 @@ builder.Services.AddScoped<IAddressService, AddressService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IJwtTokenDecoder, JwtTokenDecoder>();
 builder.Services.AddScoped<IHomeService, HomeService>();
+builder.Services.AddScoped<IImageUploader, ImageUploader>();
 
 builder.Services.AddScopedServicesFromAssembly(Assembly.GetExecutingAssembly(), "FahasaStoreClientApp.Services.EntityService");
 
@@ -28,10 +30,12 @@ builder.Services.AddScoped<UserLogined>(provider =>
 // Thêm hỗ trợ session
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.IdleTimeout = TimeSpan.FromMinutes(60);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 var app = builder.Build();
 

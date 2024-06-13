@@ -1,5 +1,4 @@
 ﻿using FahasaStoreClientApp.DataTemp.DataVM;
-using FahasaStoreClientApp.Models.Entities;
 using FahasaStoreClientApp.Models.ViewModels;
 
 namespace FahasaStoreClientApp.DataTemp.DataEntities

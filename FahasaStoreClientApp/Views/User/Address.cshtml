@@ -1,0 +1,87 @@
+﻿@using FahasaStoreClientApp.Components
+@model FahasaStoreClientApp.Models.CustomModels.PaginatedResponse<FahasaStoreClientApp.Models.DTO.AddressDTO>
+@{
+    var address = Model.Items;
+}
+
+<partial name="_ToastrMessage" />
+
+<div class="bg-black bg-opacity-10">
+    <div class="container pt-4">
+        <div class="bg-white rounded-3 py-3">
+            <div class="row">
+                <div class="col-lg-3">
+                    @(await Html.RenderComponentAsync<SideBarUser>(RenderMode.ServerPrerendered, new { active = 1 }))
+                </div>
+                <div class="col-lg-9 px-4">
+                    <h5 class="text-uppercase">Sổ địa chỉ</h5><hr /> 
+                    <a href="/User/AddressPush" onclick="HandlerCRUD(this, event)" class="btn btn-danger mb-3">Thêm địa chỉ mới</a>
+                    <div>
+                        @{
+                            if (address.Count > 0)
+                            {
+                                var defaultAddress = address.FirstOrDefault(a => a.DefaultAddress == true);
+                                if (defaultAddress != null)
+                                {
+                                    <div>
+                                        <p class="text-uppercase fw-bold">Địa chỉ mặc định</p>
+                                        <p>@defaultAddress.ReceiverName, @defaultAddress.Phone</p>
+                                        <div class="d-flex">
+                                            <p>@defaultAddress.Detail , @defaultAddress.Ward, @defaultAddress.District , @defaultAddress.Province</p>
+                                            <a href="/User/AddressUpdate" IdValue="@defaultAddress.Id" onclick="HandlerCRUD(this, event)" class="nav-link text-danger ms-3">Sửa địa chỉ</a>
+                                            <div class="ms-3">|</div>
+                                            <a href="/User/AddressDelete" IdValue="@defaultAddress.Id" onclick="HandlerCRUD(this, event)" class="nav-link text-danger ms-3">Xóa</a>
+                                        </div>
+                                    </div>
+                                }
+                                <p class="text-uppercase fw-bold">Địa chỉ khác</p>
+                                foreach (var ar in address)
+                                {
+                                    if(ar.DefaultAddress == false)
+                                    {
+                                        <div class="mb-3">
+                                            <p>@ar.ReceiverName, @ar.Phone</p>
+                                            <div class="d-flex">
+                                                <p>@ar.Detail , @ar.Ward, @ar.District , @ar.Province</p>
+                                                <a href="/User/AddressUpdate" IdValue="@ar.Id" onclick="HandlerCRUD(this, event)" class="nav-link text-danger ms-3">Sửa địa chỉ</a>
+                                                <div class="ms-3">|</div>
+                                                <a href="/User/AddressDelete" IdValue="@ar.Id" onclick="HandlerCRUD(this, event)" class="nav-link text-danger ms-3">Xóa</a>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                            }
+                        }
+                    </div>
+                    @if (Model.PageCount > 1)
+                    {
+                        <nav>
+                            <ul class="pagination justify-content-end mb-0">
+                                <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
+                                    <a class="page-link" href="@Url.Action("Orders", new { page = 1 })">First</a>
+                                </li>
+                                <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
+                                    <a class="page-link" href="@Url.Action("Orders", new { page = Model.PageNumber - 1 })">Previous</a>
+                                </li>
+
+                                @for (int i = Model.StartPage; i <= Model.EndPage; i++)
+                                {
+                                    <li class="page-item">
+                                        <a class="page-link @(Model.PageNumber == i ? "active" : "")" href="@Url.Action("Orders", new { page = i })">@i</a>
+                                    </li>
+                                }
+
+                                <li class="page-item @(Model.PageNumber == Model.PageCount ? "disabled" : "")">
+                                    <a class="page-link" href="@Url.Action("Orders", new { page = Model.PageNumber + 1 })">Next</a>
+                                </li>
+                                <li class="page-item @(Model.PageNumber == Model.PageCount ? "disabled" : "")">
+                                    <a class="page-link" href="@Url.Action("Orders", new { page = Model.PageCount })">Last</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

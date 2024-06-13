@@ -1,4 +1,8 @@
 ﻿@using FahasaStoreClientApp.Components
+@{
+    var currentUser = ViewData["CurrentUser"] as FahasaStoreClientApp.Models.DTO.AspNetUserDTO;
+    var orders = ViewData["Orders"] as List<FahasaStoreClientApp.Models.DTO.OrderDTO>;
+}
 
 <div class="bg-black bg-opacity-10">
     <div class="container pt-4">
@@ -13,13 +17,35 @@
                         <div>
                             <div class="d-flex justify-content-between align-items-center mb-4">
                                 <h6 class="text-uppercase mb-0">Thông tin khách hàng</h6>
-                                <a href="#" class="nav-link">Chỉnh sửa</a>
+                                <a href="/User/Information" onclick="HandlerCRUD(this, event)" class="nav-link">Chỉnh sửa</a>
                             </div>
                             <div class="rounded-3 p-4" style="background-color: antiquewhite;">
-                                <p>Họ và tên: Khánh Trình</p>
-                                <p>Email: khanhtrinh@gmail.com</p>
-                                <p>Số điện thoại: 0337880587</p>
-                                <p>Tổng số đơn hàng đã mua: 91</p>
+                                <dl class="row px-4">
+                                    <dt class="col-sm-3">
+                                        Họ và tên
+                                    </dt>
+                                    <dd class="col-sm-9">
+                                        @currentUser?.FullName
+                                    </dd>
+                                    <dt class="col-sm-3">
+                                        Email
+                                    </dt>
+                                    <dd class="col-sm-9">
+                                        @currentUser?.Email
+                                    </dd>
+                                    <dt class="col-sm-3">
+                                        Số điện thoại
+                                    </dt>
+                                    <dd class="col-sm-9">
+                                        @currentUser?.PhoneNumber
+                                    </dd>
+                                    <dt class="col-sm-3">
+                                        Tổng số đơn hàng đã mua
+                                    </dt>
+                                    <dd class="col-sm-9">
+                                        @currentUser?.Orders.Count
+                                    </dd>
+                                </dl>
                             </div>
                         </div> <hr />
                         <div>
@@ -36,22 +62,24 @@
                                     <div class="col-2"><strong>Trạng Thái</strong></div>
                                     <div class="col-1"></div>
                                 </div>
-                                <div class="row my-3">
-                                    <div class="col-1">1</div>
-                                    <div class="col-2">24/04/2024</div>
-                                    <div class="col-3">Khánh Trình  Khan</div>
-                                    <div class="col-3">99.000 đ</div>
-                                    <div class="col-2">Hoàn thành</div>
-                                    <div class="col-1"><a href="#" class="nav-link">Xem</a></div>
-                                </div>
-                                <div class="row my-3">
-                                    <div class="col-1">1</div>
-                                    <div class="col-2">24/04/2024</div>
-                                    <div class="col-3">Khánh Trình</div>
-                                    <div class="col-3">99.000 đ</div>
-                                    <div class="col-2">Hoàn thành</div>
-                                    <div class="col-1"><a href="#" class="nav-link">Xem</a></div>
-                                </div>
+                                @{
+                                    int i = 0;
+                                    if (orders != null && orders.Count > 0)
+                                    {
+                                        foreach (var order in orders)
+                                        {
+                                            i = i + 1;
+                                            <div class="row my-3">
+                                                <div class="col-1">@i</div>
+                                                <div class="col-2">@((order.CreatedAt != null) ? order.CreatedAt.Value.ToString("dd/MM/yyyy") : "Không có ngày tạo")</div>
+                                                <div class="col-3">@order.Address.ReceiverName</div>
+                                                <div class="col-3">@order.OrderItems.Sum(e => (e.Book.Price - e.Book.Price * e.Book.DiscountPercentage / 100) * e.Quantity).ToString("N0") đ</div>
+                                                <div class="col-2">@order.OrderStatuses.LastOrDefault()?.Status.Name</div>
+                                                <div class="col-1"><a href="/User/OrderDetail" IdValue="@order.Id" onclick="HandlerCRUD(this, event)" class="nav-link">Xem</a></div>
+                                            </div>
+                                        }
+                                    }
+                                }
                             </div>
                         </div> <hr />
                         <div>
@@ -59,11 +87,48 @@
                                 <h6 class="text-uppercase mb-0">Sổ địa chỉ</h6>
                                 <a href="#" class="nav-link">Xem thêm</a>
                             </div>
-                            <p class="text-uppercase">Địa chỉ thanh toán mặc định</p>
-                            <p>Trình Lê</p>
-                            <p>Số điện thoại: 0337880587</p>
-                            <p>C24/9 Lê Văn Việt, Phường Tăng Nhơn Phú A, Thành Phố Thủ Đức</p>
-                            <p><a href="#" class="nav-link text-danger">Sửa địa chỉ</a></p>
+                            @{
+                                if (currentUser != null && currentUser.Addresses.Count > 0)
+                                {
+                                    var address = currentUser.Addresses.FirstOrDefault(e => e.DefaultAddress == true);
+                                    if (address != null)
+                                    {
+                                        <dl class="row px-4">
+                                            <dt class="col-sm-3">
+                                                Tên người nhận
+                                            </dt>
+                                            <dd class="col-sm-9">
+                                                @address.ReceiverName
+                                            </dd>
+                                            <dt class="col-sm-3">
+                                                Số điện thoại
+                                            </dt>
+                                            <dd class="col-sm-9">
+                                                @address.Phone 033
+                                            </dd>
+                                            <dt class="col-sm-3">
+                                                Địa chỉ
+                                            </dt>
+                                            <dd class="col-sm-9">
+                                                @address.Detail , @address.Ward, @address.District , @address.Province
+                                            </dd>
+                                            <dt class="col-sm-3">
+                                                Địa chỉ mặc định
+                                            </dt>
+                                            <dd class="col-sm-9">
+                                                @if (address.DefaultAddress)
+                                                {
+                                                    <input checked type="checkbox" disabled />
+                                                }
+                                                else
+                                                {
+                                                    <input checked type="checkbox" />
+                                                }
+                                            </dd>
+                                        </dl>
+                                    }
+                                }
+                            }
                         </div>
                     </div>
                 </div>

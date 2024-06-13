@@ -1,27 +1,31 @@
-﻿@using FahasaStoreClientApp.Models.ViewModels
-@model IEnumerable<BookVM>
+﻿@model List<FahasaStoreClientApp.Models.DTO.BookDTO>
 
-<div class="row row-cols-2 row-cols-sm-4 row-cols-md-5 g-4 mt-1">
-    @foreach (var Book in Model)
-    {
-        <div>
-            <div class="card mx-2 position-relative overflow-hidden">
-                <a href="" class="text-decoration-none mx-2" style="color: #000;" title="@Book?.Name">
-                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                        <img src="@Book?.ImageUrl" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                    </div>
-                    <div class="card-body p-1">
-                        <h6 class="card-title twoLine">@Book?.Name</h6>
-                        <div class="d-flex flex-column justify-content-start">
-                            <div>
-                                <span class="card-text text-danger fw-bold">@Book?.CurrentPrice đ</span>
-                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-@Book?.DiscountPercentage %</small>
-                            </div>
-                            <small class="card-text text-decoration-line-through">@Book?.OriginalPrice đ</small>
+<div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-4 mt-1">
+    @{
+        foreach (var book in Model)
+        {
+            <div>
+                <div class="card mx-2 position-relative overflow-hidden">
+                    <a href="/Home/Product/@book.Id" class="text-decoration-none mx-2" style="color: #000;" title="@book.Name">
+                        <div class="w-100 position-relative" style="padding-bottom: 100%;">
+                            <img src="@book.PosterImages.FirstOrDefault()?.ImageUrl" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
                         </div>
-                    </div>
-                </a>
+                        <div class="card-body p-1">
+                            <h6 class="card-title twoLine">@book.Name</h6>
+                            <div class="d-flex flex-column justify-content-start">
+                                <div>
+                                    <span class="card-text text-danger fw-bold">@((book.Price - book.Price * book.DiscountPercentage / 100).ToString("N0")) đ</span>
+                                    <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">- @book.DiscountPercentage %</small>
+                                </div>
+                                <small class="card-text text-decoration-line-through">@book.Price.ToString("N0") đ</small>
+                            </div>
+                        </div>
+                    </a>
+                </div>
             </div>
-        </div>
+        }
     }
+</div>
+<div class="text-center mt-3">
+    <a href="#" class="btn btn-outline-danger px-5">Xem Thêm</a>
 </div>

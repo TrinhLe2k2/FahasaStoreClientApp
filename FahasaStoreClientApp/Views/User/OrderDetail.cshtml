@@ -1,67 +1,115 @@
-﻿@using FahasaStoreClientApp.Components
-@using FahasaStoreClientApp.Models
-@model FahasaStoreClientApp.Models.StatusOrder
-@{  
-    var orderDetail1 = new OrderDetail(1, "Ghi chép pháp y", "/image/fs1.jpg", 99000, 560000, 1, 99000);
-    var orderDetail12 = new OrderDetail(2, "Ghi chép pháp y 2", "/image/fs2.jpg", 99000, 560000, 2, 198000);
-    var ordersDetail = new List<OrderDetail>();
-    ordersDetail.Add(orderDetail1);
-    ordersDetail.Add(orderDetail12);
+﻿@model FahasaStoreClientApp.Models.DTO.OrderDTO
 
-    var voucher = new Voucher(1, "code 2025", "2025code", "giam 50%", 10, new DateTime(2024, 4, 30), 10000, 200000, 99);
+<div>
+    <!-- Button trigger modal -->
+    <button type="button" id="btn-toggle" class="btn btn-primary" hidden data-bs-toggle="modal" data-bs-target="#appModal">
+        Launch demo modal
+    </button>
 
-    var order = new Order(1, new DateTime(2024, 4, 30), "Trình", 98000, "Hoàn thành", ordersDetail, voucher, 20000);
-}
-<div class="bg-black bg-opacity-10">
-    <div class="container pt-4">
-        <div class="bg-white rounded-3 py-3">
-            <div class="row">
-                <div class="col-lg-3">
-                    @(await Html.RenderComponentAsync<SideBarUser>(RenderMode.ServerPrerendered, new { active = 4 }))
+    <!-- Modal -->
+    <div class="modal fade" id="appModal" tabindex="-1" aria-labelledby="appModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="appModalLabel">Thông tin chi tiết</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="col-lg-9 px-4">
-                    <h5 class="text-uppercase">Chi tiết đơn hàng</h5><hr />
+                <div class="modal-body">
                     <div>
-                        <div>
-                            <a href="" class="rounded-pill btn btn-outline-danger px-3 py-1">Đơn hàng bị hủy</a>
-                            <a href="#" class="rounded-pill btn btn-danger px-3 py-1">Mua lại</a>
-                            <a href="" class="rounded-pill btn btn-outline-warning px-3 py-1">Đang giao</a>
-                            <a href="" class="rounded-pill btn btn-outline-success px-3 py-1">Hoàn thành</a>
+                        <div class="d-flex justify-content-between py-3">
+                            <div><strong>Mã đơn hàng #@Model.Id</strong></div>
+                            <div>Ngày mua: @((Model.CreatedAt != null) ? Model.CreatedAt.Value.ToString("dd/MM/yyyy") : "Không có ngày tạo")</div>
                         </div>
-                        
-                        <div class="row g-2 my-3">
-                            <div>Mã đơn hàng: @order.OrderId</div>
-                            <div>Ngày mua: @order.OrderDate</div>
-                            <div>Tổng tiền: @order.TotalAmount</div>
+                        <div class="py-3 rounded-3" style="background-color: antiquewhite;">
+                            <div class="row text-center">
+                                @{
+                                    if (Model.OrderStatuses.Count > 0)
+                                    {
+                                        foreach (var item in Model.OrderStatuses)
+                                        {
+                                            <div class="col">
+                                                <div>@item.Status.Name</div>
+                                                <div>@((item.CreatedAt != null) ? item.CreatedAt.Value.ToString("dd/MM/yyyy") : "Không có ngày tạo")</div>
+                                            </div>
+                                        }
+                                    }
+                                }
+                            </div>
                         </div>
-                        <div class="row row-cols-1 row-cols-lg-3 g-3 my-3">
+                        <div class="row row-cols-1 row-cols-lg-3 g-3 py-3">
                             <div>
                                 <div class="card h-100">
                                     <div class="card-body">
-                                        <h5 class="card-title">Địa chỉ</h5>
-                                        @(await Html.RenderComponentAsync<AddressComponent>(RenderMode.ServerPrerendered, new { allowEditor = false}))
+                                        <h6 class="card-title">Thông tin người nhận</h6>
+                                        <div>
+                                            <div>@Model.Address.ReceiverName</div>
+                                            <div>Tel: @Model.Address.Phone</div>
+                                            <div>@Model.Address.Detail , @Model.Address.Ward, @Model.Address.District , @Model.Address.Province</div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             <div>
                                 <div class="card h-100">
                                     <div class="card-body">
-                                        <h5 class="card-title">Vận chuyển</h5>
-                                        <div>Giao hàng tiêu chuẩn</div>
+                                        <h6 class="card-title">Phương thức thanh toán</h6>
+                                        <div>@Model.PaymentMethod.Name</div>
                                     </div>
                                 </div>
                             </div>
                             <div>
                                 <div class="card h-100">
                                     <div class="card-body">
-                                        <h5 class="card-title">Thanh toán</h5>
-                                        <div>Thanh toán khi nhận hàng</div>
+                                        <h6 class="card-title">Tổng tiền</h6>
+                                        <div>Tổng tiền: <span class="text-danger fw-bold">@Model.OrderItems.Sum(e => (e.Book.Price - e.Book.Price * e.Book.DiscountPercentage / 100) * e.Quantity).ToString("N0") đ</span></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div>
-                            @(await Html.RenderComponentAsync<OrdersPreViewComponent>(RenderMode.ServerPrerendered, new { order = order }))
+                        <div class="p-3 rounded-3" style="border: 1px solid #dee2e6;">
+                            Ghi chú: @Model.Note
+                        </div>
+                        <div class="py-3 rounded-3">
+                            <h6>Sản phẩm (@Model.OrderItems.Count)</h6>
+                            <div class="row g-3">
+                                <div>
+                                    <div class="row">
+                                        <div class="col-2 text-center"><strong>Hình ảnh</strong></div>
+                                        <div class="col-5"><strong>Tên sản phẩm</strong></div>
+                                        <div class="col-2 text-center"><strong>Giá bán</strong></div>
+                                        <div class="col-1 text-center"><strong>SL</strong></div>
+                                        <div class="col-2 text-center"><strong>Thành tiền</strong></div>
+                                    </div>
+                                </div>
+                                @{
+                                    if (Model.OrderItems.Count > 0)
+                                    {
+                                        foreach (var oi in Model.OrderItems)
+                                        {
+                                            var currentPrice = oi.Book.Price - oi.Book.Price * oi.Book.DiscountPercentage / 100;
+                                            var money = currentPrice * oi.Quantity;
+                                            <div>
+                                                <div class="row">
+                                                    <div class="col-2">
+                                                        <div class="position-relative" style="padding-bottom: 100%;">
+                                                            <img src="@oi.Book.PosterImages.FirstOrDefault()?.ImageUrl" class="position-absolute object-fit-contain mx-2 w-100 h-100" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-5">
+                                                        <span class="text-truncatet-row-double">@oi.Book.Name</span>
+                                                    </div>
+                                                    <div class="col-2 text-center">
+                                                        <span class="fw-bold">@currentPrice.ToString("N0") đ</span> <br class="d-none d-md-block" />
+                                                        <span class="text-decoration-line-through">@oi.Book.Price.ToString("N0") đ</span>
+                                                    </div>
+                                                    <div class="col-1 text-center">@oi.Quantity</div>
+                                                    <div class="col-2 text-center"><h6 class="text-danger fw-bold">@money.ToString("N0") đ</h6></div>
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                }
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -70,9 +118,6 @@
     </div>
 </div>
 
-
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}
+<script>
+    $("#btn-toggle").click();
+</script>

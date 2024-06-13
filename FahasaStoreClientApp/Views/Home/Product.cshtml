@@ -1,7 +1,18 @@
 ﻿@using FahasaStoreClientApp.Components
+@using FahasaStoreClientApp.Helpers
+@using FahasaStoreClientApp.Models.DTO
+@inject IHttpContextAccessor HttpContextAccessor
+@model BookDTO
+
 @{
-    var voucher = new Voucher(1, "code 2025", "2025code", "giam 50%", 10, new DateTime(2024, 4, 30), 10000, 200000, 99);
-    var voucher2 = new Voucher(2, "new code 2025", "2025codenew", "giam 50%", 10, new DateTime(2024, 4, 30), 10000, 200000, 99);
+    var userLogin = new UserLogined(HttpContextAccessor);
+
+    var vouchers = ViewData["Vouchers"] as List<VoucherDTO>;
+    var similarBooks = ViewData["SimilarBooks"] as List<BookDTO>;
+
+    var reviews = ViewData["Reviews"] as List<ReviewDTO>;
+
+    var hasOrder = ViewData["HasOrder"] as bool?;
 }
 
 <div id="InfomationProduct" class="bg-black bg-opacity-10">
@@ -9,7 +20,7 @@
     <div class="container">
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="pt-2">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Product</li>
             </ol>
         </nav>
@@ -18,73 +29,78 @@
                 <div class="col-5">
                     <div class="swiper mySwiper2-product-view">
                         <div class="swiper-wrapper">
-                            <div class="swiper-slide">
-                                <img src="~/image/fs1.jpg" class="w-100 h-100 object-fit-contain" />
-                            </div>
-                            <div class="swiper-slide">
-                                <img src="~/image/fs2.jpg" class="w-100 h-100 object-fit-contain" />
-                            </div>
-                            <div class="swiper-slide">
-                                <img src="~/image/fs3.jpg" class="w-100 h-100 object-fit-contain" />
-                            </div>
-                            <div class="swiper-slide">
-                                <img src="~/image/fs4.jpg" class="w-100 h-100 object-fit-contain" />
-                            </div>
-                            <div class="swiper-slide">
-                                <img src="~/image/fs5.jpg" class="w-100 h-100 object-fit-contain" />
-                            </div>
+                            @{
+                                if (Model.PosterImages != null && Model.PosterImages.Count > 0)
+                                {
+                                    foreach (var poster in Model.PosterImages)
+                                    {
+                                        <div class="swiper-slide">
+                                            <div class="w-100 position-relative" style="padding-bottom: 100%;">
+                                                <img src="@poster.ImageUrl" class="position-absolute w-100 h-100 object-fit-contain" alt="...">
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                            }
                         </div>
                         <div class="swiper-pagination text-warning"></div>
                     </div>
                     <div thumbsSlider="" class="swiper mySwiper-product-view mt-3 d-none d-md-block">
                         <div class="swiper-wrapper">
-                            <div class="swiper-slide">
-                                <img src="~/image/fs1.jpg" class="w-100 object-fit-contain" />
-                            </div>
-                            <div class="swiper-slide">
-                                <img src="~/image/fs2.jpg" class="w-100 object-fit-contain" />
-                            </div>
-                            <div class="swiper-slide">
-                                <img src="~/image/fs3.jpg" class="w-100 object-fit-contain" />
-                            </div>
-                            <div class="swiper-slide">
-                                <img src="~/image/fs4.jpg" class="w-100 object-fit-contain" />
-                            </div>
-                            <div class="swiper-slide">
-                                <img src="~/image/fs3.jpg" class="w-100 object-fit-contain" />
-                            </div>
+                            @{
+                                if (Model.PosterImages != null && Model.PosterImages.Count > 0)
+                                {
+                                    foreach (var poster in Model.PosterImages)
+                                    {
+                                        <div class="swiper-slide">
+                                            <div class="w-100 position-relative" style="padding-bottom: 100%;">
+                                                <img src="@poster.ImageUrl" class="position-absolute w-100 h-100 object-fit-contain" alt="...">
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                            }
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-7 col-12 mt-3 mt-lg-0 fs-7 pt-lg-3">
-                    <h4 class="mb-3">Ghi Chép Pháp Y - Những Thi Thể Không Hoàn Chỉnh</h4>
+                    <h4 class="mb-3">@Model.Name</h4>
                     <div class="row row-cols-2 mb-2">
-                        <div class="col">Nhà cung cấp: <a href="" class="text-decoration-none fw-bold">AZ Việt Nam</a></div>
-                        <div class="col">Tác giả: <a href="" class="text-decoration-none fw-bold">Lưu Bát Bách</a></div>
-                        <div class="col">Nhà xuất bản: <a href="" class="text-decoration-none fw-bold">Thanh Niên</a></div>
-                        <div class="col">Hình thức bìa: <a href="" class="text-decoration-none fw-bold">Bìa Mềm</a></div>
+                        <div class="col">Tác giả: <a href="" class="text-decoration-none fw-bold">@Model.Author.Name</a></div>
+                        @{
+                            if (Model.BookPartners != null && Model.BookPartners.Count > 0)
+                            {
+                                foreach (var bp in Model.BookPartners)
+                                {
+                                    <div class="col">@bp.Partner.PartnerType.Name: <a href="" class="text-decoration-none fw-bold">@bp.Partner.Name</a></div>
+                                }
+                            }
+                        }
+                        <div class="col">Hình thức bìa: <a href="" class="text-decoration-none fw-bold">@Model.CoverType.TypeName</a></div>
                     </div>
                     <div>
-                        <span>★</span>
-                        <span>★</span>
-                        <span>★</span>
-                        <span>★</span>
-                        <span>★</span>
-                        <span>(0 đánh giá)</span>
+                        @{
+                            var averageRating = 0;
+                            if (Model.Reviews.Count > 0) averageRating = (int)Math.Round(Model.Reviews.Average(r => r.Rating), 0);
+                            
+                            for (int i = 1; i <= 5; i++)
+                            {
+                                if (i <= averageRating)
+                                {
+                                    <span style="color: gold;">★</span>
+                                }
+                                else
+                                {
+                                    <span>★</span>
+                                }
+                            }
+                        }
+                        <span>(@Model.Reviews.Count đánh giá)</span>
                     </div>
                     <div class="d-flex align-items-center my-3">
-                        <span class="fs-2 fw-bold text-danger">94.900 đ</span>
-                        <span class="ms-2 text-decoration-line-through">130.000 đ</span>
-                        <span class="bg-danger text-white px-2 ms-2 fw-bold px-2 py-1 rounded-3">-75%</span>
-                    </div>
-                    <div class="row">
-                        <div class="col-3">
-                            Thời gian giao hàng
-                        </div>
-                        <div class="col-9">
-                            Giao hàng đến Phường Tăng Nhơn Phú A, TP. Thủ Đức, Hồ Chí Minh
-                            <a href="#" class="text-decoration-none fw-bold">Thay đổi</a>
-                        </div>
+                        <span class="fs-2 fw-bold text-danger">@((Model.Price - Model.Price * Model.DiscountPercentage / 100).ToString("N0")) đ</span>
+                        <span class="ms-2 text-decoration-line-through">@Model.Price.ToString("N0") đ</span>
+                        <span class="bg-danger text-white px-2 ms-2 fw-bold px-2 py-1 rounded-3">- @Model.DiscountPercentage %</span>
                     </div>
                     <div class="row">
                         <div class="col-3">
@@ -100,12 +116,17 @@
                             Số lượng
                         </div>
                         <div class="col-9">
-                            <input type="number" value="1" class="fs-5 px-2 py-1 text-center w-25" min="1" />
+                            <input type="number" id="order-quantity" value="1" class="fs-5 px-2 py-1 text-center w-25" min="1" max="@Model.Quantity" />
                         </div>
                     </div>
                     <div class="d-flex mt-3">
-                        <a href="/User/Cart" class="btn btn-outline-danger fw-bold w-50 mx-1 py-2">Thêm vào giỏ hàng</a>
-                        <a href="/User/Pay" class="btn btn-danger fw-bold w-50 mx-1 py-2">Mua ngay</a>
+                        @Html.AntiForgeryToken()
+                        <form action="/User/AddCartItem" BookId="@Model.Id" onsubmit="AddCartItem(this, event)">
+                            <input type="submit" value="Thêm vào giỏ hàng" class="btn btn-outline-danger fw-bold mx-1 py-2" />
+                        </form>
+                        <form asp-controller="User" asp-action="AddOrder" id="form-AddOrder">
+                            <input type="submit" value="Mua ngay" class="btn btn-danger fw-bold mx-1 py-2" />
+                        </form>
                     </div>
                 </div>
             </div>
@@ -116,47 +137,49 @@
         <div class="d-flex align-items-center p-3 rounded-top-3 bg-white">
             <img src="~/image/icon_dealhot_new.png" width="32" height="32" class="object-fit-cover rounded-3" />
             <h5 class="fw-bold mb-0 p-2">Mã giảm giá</h5>
-            <span role="button" class="text-primary ms-auto" data-bs-toggle="modal" data-bs-target="#vouchersModal">Xem thêm</span>
-            <div class="modal fade" id="vouchersModal" tabindex="-1" aria-labelledby="vouchersModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                    <div class="modal-content">
-                        <div class="modal-header text-danger">
-                            <i class="bi bi-gift-fill fs-3"></i>
-                            <h1 class="modal-title fs-5 text-uppercase ms-3" id="vouchersModalLabel">Mã giảm giá</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="mb-3">
-                                @(await Html.RenderComponentAsync<VoucherComponent>(RenderMode.ServerPrerendered, new { voucher = voucher }))
-                            </div>
-                            <div class="mb-3">
-                                @(await Html.RenderComponentAsync<VoucherComponent>(RenderMode.ServerPrerendered, new { voucher = voucher2 }))
-                            </div>
-                            <div class="mb-3">
-                                @(await Html.RenderComponentAsync<VoucherComponent>(RenderMode.ServerPrerendered, new { voucher = voucher }))
-                            </div>
-                            <div class="mb-3">
-                                @(await Html.RenderComponentAsync<VoucherComponent>(RenderMode.ServerPrerendered, new { voucher = voucher2 }))
-                            </div>
-                            <div class="mb-3">
-                                @(await Html.RenderComponentAsync<VoucherComponent>(RenderMode.ServerPrerendered, new { voucher = voucher }))
+            @{
+                var voucherMore = vouchers?.Skip(3).ToList();
+                if (voucherMore != null && voucherMore.Count > 0)
+                {
+                    <span role="button" class="text-primary ms-auto" data-bs-toggle="modal" data-bs-target="#vouchersModal">Xem thêm</span>
+                    <div class="modal fade" id="vouchersModal" tabindex="-1" aria-labelledby="vouchersModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                            <div class="modal-content">
+                                <div class="modal-header text-danger">
+                                    <i class="bi bi-gift-fill fs-3"></i>
+                                    <h1 class="modal-title fs-5 text-uppercase ms-3" id="vouchersModalLabel">Mã giảm giá</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    @{
+                                        foreach (var v in voucherMore)
+                                        {
+                                            <div class="mb-3">
+                                                @(await Html.RenderComponentAsync<VoucherComponent>(RenderMode.ServerPrerendered, new { voucher = v }))
+                                            </div>
+                                        }
+                                    }
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
+                }
+            }
+            
         </div>
         <div class="bg-white p-3 rounded-bottom-3">
             <div class="row row-cols-1 row-cols-lg-3 g-3">
-                <div class="col">
-                    @(await Html.RenderComponentAsync<VoucherComponent>(RenderMode.ServerPrerendered, new { voucher = voucher }))
-                </div>
-                <div class="col">
-                    @(await Html.RenderComponentAsync<VoucherComponent>(RenderMode.ServerPrerendered, new { voucher = voucher2 }))
-                </div>
-                <div class="col">
-                    @(await Html.RenderComponentAsync<VoucherComponent>(RenderMode.ServerPrerendered, new { voucher = voucher }))
-                </div>
+                @{
+                    if (vouchers != null && vouchers.Count > 0)
+                    {
+                        foreach (var v in vouchers.Take(3))
+                        {
+                            <div class="col">
+                                @(await Html.RenderComponentAsync<VoucherComponent>(RenderMode.ServerPrerendered, new { voucher = v }))
+                            </div>
+                        }
+                    }
+                }
             </div>
         </div>
     </div>
@@ -164,183 +187,39 @@
     <div class="container mt-4">
         <div class="d-flex align-items-center p-3 rounded-top-3 bg-white">
             <img src="~/image/icon_dealhot_new.png" width="32" height="32" class="object-fit-cover rounded-3" />
-            <h5 class="fw-bold mb-0 p-2">Đề xuất</h5>
+            <h5 class="fw-bold mb-0 p-2">Gợi Ý Sản Phẩm</h5>
         </div>
         <div class="bg-white p-3 rounded-bottom-3">
             <!-- Swiper -->
             <div class="swiper mySwiper-hot">
                 <div class="swiper-wrapper">
-                    <div class="swiper-slide">
-                        <div class="card position-relative">
-                            <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)">
-                                <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                    <img src="~/image/fs10.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                </div>
-                                <div class="card-body p-1">
-                                    <h6 class="card-title twoLine">Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)</h6>
-                                    <div class="d-flex flex-column justify-content-start">
-                                        <div>
-                                            <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                            <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                        </div>
-                                        <small class="card-text text-decoration-line-through">86.000 đ</small>
+                    @{
+                        if (similarBooks != null && similarBooks.Count > 0)
+                        {
+                            foreach (var book in similarBooks)
+                            {
+                                <div class="swiper-slide">
+                                    <div class="card position-relative">
+                                        <a href="~/Home/Product/@book.Id" class="text-decoration-none mx-2" style="color: #000;" title="@book.Name">
+                                            <div class="w-100 position-relative" style="padding-bottom: 100%;">
+                                                <img src="@book.PosterImages.FirstOrDefault()?.ImageUrl" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
+                                            </div>
+                                            <div class="card-body p-1">
+                                                <h6 class="card-title twoLine">@book.Name</h6>
+                                                <div class="d-flex flex-column justify-content-start">
+                                                    <div>
+                                                        <span class="card-text text-danger fw-bold">@((book.Price - book.Price * book.DiscountPercentage / 100).ToString("N0")) đ</span>
+                                                        <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">- @book.DiscountPercentage %</small>
+                                                    </div>
+                                                    <small class="card-text text-decoration-line-through">@book.Price.ToString("N0") đ</small>
+                                                </div>
+                                            </div>
+                                        </a>
                                     </div>
                                 </div>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="card position-relative">
-                            <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)">
-                                <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                    <img src="~/image/fs10.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                </div>
-                                <div class="card-body p-1">
-                                    <h6 class="card-title twoLine">Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)</h6>
-                                    <div class="d-flex flex-column justify-content-start">
-                                        <div>
-                                            <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                            <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                        </div>
-                                        <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="card position-relative">
-                            <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)">
-                                <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                    <img src="~/image/fs10.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                </div>
-                                <div class="card-body p-1">
-                                    <h6 class="card-title twoLine">Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)</h6>
-                                    <div class="d-flex flex-column justify-content-start">
-                                        <div>
-                                            <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                            <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                        </div>
-                                        <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="card position-relative">
-                            <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)">
-                                <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                    <img src="~/image/fs10.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                </div>
-                                <div class="card-body p-1">
-                                    <h6 class="card-title twoLine">Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)</h6>
-                                    <div class="d-flex flex-column justify-content-start">
-                                        <div>
-                                            <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                            <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                        </div>
-                                        <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="card position-relative">
-                            <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)">
-                                <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                    <img src="~/image/fs10.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                </div>
-                                <div class="card-body p-1">
-                                    <h6 class="card-title twoLine">Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)</h6>
-                                    <div class="d-flex flex-column justify-content-start">
-                                        <div>
-                                            <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                            <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                        </div>
-                                        <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="card position-relative">
-                            <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)">
-                                <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                    <img src="~/image/fs10.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                </div>
-                                <div class="card-body p-1">
-                                    <h6 class="card-title twoLine">Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)</h6>
-                                    <div class="d-flex flex-column justify-content-start">
-                                        <div>
-                                            <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                            <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                        </div>
-                                        <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="card position-relative">
-                            <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)">
-                                <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                    <img src="~/image/fs10.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                </div>
-                                <div class="card-body p-1">
-                                    <h6 class="card-title twoLine">Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)</h6>
-                                    <div class="d-flex flex-column justify-content-start">
-                                        <div>
-                                            <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                            <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                        </div>
-                                        <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="card position-relative">
-                            <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)">
-                                <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                    <img src="~/image/fs10.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                </div>
-                                <div class="card-body p-1">
-                                    <h6 class="card-title twoLine">Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)</h6>
-                                    <div class="d-flex flex-column justify-content-start">
-                                        <div>
-                                            <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                            <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                        </div>
-                                        <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="card position-relative">
-                            <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)">
-                                <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                    <img src="https://cdn.popsww.com/blog/sites/2/2022/12/top-anime-nam-dep.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                </div>
-                                <div class="card-body p-1">
-                                    <h6 class="card-title twoLine">Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)</h6>
-                                    <div class="d-flex flex-column justify-content-start">
-                                        <div>
-                                            <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                            <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                        </div>
-                                        <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
+                            }
+                        }
+                    }
                 </div>
                 <div class="swiper-button-next rounded-circle"><i class="bi bi-arrow-right-circle"></i></div>
                 <div class="swiper-button-prev rounded-circle"><i class="bi bi-arrow-left-circle"></i></div>
@@ -351,94 +230,72 @@
     <div class="container mt-4">
         <div class="p-3 bg-white rounded-3">
             <h5>Thông tin sản phẩm</h5>
-            <div class="container-fluid">
-                <div class="row py-2">
-                    <div class="col-3">Mã hàng</div>
-                    <div class="col-9">8935325009433</div>
-                </div>
-                <div class="row py-2">
-                    <div class="col-3">Tên Nhà Cung Cấp</div>
-                    <div class="col-9"><a href="" class="text-decoration-none">AZ Việt Nam</a></div>
-                </div>
-                <div class="row py-2">
-                    <div class="col-3">Tác giả</div>
-                    <div class="col-9">Lưu Hiểu Huy</div>
-                </div>
-                <div class="row py-2">
-                    <div class="col-3">NXB</div>
-                    <div class="col-9">Thanh Niên</div>
-                </div>
-                <div class="row py-2">
-                    <div class="col-3">Năm XB</div>
-                    <div class="col-9">2022</div>
-                </div>
-                <div class="row py-2">
-                    <div class="col-3">Ngôn Ngữ</div>
-                    <div class="col-9">Tiếng Việt</div>
-                </div>
-                <div class="row py-2">
-                    <div class="col-3">Trọng lượng (gr)</div>
-                    <div class="col-9">350</div>
-                </div>
-                <div class="row py-2">
-                    <div class="col-3">Kích Thước Bao Bì</div>
-                    <div class="col-9">24 x 15.7 cm</div>
-                </div>
-                <div class="row py-2">
-                    <div class="col-3">Số trang</div>
-                    <div class="col-9">344</div>
-                </div>
-                <div class="row py-2">
-                    <div class="col-3">Hình thức</div>
-                    <div class="col-9">Bìa Mềm</div>
-                </div>
-                <div class="row py-2">
+            <dl class="row px-4">
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Name)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Name)
+                </dd>
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Id)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Id)
+                </dd>
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Author)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Author.Name)
+                </dd>
+                @{
+                    if (Model.BookPartners != null && Model.BookPartners.Count > 0)
+                    {
+                        foreach (var bp in Model.BookPartners)
+                        {
+                            <dt class="col-sm-3">
+                                @bp.Partner.PartnerType.Name
+                            </dt>
+                            <dd class="col-sm-9">
+                                @bp.Partner.Name
+                            </dd>
+                        }
+                    }
+                }
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Weight)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Weight)
+                </dd>
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Dimension)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Dimension.Width) x @Html.DisplayFor(model => model.Dimension.Length) x @Html.DisplayFor(model => model.Dimension.Height) @Html.DisplayFor(model => model.Dimension.Unit)
+                </dd>
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.PageCount)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.PageCount)
+                </dd>
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.CoverType)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.CoverType.TypeName)
+                </dd>
+                <div class="py-2">
                     Giá sản phẩm trên Fahasa.com đã bao gồm thuế theo luật hiện hành. Bên cạnh đó, tuỳ vào loại sản phẩm, hình thức và địa chỉ giao hàng mà có thể phát sinh thêm chi phí khác như Phụ phí đóng gói, phí vận chuyển, phụ phí hàng cồng kềnh,...
                 </div>
-            </div>
+            </dl>
             <hr />
             <div>
                 <div class="collapse" id="collapseDescriptionBook">
                     <div class="textContent">
-                        Làm cách nào để một “xác chết lên tiếng”? - đó là công việc của bác sĩ pháp y.
-
-                        “Ghi chép pháp y - Những cái chết bí ẩn” là cuốn sách nằm trong hệ liệt với “Pháp y Tần Minh” - bộ tiểu thuyết nổi đình đám của xứ Trung đã được chuyển thể thành series phim. Cuốn sách tổng hợp những vụ án có thật, được viết bởi bác sĩ pháp y Lưu Hiểu Huy - người có 15 năm kinh nghiệm và từng mổ xẻ hơn 800 tử thi.
-
-                        Trải qua 15 câu chuyện kinh hoàng, cuốn sách sẽ đưa bạn bước vào hiện trường của những vụ án man rợ như: xác chết phi tang dưới cánh đồng ngô, thi thể thiếu nữ không lành lặn, xác chết nhầy nhụa đang bị giòi bọ đục khoét hay một thi thể co cứng trong màng bọc nilon…lần theo những dấu vết, ghép lại sự thật từ những mảnh vụn thi thể, nguyên nhân của cái chết sẽ dần được hé mở.
-
-                        Mỗi vụ án đều là một ẩn số, hiện trường vụ án bao gồm cả xác chết chính là chiếc chìa khóa để truy tìm hung thủ ngay cả khi nó không còn nguyên vẹn. Vậy làm cách để các bác sĩ pháp y có thể xác định thương tật, các dấu hiệu cơ thể bị xâm hại? Cuốn sách này sẽ trình bày những kiến thức chuyên môn và quy trình xử lý vụ án, từ hiện trường vụ án đến đài giải phẫu, xét nghiệm nội tạng, phân tích chất độc… từng bước tìm ra bí mật ẩn giấu sau mỗi tử thi, phơi bày những manh mối liên quan đến tội ác con người và lỗ hổng của xã hội.
-
-                        Không chỉ thuật lại những vụ án và các phương pháp pháp y, cuốn sách còn chứa đựng cảm xúc của tác giả đối với nghề nghiệp và sự méo mó của bản chất con người. Chẳng hạn, một đứa trẻ bệnh nặng phải đau đớn đến thế nào khi bị người nhà đem ra làm công cụ để đòi bồi thường? Cuốn sách sẽ phơi bày những góc khuất của xã hội, những hành vi thủ ác, sự biến chất và mất nhân tính của một bộ phận con người trong xã hội.
-
-                        Nếu bạn tò mò muốn biết cách đánh giá tuổi của người chết dựa trên mức độ mòn răng? Hay cách dùng một con giòi từ người chết để suy ra thời điểm chính xác của vụ án giết người?  Hy vọng cuốn sách này sẽ cho bạn trải nghiệm khó quên về nghề pháp y.
-
-                        Mã hàng	8935325009433
-                        Tên Nhà Cung Cấp	AZ Việt Nam
-                        Tác giả	Lưu Hiểu Huy
-                        Người Dịch	Bùi Thanh Thúy
-                        NXB	Thanh Niên
-                        Năm XB	2022
-                        Ngôn Ngữ	Tiếng Việt
-                        Trọng lượng (gr)	350
-                        Kích Thước Bao Bì	24 x 15.7 cm
-                        Số trang	344
-                        Hình thức	Bìa Mềm
-                        Sản phẩm bán chạy nhất	Top 100 sản phẩm Truyện Trinh Thám - Kiếm Hiệp bán chạy của tháng
-                        Giá sản phẩm trên Fahasa.com đã bao gồm thuế theo luật hiện hành. Bên cạnh đó, tuỳ vào loại sản phẩm, hình thức và địa chỉ giao hàng mà có thể phát sinh thêm chi phí khác như Phụ phí đóng gói, phí vận chuyển, phụ phí hàng cồng kềnh,...
-                        Chính sách khuyến mãi trên Fahasa.com không áp dụng cho Hệ thống Nhà sách Fahasa trên toàn quốc
-                        GHI CHÉP PHÁP Y - NHỮNG CÁI CHẾT BÍ ẨN –
-
-                        Làm cách nào để một “xác chết lên tiếng”? - đó là công việc của bác sĩ pháp y.
-
-                        “Ghi chép pháp y - Những cái chết bí ẩn” là cuốn sách nằm trong hệ liệt với “Pháp y Tần Minh” - bộ tiểu thuyết nổi đình đám của xứ Trung đã được chuyển thể thành series phim. Cuốn sách tổng hợp những vụ án có thật, được viết bởi bác sĩ pháp y Lưu Hiểu Huy - người có 15 năm kinh nghiệm và từng mổ xẻ hơn 800 tử thi.
-
-                        Trải qua 15 câu chuyện kinh hoàng, cuốn sách sẽ đưa bạn bước vào hiện trường của những vụ án man rợ như: xác chết phi tang dưới cánh đồng ngô, thi thể thiếu nữ không lành lặn, xác chết nhầy nhụa đang bị giòi bọ đục khoét hay một thi thể co cứng trong màng bọc nilon…lần theo những dấu vết, ghép lại sự thật từ những mảnh vụn thi thể, nguyên nhân của cái chết sẽ dần được hé mở.
-
-                        Mỗi vụ án đều là một ẩn số, hiện trường vụ án bao gồm cả xác chết chính là chiếc chìa khóa để truy tìm hung thủ ngay cả khi nó không còn nguyên vẹn. Vậy làm cách để các bác sĩ pháp y có thể xác định thương tật, các dấu hiệu cơ thể bị xâm hại? Cuốn sách này sẽ trình bày những kiến thức chuyên môn và quy trình xử lý vụ án, từ hiện trường vụ án đến đài giải phẫu, xét nghiệm nội tạng, phân tích chất độc… từng bước tìm ra bí mật ẩn giấu sau mỗi tử thi, phơi bày những manh mối liên quan đến tội ác con người và lỗ hổng của xã hội.
-
-                        Không chỉ thuật lại những vụ án và các phương pháp pháp y, cuốn sách còn chứa đựng cảm xúc của tác giả đối với nghề nghiệp và sự méo mó của bản chất con người. Chẳng hạn, một đứa trẻ bệnh nặng phải đau đớn đến thế nào khi bị người nhà đem ra làm công cụ để đòi bồi thường? Cuốn sách sẽ phơi bày những góc khuất của xã hội, những hành vi thủ ác, sự biến chất và mất nhân tính của một bộ phận con người trong xã hội.
-
-                        Nếu bạn tò mò muốn biết cách đánh giá tuổi của người chết dựa trên mức độ mòn răng? Hay cách dùng một con giòi từ người chết để suy ra thời điểm chính xác của vụ án giết người?  Hy vọng cuốn sách này sẽ cho bạn trải nghiệm khó quên về nghề pháp y.
+                        @Model.Description
                     </div>
                 </div>
                 <div class="d-flex justify-content-center mt-4">
@@ -467,185 +324,186 @@
                 <div class="col-9 col-lg-7">
                     <div class="d-flex">
                         <div class="my-auto">
-                            <h6 class="text-center">5/5</h6>
+                            <h6 class="text-center">@averageRating/5</h6>
                             <div class="fs-5">
-                                <span style="color: gold;">&#9733;</span>
-                                <span style="color: gold;">&#9733;</span>
-                                <span style="color: gold;">&#9733;</span>
-                                <span style="color: gold;">&#9733;</span>
-                                <span>&#9733;</span>
+                                @{
+                                    for (int i = 1; i <= 5; i++)
+                                    {
+                                        if (i <= averageRating)
+                                        {
+                                            <span style="color: gold;">★</span>
+                                        }
+                                        else
+                                        {
+                                            <span>★</span>
+                                        }
+                                    }
+                                }
                             </div>
-                            <div>(2301 đánh giá)</div>
+                            <div class="text-center">(@Model.Reviews.Count đánh giá)</div>
                         </div>
                         <div class="flex-grow-1 mx-4">
+                            @{
+                                var totalReviews = Model.Reviews.Count;
+                                var ratings = new int[5];
+
+                                foreach (var review in Model.Reviews)
+                                {
+                                    if (review.Rating >= 1 && review.Rating <= 5)
+                                    {
+                                        ratings[review.Rating - 1]++;
+                                    }
+                                }
+
+                                var rate5 = totalReviews > 0 ? Math.Round((ratings[4] * 100.0 / totalReviews), 0) : 0;
+                                var rate4 = totalReviews > 0 ? Math.Round((ratings[3] * 100.0 / totalReviews), 0) : 0;
+                                var rate3 = totalReviews > 0 ? Math.Round((ratings[2] * 100.0 / totalReviews), 0) : 0;
+                                var rate2 = totalReviews > 0 ? Math.Round((ratings[1] * 100.0 / totalReviews), 0) : 0;
+                                var rate1 = totalReviews > 0 ? Math.Round((ratings[0] * 100.0 / totalReviews), 0) : 0;
+                            }
                             <div class="d-flex align-items-center">
                                 <span>5 sao</span>
                                 <div style="height: 8px;" class="progress flex-grow-1 mx-3" role="progressbar" aria-label="Danger example" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
-                                    <div class="progress-bar bg-danger" style="width: 90%"></div>
+                                    <div class="progress-bar bg-danger" style="width: @rate5%"></div>
                                 </div>
-                                <span>90%</span>
+                                <span>@rate5%</span>
                             </div>
                             <div class="d-flex align-items-center">
                                 <span>4 sao</span>
                                 <div style="height: 8px;" class="progress flex-grow-1 mx-3" role="progressbar" aria-label="Danger example" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
-                                    <div class="progress-bar bg-danger" style="width: 5%"></div>
+                                    <div class="progress-bar bg-danger" style="width: @rate4%"></div>
                                 </div>
-                                <span>5%</span>
+                                <span>@rate4%</span>
                             </div>
                             <div class="d-flex align-items-center">
                                 <span>3 sao</span>
                                 <div style="height: 8px;" class="progress flex-grow-1 mx-3" role="progressbar" aria-label="Danger example" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
-                                    <div class="progress-bar bg-danger" style="width: 3%"></div>
+                                    <div class="progress-bar bg-danger" style="width: @rate3%"></div>
                                 </div>
-                                <span>2%</span>
+                                <span>@rate3%</span>
                             </div>
                             <div class="d-flex align-items-center">
                                 <span>2 sao</span>
                                 <div style="height: 8px;" class="progress flex-grow-1 mx-3" role="progressbar" aria-label="Danger example" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
-                                    <div class="progress-bar bg-danger" style="width: 1%"></div>
+                                    <div class="progress-bar bg-danger" style="width: @rate2%"></div>
                                 </div>
-                                <span>1%</span>
+                                <span>@rate2%</span>
                             </div>
                             <div class="d-flex align-items-center">
                                 <span>1 sao</span>
                                 <div style="height: 8px;" class="progress flex-grow-1 mx-3" role="progressbar" aria-label="Danger example" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
-                                    <div class="progress-bar bg-danger" style="width: 1%"></div>
+                                    <div class="progress-bar bg-danger" style="width: @rate1%"></div>
                                 </div>
-                                <span>1%</span>
+                                <span>@rate1%</span>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col">
-                    <div class="d-flex justify-content-center align-items-center h-100">
-                        <!-- Button trigger modal -->
-                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#reviewBookModal">
-                            Viết đánh giá
-                        </button>
-                    </div>
-
-                    <!-- Modal -->
-                    <div class="modal fade" id="reviewBookModal" tabindex="-1" aria-labelledby="reviewBookModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered modal-lg">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h1 class="modal-title fs-5 text-uppercase" id="reviewBookModalLabel">Viết đánh giá sản phẩm</h1>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <form>
-                                        <div class="mb-3 d-flex flex-column align-items-center">
-                                            <input type="number" name="Rating" min="1" max="5" value="5" hidden />
-                                            <div class="stars fs-3">
-                                                <span class="star active" data-rating="1">&#9733;</span>
-                                                <span class="star active" data-rating="2">&#9733;</span>
-                                                <span class="star active" data-rating="3">&#9733;</span>
-                                                <span class="star active" data-rating="4">&#9733;</span>
-                                                <span class="star active" data-rating="5">&#9733;</span>
-                                            </div>
-                                            <div class="rating-description ms-3">Tuyệt vời</div>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="cmtInput" class="form-label">Nội dung đánh giá</label>
-                                            <textarea class="form-control" id="cmtInput" oninput="updateCharacterCount()" rows="3" maxlength="500" placeholder="Nhập nội dung nhận xét của bạn về sản phẩm, tối đa 500 ký tự."></textarea>
-                                            <div id="charCount" class="mt-3 text-end">Số ký tự còn lại: 500</div>
-                                        </div>
-                                    </form>
-
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-danger">Gửi đánh giá</button>
+                @{
+                    if (hasOrder == true && userLogin.CurrentUser != null)
+                    {
+                        var reviewOfUser = reviews?.FirstOrDefault(r => r.User.Id == userLogin.CurrentUser.Id);
+                        if (reviewOfUser != null)
+                        {
+                            <div class="col">
+                                <div class="d-flex justify-content-center align-items-center h-100">
+                                    <a href="/User/EditReview" IdValue="@reviewOfUser.Id" onclick="HandlerCRUD(this, event)" class="btn btn-outline-danger">Chỉnh sửa đánh giá</a>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
+                        }
+                        else
+                        {
+                            <div class="col">
+                                <div class="d-flex justify-content-center align-items-center h-100">
+                                    <a href="/User/AddReview" IdValue="@Model.Id" onclick="HandlerCRUD(this, event)" class="btn btn-outline-danger">Viết đánh giá</a>
+                                </div>
+                            </div>
+                        }
+                    }
+                }
             </div>
             <div class="row mt-4">
-                <div class="col-5 col-lg-4 ms-auto">
-                    <div class="input-group mb-3">
-                        <select class="form-select fillterReview" id="inputGroupSelect02">
-                            <option selected>Tất cả</option>
-                            <option value="1">One</option>
-                            <option value="2">Two</option>
-                            <option value="3">Three</option>
-                        </select>
-                        <label class="input-group-text" for="inputGroupSelect02">Bộ lọc</label>
-                    </div>
-                </div>
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item">
-                        <div class="row">
-                            <div class="col-3 col-xl-2">
-                                <img src="https://gamek.mediacdn.vn/133514250583805952/2022/4/6/be1-164922643669587606129.jpg" width="50" height="50" class="object-fit-contain rounded-circle me-2" />
-                                SomeOne
-                                <div>
-                                    <span style="color: gold;">&#9733;</span>
-                                    <span style="color: gold;">&#9733;</span>
-                                    <span style="color: gold;">&#9733;</span>
-                                    <span style="color: gold;">&#9733;</span>
-                                    <span>&#9733;</span>
-                                </div>
-                                <small>18/05/2023</small>
-                            </div>
-                            <div class="col">
-                                Về mặt hình thức, bìa và chất giấy ổn. Đặc biệt là cái bookmark lạ lắm luon, nhưng nhìn nó vui vui. Trưng bày trên kệ được, số 15 in ngược mà kệ đi Về mặt nội dung mình thấy vài chương đầu đọc không thú vị lắm, về những chương sau thấy vụ án có chiều sâu và bớt nhàm hơn. Phần kết lại của tất cả hồ sơ vụ án làm mình hơi hụt hẫn tí, không làm dừa lòng các con nghiện Kết lại mình thấy đáng tiền, thông tin trong sách khá thú vị.
-                            </div>
-                        </div>
-                    </li>
-                    <li class="list-group-item">
-                        <div class="row">
-                            <div class="col-3 col-xl-2">
-                                <img src="https://gamek.mediacdn.vn/133514250583805952/2022/4/6/be1-164922643669587606129.jpg" width="50" height="50" class="object-fit-contain rounded-circle me-2" />
-                                SomeOne
-                                <div>
-                                    <span style="color: gold;">&#9733;</span>
-                                    <span style="color: gold;">&#9733;</span>
-                                    <span style="color: gold;">&#9733;</span>
-                                    <span style="color: gold;">&#9733;</span>
-                                    <span>&#9733;</span>
-                                </div>
-                                <small>18/05/2023</small>
-                            </div>
-                            <div class="col">
-                                Về mặt hình thức, bìa và chất giấy ổn. Đặc biệt là cái bookmark lạ lắm luon, nhưng nhìn nó vui vui. Trưng bày trên kệ được, số 15 in ngược mà kệ đi Về mặt nội dung mình thấy vài chương đầu đọc không thú vị lắm, về những chương sau thấy vụ án có chiều sâu và bớt nhàm hơn. Phần kết lại của tất cả hồ sơ vụ án làm mình hơi hụt hẫn tí, không làm dừa lòng các con nghiện Kết lại mình thấy đáng tiền, thông tin trong sách khá thú vị.
-                            </div>
-                        </div>
-                    </li>
-                    <li class="list-group-item">
-                        <div class="row">
-                            <div class="col-3 col-xl-2">
-                                <img src="https://gamek.mediacdn.vn/133514250583805952/2022/4/6/be1-164922643669587606129.jpg" width="50" height="50" class="object-fit-contain rounded-circle me-2" />
-                                SomeOne
-                                <div>
-                                    <span style="color: gold;">&#9733;</span>
-                                    <span style="color: gold;">&#9733;</span>
-                                    <span style="color: gold;">&#9733;</span>
-                                    <span style="color: gold;">&#9733;</span>
-                                    <span>&#9733;</span>
-                                </div>
-                                <small>18/05/2023</small>
-                            </div>
-                            <div class="col">
-                                Về mặt hình thức, bìa và chất giấy ổn. Đặc biệt là cái bookmark lạ lắm luon, nhưng nhìn nó vui vui. Trưng bày trên kệ được, số 15 in ngược mà kệ đi Về mặt nội dung mình thấy vài chương đầu đọc không thú vị lắm, về những chương sau thấy vụ án có chiều sâu và bớt nhàm hơn. Phần kết lại của tất cả hồ sơ vụ án làm mình hơi hụt hẫn tí, không làm dừa lòng các con nghiện Kết lại mình thấy đáng tiền, thông tin trong sách khá thú vị.
-                            </div>
-                        </div>
-                    </li>
+                    @{
+                        if (reviews != null && reviews.Count > 0)
+                        {
+                            if(userLogin.CurrentUser != null)
+                            {
+                                var reviewOfUser = reviews.FirstOrDefault(r => r.User.Id == userLogin.CurrentUser.Id);
+                                if (reviewOfUser != null)
+                                {
+                                    <li class="list-group-item" id="reviewOfUser">
+                                        <div class="row">
+                                            <div class="col-3 col-xl-2">
+                                                <img src="@reviewOfUser.User.ImageUrl" width="50" height="50" class="object-fit-contain rounded-circle me-2" />
+                                                <span>@reviewOfUser.User.FullName</span>
+                                                <div id="reviewOfUser_rating">
+                                                    @{
+                                                        for (int i = 1; i <= 5; i++)
+                                                        {
+                                                            if (i <= reviewOfUser.Rating)
+                                                            {
+                                                                <span style="color: gold;">★</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span>★</span>
+                                                            }
+                                                        }
+                                                    }
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <span id="reviewOfUser_comment">@reviewOfUser.Comment</span>
+                                                <div class="d-flex justify-content-between">
+                                                    <small>@reviewOfUser.CreatedAt</small>
+                                                    <a href="/User/DeleteReview" IdValue="@reviewOfUser.Id" onclick="HandlerCRUD(this, event)"><i class="bi bi-trash3"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                }
+                            }
+                            foreach (var review in reviews)
+                            {
+                                if (review.UserId != userLogin.CurrentUser?.Id)
+                                {
+                                    <li class="list-group-item">
+                                        <div class="row">
+                                            <div class="col-3 col-xl-2">
+                                                <img src="@review.User.ImageUrl" width="50" height="50" class="object-fit-contain rounded-circle me-2" />
+                                                <span>@review.User.FullName</span>
+                                                <div>
+                                                    @{
+                                                        for (int i = 1; i <= 5; i++)
+                                                        {
+                                                            if (i <= review.Rating)
+                                                            {
+                                                                <span style="color: gold;">★</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span>★</span>
+                                                            }
+                                                        }
+                                                    }
+                                                </div>
+
+                                            </div>
+                                            <div class="col">
+                                                @review.Comment
+                                                <div>
+                                                    <small>@review.CreatedAt</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                }
+                                
+                            }
+                        }
+                    }
                 </ul>
-                <nav aria-label="Page navigation example">
-                    <ul class="pagination justify-content-end">
-                        <li class="page-item disabled">
-                            <a class="page-link">Previous</a>
-                        </li>
-                        <li class="page-item"><a class="page-link active" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#">Next</a>
-                        </li>
-                    </ul>
-                </nav>
             </div>
         </div>
     </div>
@@ -695,47 +553,6 @@
                 },
             });
         });
-        // review
-        $(document).ready(function () {
-            ReviewHandler();
-            function ReviewHandler() {
-                let starDescriptions = {
-                    1: "Quá tệ",
-                    2: "Không hài lòng",
-                    3: "Bình thường",
-                    4: "Hài lòng",
-                    5: "Tuyệt vời",
-                };
-
-                let stars = document.querySelectorAll("span[data-rating]");
-                let ratingDescription = document.querySelector(".rating-description");
-                let starsContainer = document.querySelector(".stars");
-
-                stars.forEach((star, index) => {
-                    star.addEventListener("click", () => {
-                        let rating = star.getAttribute("data-rating");
-                        ratingDescription.innerText = starDescriptions[rating];
-                        document.querySelector('input[name="Rating"]').value = index + 1;
-                        stars.forEach((star, i) => {
-                            if (i + 1 <= rating) {
-                                star.classList.add("active");
-                            } else {
-                                star.classList.remove("active");
-                            }
-                        });
-                    });
-                });
-            }
-        });
-        // review
-        function updateCharacterCount() {
-            var textarea = document.getElementById("cmtInput");
-            var charCount = document.getElementById("charCount");
-            var maxLength = textarea.getAttribute("maxlength");
-            var remainingChars = maxLength - textarea.value.length;
-            charCount.textContent = "Số ký tự còn lại: " + remainingChars;
-        }
-
     </script>
 }
 

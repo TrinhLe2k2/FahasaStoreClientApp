@@ -1,19 +1,20 @@
-﻿@model FahasaStoreClientApp.Models.Address
-@using FahasaStoreClientApp.Components
+﻿@model FahasaStoreClientApp.Models.EModels.AddressModel
 
-@{
-    var provinces = ViewData["Provinces"] as IEnumerable<Province>;
-}
+<div>
+    <!-- Button trigger modal -->
+    <button type="button" id="btn-toggle" class="btn btn-primary" hidden data-bs-toggle="modal" data-bs-target="#appModal">
+        Launch demo modal
+    </button>
 
-<div class="bg-black bg-opacity-10">
-    <div class="container pt-4">
-        <div class="bg-white rounded-3 py-3">
-            <div class="row">
-                <div class="col-lg-3">
-                    @(await Html.RenderComponentAsync<SideBarUser>(RenderMode.ServerPrerendered, new { active = 2 }))
+    <!-- Modal -->
+    <div class="modal fade" id="appModal" tabindex="-1" aria-labelledby="appModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="appModalLabel">Cập nhật chỉ mới</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="col-lg-9 px-4">
-                    <h5 class="text-uppercase">Sổ địa chỉ</h5><hr />
+                <div class="modal-body">
                     <form asp-action="AddressUpdate">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                         <div class="row row-cols-1 row-cols-md-2">
@@ -35,30 +36,21 @@
                                 <div class="row row-cols-1 g-2">
                                     <div class="form-group">
                                         <label asp-for="Province" class="control-label"></label>
-                                        <select asp-for="Province" class="form-control" id="Province">
+                                        <select asp-for="Province" class="form-control" id="Province" province="@Model.Province">
                                             <option value="">-- Chọn tỉnh/thành phố --</option>
-                                            @{
-                                                if (provinces != null)
-                                                {
-                                                    foreach (var province in provinces)
-                                                    {
-                                                        <option value="@province.PROVINCE_ID">@province.PROVINCE_NAME</option>
-                                                    }
-                                                }
-                                            }
                                         </select>
                                         <span asp-validation-for="Province" class="text-danger"></span>
                                     </div>
                                     <div class="form-group">
                                         <label asp-for="District" class="control-label"></label>
-                                        <select asp-for="District" class="form-control" id="District">
+                                        <select asp-for="District" class="form-control" id="District" district="@Model.District">
                                             <option value="">-- Chọn Quận/Huyện --</option>
                                         </select>
                                         <span asp-validation-for="District" class="text-danger"></span>
                                     </div>
                                     <div class="form-group">
                                         <label asp-for="Ward" class="control-label"></label>
-                                        <select asp-for="Ward" class="form-control" id="Ward">
+                                        <select asp-for="Ward" class="form-control" id="Ward" ward="@Model.Ward">
                                             <option value="">-- Chọn Phường/Xã --</option>
                                         </select>
                                         <span asp-validation-for="Ward" class="text-danger"></span>
@@ -68,17 +60,16 @@
                                         <input asp-for="Detail" class="form-control" />
                                         <span asp-validation-for="Detail" class="text-danger"></span>
                                     </div>
-                                    <div class="form-group">
-                                        <input type="checkbox" id="DefaultAddress" name="DefaultAddress" class="form-check-input" />
-                                        <label asp-for="DefaultAddress" class="control-label"></label>
-                                        @* <input asp-for="DefaultAddress" class="form-control" /> *@
-                                        <span asp-validation-for="DefaultAddress" class="text-danger"></span>
+                                    <div class="form-group form-check">
+                                        <label class="form-check-label">
+                                            <input class="form-check-input" asp-for="DefaultAddress" /> @Html.DisplayNameFor(model => model.DefaultAddress)
+                                        </label>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="form-group mt-3">
-                            <input type="submit" value="Cập nhật" class="btn btn-danger" />
+                            <input type="submit" value="Cập Nhật" class="btn btn-danger" />
                         </div>
                     </form>
                 </div>
@@ -87,58 +78,84 @@
     </div>
 </div>
 
+<script>
+    $("#btn-toggle").click();
+</script>
 
+<script>
+    $(document).ready(function () {
+        var province = $('#Province').attr("province");
+        var district = $('#District').attr("district");
+        var ward = $('#Ward').attr("ward");
 
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-    <script>
-        $(document).ready(function () {
-            $('#District').prop('disabled', true);
-            $('#Province').change(function () {
-                var provinceId = $(this).val();
+        // Load Provinces
+        $.ajax({
+            url: '/User/OnGetProvinces?province=' + province,
+            type: 'GET',
+            success: function (data) {
+                $('#Province').html(data);
+
+                // Set selected value for Province
+                $('#Province').val(province).trigger('change');
+            },
+            error: function () {
+                console.error('Error fetching province');
+            }
+        });
+
+        // Province change event
+        $('#Province').change(function () {
+            var selectedOption = $(this).find('option:selected');
+            var provinceId = $(selectedOption).attr("IdValue");
+
+            if (provinceId) {
                 $.ajax({
-                    url: '/Address/OnGetDistricts?provinceId=' + provinceId,
+                    url: '/User/OnGetDistricts?provinceId=' + provinceId + '&district=' + district,
                     type: 'GET',
                     success: function (data) {
                         $('#District').html(data);
+                        $('#District').prop('disabled', false);
+
+                        // Set selected value for District
+                        $('#District').val(district).trigger('change');
                     },
                     error: function () {
                         console.error('Error fetching districts');
                     }
                 });
+            } else {
+                $('#District').html('<option value="">-- Chọn quận/huyện --</option>').prop('disabled', true);
+                $('#Ward').html('<option value="">-- Chọn phường/xã --</option>').prop('disabled', true);
+            }
+        });
 
-                if (provinceId !== '') {
-                    $('#District').prop('disabled', false);
-                } else {
-                    $('#District').prop('disabled', true);
-                }
-            });
+        // District change event
+        $('#District').change(function () {
+            var selectedOption = $(this).find('option:selected');
+            var districtId = $(selectedOption).attr("IdValue");
 
-            $('#Ward').prop('disabled', true);
-            $('#District').change(function () {
-                var districtId = $(this).val();
+            if (districtId) {
                 $.ajax({
-                    url: '/Address/OnGetWards?districtId=' + districtId,
+                    url: '/User/OnGetWards?districtId=' + districtId + '&ward=' + ward,
                     type: 'GET',
                     success: function (data) {
                         $('#Ward').html(data);
+                        $('#Ward').prop('disabled', false);
+
+                        // Set selected value for Ward
+                        $('#Ward').val(ward);
                     },
                     error: function () {
-                        console.error('Error fetching districts');
+                        console.error('Error fetching wards');
                     }
                 });
-
-                if (districtId !== '') {
-                    $('#Ward').prop('disabled', false);
-                } else {
-                    $('#Ward').prop('disabled', true);
-                }
-            });
-
+            } else {
+                $('#Ward').html('<option value="">-- Chọn phường/xã --</option>').prop('disabled', true);
+            }
         });
-    </script>
+    });
 
-}
+</script>
 
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>

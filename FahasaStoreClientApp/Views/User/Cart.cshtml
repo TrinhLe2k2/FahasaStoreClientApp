@@ -1,12 +1,10 @@
 ﻿@using FahasaStoreClientApp.Components
-@{
-    var voucher = new Voucher(1, "code 2025", "2025code", "giam 50%", 10, new DateTime(2024, 4, 30), 10000, 200000, 99);
-    var voucher2 = new Voucher(2, "new code 2025", "2025codenew", "giam 50%", 10, new DateTime(2024, 4, 30), 10000, 200000, 99);
-}
+@model List<FahasaStoreClientApp.Models.DTO.CartItemDTO>
 
+@Html.AntiForgeryToken()
 <div id="Cart" class="bg-black bg-opacity-10">
     <div class="container pt-4 d-flex align-items-center">
-        <h6 class="mb-0 fs-4 text-uppercase">Giỏ hàng</h6><span class="px-2">(2 sản phẩm)</span>
+        <h6 class="mb-0 fs-4 text-uppercase">Giỏ hàng</h6><span class="px-2">(@Model.Count sản phẩm)</span>
     </div>
     <div class="container mt-4">
         <div class="row">
@@ -15,9 +13,9 @@
                     <div class="p-3 mb-2 bg-white rounded-3">
                         <div class="row">
                             <div class="col-7">
-                                <input class="py-2" type="checkbox" value="" id="select-all-checkbox">
+                                <input class="py-2 cartItem-checkbox" type="checkbox" id="select-all-checkbox">
                                 <label role="button" for="select-all-checkbox">
-                                    Chọn tất cả (6 sản phẩm)
+                                    Chọn tất cả (@Model.Count sản phẩm)
                                 </label>
                             </div>
                             <div class="col-2">
@@ -30,59 +28,46 @@
                         </div>
                     </div>
                     <div class="p-3 bg-white rounded-3">
-                        <div class="py-3">
-                            <div class="row">
-                                <div class="col-7">
-                                    <div class="d-flex">
-                                        <input class="item-checkbox py-2" type="checkbox" value="" id="checkItem" name="product">
-                                        <label for="checkItem">
-                                            <img src="~/image/fs1.jpg" width="120" height="120" class="object-fit-contain mx-2" />
-                                        </label>
-                                        <div class="d-flex flex-column justify-content-between">
-                                            <a href="#" class="mb-2 nav-link">Ghi Chép Pháp Y - Những Thi Thể Không Hoàn Chỉnh</a>
-                                            <div class="d-flex align-items-center">
-                                                <span class="fw-bold">94.900 đ</span>
-                                                <span class="ms-2 text-decoration-line-through">130.000 đ</span>
+                        <form asp-action="GetIntoMoney">
+                            @{
+                                if (Model.Count > 0)
+                                {
+                                    foreach (var item in Model)
+                                    {
+                                        var currentPrice = item.Book.Price - item.Book.Price * item.Book.DiscountPercentage / 100;
+                                        var money = currentPrice * item.Quantity;
+
+                                        <div class="py-3">
+                                            <div class="row">
+                                                <div class="col-7">
+                                                    <div class="d-flex">
+                                                        <input class="cartItem-checkbox py-2" type="checkbox" value="@item.Id" id="checkItem_@item.Id" name="cartItemIds">
+                                                        <label for="checkItem_@item.Id">
+                                                            <img src="@item.Book.PosterImages.FirstOrDefault()?.ImageUrl" width="120" height="120" class="object-fit-contain mx-2" />
+                                                        </label>
+                                                        <div class="d-flex flex-column justify-content-between">
+                                                            <a href="#" class="mb-2 nav-link">@item.Book.Name</a>
+                                                            <div class="d-flex align-items-center">
+                                                                <span class="fw-bold">@currentPrice.ToString("N0") đ</span>
+                                                                <span class="ms-2 text-decoration-line-through">@item.Book.Price.ToString("N0") đ</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-2 d-flex flex-column justify-content-center">
+                                                    <input type="number" value="@item.Quantity" cartItemId="@item.Id" class="fs-6 px-1 py-1 text-center w-100 quantity-book" min="1" />
+                                                </div>
+                                                <div class="col-2 d-flex flex-column justify-content-center">
+                                                    <h6 class="text-danger fw-bold">@money.ToString("N0") đ</h6>
+                                                </div>
+                                                <div class="col-1 d-flex flex-column justify-content-center"><a href="/User/DeleteCartItem" IdValue="@item.Id" onclick="HandlerCRUD(this, event)" class="nav-link"><h6 class="fw-bold"><i class="bi bi-trash"></i></h6></a></div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="col-2 d-flex flex-column justify-content-center">
-                                    <input type="number" value="1" class="fs-6 px-1 py-1 text-center w-100" min="1" />
-                                </div>
-                                <div class="col-2 d-flex flex-column justify-content-center">
-                                    <h6 class="text-danger fw-bold">819.999 đ</h6>
-                                </div>
-                                <div class="col-1 d-flex flex-column justify-content-center"><a href="#" class="nav-link"><h6 class="fw-bold"><i class="bi bi-trash"></i></h6></a></div>
-                            </div>
-                        </div>
-                        <hr />
-                        <div class="py-3">
-                            <div class="row">
-                                <div class="col-7">
-                                    <div class="d-flex">
-                                        <input class="item-checkbox py-2" type="checkbox" value="" id="checkItem2" name="product">
-                                        <label for="checkItem2">
-                                            <img src="~/image/fs1.jpg" width="120" height="120" class="object-fit-contain mx-2" />
-                                        </label>
-                                        <div class="d-flex flex-column justify-content-between">
-                                            <a href="#" class="mb-2 nav-link">Ghi Chép Pháp Y - Những Thi Thể Không Hoàn Chỉnh</a>
-                                            <div class="d-flex align-items-center">
-                                                <span class="fw-bold">94.900 đ</span>
-                                                <span class="ms-2 text-decoration-line-through">130.000 đ</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-2 d-flex flex-column justify-content-center">
-                                    <input type="number" value="1" class="fs-6 px-1 py-1 text-center w-100" min="1" />
-                                </div>
-                                <div class="col-2 d-flex flex-column justify-content-center">
-                                    <h6 class="text-danger fw-bold">819.999 đ</h6>
-                                </div>
-                                <div class="col-1 d-flex flex-column justify-content-center"><a href="#" class="nav-link"><h6 class="fw-bold"><i class="bi bi-trash"></i></h6></a></div>
-                            </div>
-                        </div>
+                                        <hr />
+                                    }
+                                }
+                            }
+                        </form>
                     </div>
                 </div>
             </div>
@@ -284,14 +269,14 @@
                             </div>
                         </div> <hr />
                         <div>
-                            @(await Html.RenderComponentAsync<VoucherComponent>(RenderMode.ServerPrerendered, new { voucher = voucher, buyMore = true }))
+                            @* @(await Html.RenderComponentAsync<VoucherComponent>(RenderMode.ServerPrerendered, new { voucher = voucher, buyMore = true })) *@
                         </div>
 
                         <div class="mt-3">
                             <h6 class="text-black text-opacity-75">Khuyến mãi đã áp dụng</h6>
                             <div>
                                 @* <span class="text-black text-opacity-75">Chưa sử dụng khuyến mãi nào</span> *@
-                                @(await Html.RenderComponentAsync<VoucherComponent>(RenderMode.ServerPrerendered, new { voucher = voucher, remove = true }))
+                                @* @(await Html.RenderComponentAsync<VoucherComponent>(RenderMode.ServerPrerendered, new { voucher = voucher, remove = true })) *@
                             </div>
                         </div>
                     </div>
@@ -303,7 +288,7 @@
                         <hr />
                         <div class="d-flex justify-content-between align-items-center">
                             <span class="fw-bold">Tổng tiền:</span>
-                            <span class="text-danger fw-bold fs-5">999.999 đ</span>
+                            <span id="total-money" class="text-danger fw-bold fs-5">0 đ</span>
                         </div>
                         <div class="mt-3">
                             <a href="/User/Pay" class="btn btn-danger text-uppercase fw-bold fs-6 w-100">Mua ngay</a>
@@ -322,14 +307,14 @@
         // selectors all product
         $(document).ready(function () {
             $('#select-all-checkbox').change(function () {
-                $('.item-checkbox').prop('checked', $(this).prop('checked'));
+                $('.cartItem-checkbox').prop('checked', $(this).prop('checked'));
             });
 
-            $('.item-checkbox').change(function () {
+            $('.cartItem-checkbox').change(function () {
                 if (false === $(this).prop('checked')) {
                     $('#select-all-checkbox').prop('checked', false);
                 }
-                if ($('.item-checkbox:checked').length === $('.item-checkbox').length) {
+                if ($('.cartItem-checkbox:checked').length === $('.cartItem-checkbox').length) {
                     $('#select-all-checkbox').prop('checked', true);
                 }
             });

@@ -64,23 +64,24 @@
     border: 1px solid var(--primary-color-fahasa);
 }
 
+.ul-Tabs,
 #rankingTab,
 #shoppingTrendsTab {
     border-bottom: none;
 }
-
+.ul-Tabs .nav-link,
 #rankingTab .nav-link,
 #shoppingTrendsTab .nav-link {
     color: #000;
     font-weight: 600;
     border: none;
 }
-
+.ul-Tabs .nav-link:hover,
 #rankingTab .nav-link:hover,
 #shoppingTrendsTab .nav-link:hover {
     color: var(--primary-color-fahasa);
 }
-
+.ul-Tabs .nav-link.active,
 #rankingTab .nav-link.active,
 #shoppingTrendsTab .nav-link.active {
     position: relative;
@@ -88,7 +89,7 @@
     color: var(--primary-color-fahasa);
     border: none;
 }
-
+.ul-Tabs .nav-link.active::before,
 #rankingTab .nav-link.active::before,
 #shoppingTrendsTab .nav-link.active::before {
     content: "";

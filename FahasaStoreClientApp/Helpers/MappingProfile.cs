@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using FahasaStoreClientApp.Models.EModels;
 using FahasaStoreClientApp.Entities;
+using FahasaStoreClientApp.Models.CustomModels;
+using FahasaStoreClientApp.Models.DTO;
 
 namespace FahasaStoreAdminApp.Helpers
 {
@@ -8,6 +10,8 @@ namespace FahasaStoreAdminApp.Helpers
     {
         public MappingProfile()
         {
+            CreateMap<PaginatedResponse, PaginatedResponse<ReviewDTO>>().ReverseMap();
+
             CreateMap<Address, AddressModel>().ReverseMap();
             CreateMap<Author, AuthorModel>().ReverseMap();
             CreateMap<Banner, BannerModel>().ReverseMap();

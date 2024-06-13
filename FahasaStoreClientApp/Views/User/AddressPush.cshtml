@@ -1,20 +1,21 @@
-﻿@model FahasaStoreClientApp.Models.Address
-@using FahasaStoreClientApp.Components
+﻿@model FahasaStoreClientApp.Models.EModels.AddressModel
 
-@{
-    var provinces = ViewData["Provinces"] as IEnumerable<Province>;
-}
+<div>
+    <!-- Button trigger modal -->
+    <button type="button" id="btn-toggle" class="btn btn-primary" hidden data-bs-toggle="modal" data-bs-target="#appModal">
+        Launch demo modal
+    </button>
 
-<div class="bg-black bg-opacity-10">
-    <div class="container pt-4">
-        <div class="bg-white rounded-3 py-3">
-            <div class="row">
-                <div class="col-lg-3">
-                    @(await Html.RenderComponentAsync<SideBarUser>(RenderMode.ServerPrerendered, new { active = 2 }))
+    <!-- Modal -->
+    <div class="modal fade" id="appModal" tabindex="-1" aria-labelledby="appModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="appModalLabel">Thêm địa chỉ mới</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="col-lg-9 px-4">
-                    <h5 class="text-uppercase">Sổ địa chỉ</h5><hr />
-                    <form asp-action="Update">
+                <div class="modal-body">
+                    <form asp-action="AddressPush">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                         <div class="row row-cols-1 row-cols-md-2">
                             <div class="col">
@@ -37,15 +38,6 @@
                                         <label asp-for="Province" class="control-label"></label>
                                         <select asp-for="Province" class="form-control" id="Province">
                                             <option value="">-- Chọn tỉnh/thành phố --</option>
-                                            @{
-                                                if (provinces != null)
-                                                {
-                                                    foreach (var province in provinces)
-                                                    {
-                                                        <option value="@province.PROVINCE_ID">@province.PROVINCE_NAME</option>
-                                                    }
-                                                }
-                                            }
                                         </select>
                                         <span asp-validation-for="Province" class="text-danger"></span>
                                     </div>
@@ -68,14 +60,13 @@
                                         <input asp-for="Detail" class="form-control" />
                                         <span asp-validation-for="Detail" class="text-danger"></span>
                                     </div>
-                                    <div class="form-group">
-                                        <input type="checkbox" id="DefaultAddress" name="DefaultAddress" class="form-check-input" />
-                                        <label asp-for="DefaultAddress" class="control-label"></label>
-                                        @* <input asp-for="DefaultAddress" class="form-control" /> *@
-                                        <span asp-validation-for="DefaultAddress" class="text-danger"></span>
+                                    <div class="form-group form-check">
+                                        <label class="form-check-label">
+                                            <input class="form-check-input" asp-for="DefaultAddress" /> @Html.DisplayNameFor(model => model.DefaultAddress)
+                                        </label>
                                     </div>
                                 </div>
-                            </div>
+                            </div> 
                         </div>
                         <div class="form-group mt-3">
                             <input type="submit" value="Thêm mới" class="btn btn-danger" />
@@ -87,58 +78,70 @@
     </div>
 </div>
 
-
-
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-    <script>
-        $(document).ready(function () {
-            $('#District').prop('disabled', true);
-            $('#Province').change(function () {
-                var provinceId = $(this).val();
-                $.ajax({
-                    url: '/Address/OnGetDistricts?provinceId=' + provinceId,
-                    type: 'GET',
-                    success: function (data) {
-                        $('#District').html(data);
-                    },
-                    error: function () {
-                        console.error('Error fetching districts');
-                    }
-                });
-
-                if (provinceId !== '') {
-                    $('#District').prop('disabled', false);
-                } else {
-                    $('#District').prop('disabled', true);
+<script>
+    $("#btn-toggle").click();
+</script>
+<script>
+    $(document).ready(function () {
+        $('#District').prop('disabled', true);
+        $('#Province').change(function () {
+            var selectedOption = $(this).find('option:selected');
+            var provinceId = $(selectedOption).attr("IdValue");
+            $.ajax({
+                url: '/User/OnGetDistricts?provinceId=' + provinceId,
+                type: 'GET',
+                success: function (data) {
+                    $('#District').html(data);
+                },
+                error: function () {
+                    console.error('Error fetching districts');
                 }
             });
 
-            $('#Ward').prop('disabled', true);
-            $('#District').change(function () {
-                var districtId = $(this).val();
-                $.ajax({
-                    url: '/Address/OnGetWards?districtId=' + districtId,
-                    type: 'GET',
-                    success: function (data) {
-                        $('#Ward').html(data);
-                    },
-                    error: function () {
-                        console.error('Error fetching districts');
-                    }
-                });
-
-                if (districtId !== '') {
-                    $('#Ward').prop('disabled', false);
-                } else {
-                    $('#Ward').prop('disabled', true);
-                }
-            });
-
+            if (provinceId !== '') {
+                $('#District').prop('disabled', false);
+            } else {
+                $('#District').prop('disabled', true);
+            }
         });
-    </script>
 
-}
+        $('#Ward').prop('disabled', true);
+        $('#District').change(function () {
+            var selectedOption = $(this).find('option:selected');
+            var districtId = $(selectedOption).attr("IdValue");
+            $.ajax({
+                url: '/User/OnGetWards?districtId=' + districtId,
+                type: 'GET',
+                success: function (data) {
+                    $('#Ward').html(data);
+                },
+                error: function () {
+                    console.error('Error fetching districts');
+                }
+            });
 
+            if (districtId !== '') {
+                $('#Ward').prop('disabled', false);
+            } else {
+                $('#Ward').prop('disabled', true);
+            }
+        });
+
+    });
+    $(document).ready(function () {
+        $.ajax({
+            url: '/User/OnGetProvinces',
+            type: 'GET',
+            success: function (data) {
+                $('#Province').html(data);
+            },
+            error: function () {
+                console.error('Error fetching province');
+            }
+        });
+    });
+
+</script>
+
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>

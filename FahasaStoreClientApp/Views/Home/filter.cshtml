@@ -1,10 +1,17 @@
-﻿
-
+﻿@using FahasaStoreClientApp.Models.DTO
+@using FahasaStoreClientApp.Models.EModels
+@model FahasaStoreClientApp.Models.CustomModels.BookFilterOptions
+@{
+    var categories = ViewData["categories"] as List<CategoryDTO>;
+    var partnerTypes = ViewData["partnerTypes"] as List<PartnerTypeDTO>; 
+    var authors = ViewData["authors"] as List<AuthorDTO>;
+    var coverTypes = ViewData["coverTypes"] as List<CoverTypeDTO>;
+}
 <div id="Fillter" class="bg-black bg-opacity-10">
     <div class="container">
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="pt-2">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Bộ lọc</li>
             </ol>
         </nav>
@@ -20,527 +27,241 @@
                             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                         </div>
                         <div class="offcanvas-body">
-                            <div>
-                                <h5 class="text-uppercase text-fahasa">Lọc theo</h5>
-                                <hr />
-                                <div class="mb-3">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <h6 class="text-uppercase mb-0">Danh mục</h6>
-                                        <a class="nav-link py-1" href="/Home/Fillter">Tất cả</a>
+                            <form asp-action="FilterResult" class="w-100" id="filterForm">
+                                <div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h5 class="text-uppercase text-fahasa m-0">Lọc theo</h5>
+                                        <a class="nav-link" id="resetAll" href="#">Đặt lại toàn bộ</a>
                                     </div>
-                                    <div class="accordion" id="accordionExample">
-                                        <div class="accordion-item">
-                                            <h2 class="accordion-header">
-                                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                                    Sách trong nước
-                                                </button>
-                                            </h2>
-                                            <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
-                                                <div class="accordion-body">
-                                                    <a class="nav-link py-1 detailed-category active" href="/Home/Fillter">Tiểu Thuyết</a>
-                                                    <a class="nav-link py-1 detailed-category" href="/Home/Fillter">Truyện Ngắn - Tản Văn</a>
-                                                    <a class="nav-link py-1 detailed-category" href="/Home/Fillter">Light Novel</a>
-                                                    <a class="nav-link py-1 detailed-category" href="/Home/Fillter">Ngôn Tình</a>
-                                                </div>
-                                            </div>
+                                    <hr />
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <h6 class="text-uppercase mb-0">@Html.DisplayNameFor(model => model.CategoryId)</h6>
+                                            <a class="nav-link py-1 reset-filter" data-subfilter="SubcategoryId" data-filter="CategoryId" href="#">Đặt lại</a>
                                         </div>
-                                        <div class="accordion-item">
-                                            <h2 class="accordion-header">
-                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                                    Sách nước ngoài
-                                                </button>
-                                            </h2>
-                                            <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                                                <div class="accordion-body">
-                                                    <a class="nav-link py-1 detailed-category" href="/Home/Fillter">Tiểu Thuyết</a>
-                                                    <a class="nav-link py-1 detailed-category" href="/Home/Fillter">Truyện Ngắn - Tản Văn</a>
-                                                    <a class="nav-link py-1 detailed-category" href="/Home/Fillter">Light Novel</a>
-                                                    <a class="nav-link py-1 detailed-category" href="/Home/Fillter">Ngôn Tình</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="accordion-item">
-                                            <h2 class="accordion-header">
-                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                                    Hành trang đến trường
-                                                </button>
-                                            </h2>
-                                            <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                                                <div class="accordion-body">
-                                                    <a class="nav-link py-1 detailed-category" href="/Home/Fillter">Tiểu Thuyết</a>
-                                                    <a class="nav-link py-1 detailed-category" href="/Home/Fillter">Truyện Ngắn - Tản Văn</a>
-                                                    <a class="nav-link py-1 detailed-category" href="/Home/Fillter">Light Novel</a>
-                                                    <a class="nav-link py-1 detailed-category" href="/Home/Fillter">Ngôn Tình</a>
-                                                </div>
-                                            </div>
+                                        <div class="accordion" id="accordionCategoryFilter">
+                                            @{
+                                                if (categories != null && categories.Count > 0)
+                                                {
+                                                    foreach (var category in categories)
+                                                    {
+                                                        <div class="accordion-item">
+                                                            <h2 class="accordion-header">
+                                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCategory_@category.Id" aria-expanded="true" aria-controls="collapseCategory_@category.Id">
+                                                                    @category.Name
+                                                                </button>
+                                                            </h2>
+                                                            <div id="collapseCategory_@category.Id" class="accordion-collapse collapse" data-bs-parent="#accordionCategoryFilter">
+                                                                <div class="accordion-body">
+                                                                    @{
+                                                                        <div class="form-group form-check">
+                                                                            <label class="form-check-label w-100 py-2">
+                                                                                <input class="form-check-input" asp-for="CategoryId" type="radio" value="@category.Id" /> @category.Name
+                                                                            </label>
+                                                                        </div>
+                                                                        if (category.Subcategories.Count > 0)
+                                                                        {
+                                                                            foreach (var subcategory in category.Subcategories)
+                                                                            {
+                                                                                <div class="form-group form-check">
+                                                                                    <label class="form-check-label w-100 py-2">
+                                                                                        <input class="form-check-input" asp-for="SubcategoryId" type="radio" value="@subcategory.Id" /> @subcategory.Name
+                                                                                    </label>
+                                                                                </div>
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                }
+                                            }
                                         </div>
                                     </div>
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <h6 class="text-uppercase mb-0">@Html.DisplayNameFor(model => model.MinPrice)</h6>
+                                            <a class="nav-link py-1 reset-filter" data-filter="MinPrice" href="#">Đặt lại</a>
+                                        </div>
+                                        <div class="p-3 border rounded-3">
+                                            @for (int price = 0; price < 6; price++)
+                                            {
+                                                var minPrice = price * 100000;
+                                                <div class="form-group form-check">
+                                                    <label class="form-check-label w-100 py-2">
+                                                        <input class="form-check-input" asp-for="MinPrice" type="radio" value="@minPrice" /> @minPrice.ToString("N0") đ
+                                                    </label>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <h6 class="text-uppercase mb-0">@Html.DisplayNameFor(model => model.PartnerId)</h6>
+                                            <a class="nav-link py-1 reset-filter" data-subfilter="PartnerId" data-filter="PartnerTypeId" href="#">Đặt lại</a>
+                                        </div>
+                                        <div class="accordion" id="accordionPartnerFilter">
+                                            @{
+                                                if (partnerTypes != null && partnerTypes.Count > 0)
+                                                {
+                                                    foreach (var partnerType in partnerTypes)
+                                                    {
+                                                        <div class="accordion-item">
+                                                            <h2 class="accordion-header">
+                                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePartner_@partnerType.Id" aria-expanded="true" aria-controls="collapsePartner_@partnerType.Id">
+                                                                    @partnerType.Name
+                                                                </button>
+                                                            </h2>
+                                                            <div id="collapsePartner_@partnerType.Id" class="accordion-collapse collapse" data-bs-parent="#accordionPartnerFilter">
+                                                                <div class="accordion-body">
+                                                                    @{
+                                                                        <div class="form-group form-check">
+                                                                            <label class="form-check-label w-100 py-2">
+                                                                                <input class="form-check-input" asp-for="PartnerTypeId" type="radio" value="@partnerType.Id" /> @partnerType.Name
+                                                                            </label>
+                                                                        </div>
+                                                                        if (partnerType.Partners.Count > 0)
+                                                                        {
+                                                                            foreach (var partner in partnerType.Partners)
+                                                                            {
+                                                                                <div class="form-group form-check">
+                                                                                    <label class="form-check-label w-100 py-2">
+                                                                                        <input class="form-check-input" asp-for="PartnerId" type="radio" value="@partner.Id" /> @partner.Name
+                                                                                    </label>
+                                                                                </div>
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                }
+                                            }
+
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <h6 class="text-uppercase mb-0">@Html.DisplayNameFor(model => model.AuthorId)</h6>
+                                            <a class="nav-link py-1 reset-filter" data-filter="AuthorId" href="#">Đặt lại</a>
+                                        </div>
+                                        <div class="p-3 border rounded-3">
+                                            @{
+                                                if (authors != null && authors.Count > 0)
+                                                {
+                                                    foreach (var author in authors)
+                                                    {
+                                                        <div class="form-group form-check">
+                                                            <label class="form-check-label w-100 py-2">
+                                                                <input class="form-check-input" asp-for="AuthorId" type="radio" value="@author.Id" /> @author.Name
+                                                            </label>
+                                                        </div>
+                                                    }
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <h6 class="text-uppercase mb-0">@Html.DisplayNameFor(model => model.CoverTypeId)</h6>
+                                            <a class="nav-link py-1 reset-filter" data-filter="CoverTypeId" href="#">Đặt lại</a>
+                                        </div>
+                                        <div class="p-3 border rounded-3">
+                                            @{
+                                                if (coverTypes != null && coverTypes.Count > 0)
+                                                {
+                                                    foreach (var coverType in coverTypes)
+                                                    {
+                                                        <div class="form-group form-check">
+                                                            <label class="form-check-label w-100 py-2">
+                                                                <input class="form-check-input" asp-for="CoverTypeId" type="radio" value="@coverType.Id" /> @coverType.TypeName
+                                                            </label>
+                                                        </div>
+                                                    }
+                                                }
+                                            }
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="mb-3">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <h6 class="text-uppercase mb-0">Giá</h6>
-                                        <a class="nav-link py-1" href="/Home/Fillter">Tất cả</a>
-                                    </div>
-                                    <div class="p-3 border rounded-3">
-                                        <a class="nav-link py-1 active" href="/Home/Fillter">0đ - 150,000đ</a>
-                                        <a class="nav-link py-1" href="/Home/Fillter">150,000đ - 300,000đ</a>
-                                        <a class="nav-link py-1" href="/Home/Fillter">300,000đ - 500,000đ</a>
-                                        <a class="nav-link py-1" href="/Home/Fillter">500,000đ trở lên</a>
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <h6 class="text-uppercase mb-0">Nhà cung cấp</h6>
-                                        <a class="nav-link py-1" href="/Home/Fillter">Tất cả</a>
-                                    </div>
-                                    <div class="p-3 border rounded-3">
-                                        <a class="nav-link py-1 active" href="/Home/Fillter">AZ Việt Nam AZ Việt Nam AZ Việt Nam</a>
-                                        <a class="nav-link py-1" href="/Home/Fillter">AZ Việt Nam</a>
-                                        <a class="nav-link py-1" href="/Home/Fillter">AZ Việt Nam</a>
-                                        <a class="nav-link py-1" href="/Home/Fillter">AZ Việt Nam</a>
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <h6 class="text-uppercase mb-0">Nhà xuất bản</h6>
-                                        <a class="nav-link py-1" href="/Home/Fillter">Tất cả</a>
-                                    </div>
-                                    <div class="p-3 border rounded-3">
-                                        <a class="nav-link py-1 active" href="/Home/Fillter">Thanh Niên</a>
-                                        <a class="nav-link py-1" href="/Home/Fillter">Thanh Niên</a>
-                                        <a class="nav-link py-1" href="/Home/Fillter">Thanh Niên</a>
-                                        <a class="nav-link py-1" href="/Home/Fillter">Thanh Niên</a>
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <h6 class="text-uppercase mb-0">Tác giả</h6>
-                                        <a class="nav-link py-1" href="/Home/Fillter">Tất cả</a>
-                                    </div>
-                                    <div class="p-3 border rounded-3">
-                                        <a class="nav-link py-1 active" href="/Home/Fillter">Lưu Bát Bách</a>
-                                        <a class="nav-link py-1" href="/Home/Fillter">Lưu Bát Bách</a>
-                                        <a class="nav-link py-1" href="/Home/Fillter">Thanh Niên</a>
-                                        <a class="nav-link py-1" href="/Home/Fillter">Thanh Niên</a>
-                                    </div>
-                                </div>
-                            </div>
+                            </form>
                         </div>
                     </div>
                 </div>
                 <div class="col-12 col-lg-9">
-                    <h5 class="text-uppercase">Kết quả: có 76 kết quả được tìm thấy</h5>
-                    <div class="w-50 ms-auto">
-                        <div class="input-group">
-                            <select class="form-select sortBy" id="inputGroupSelectSortBy">
-                                <option selected>Choose...</option>
-                                <option value="1">One</option>
-                                <option value="2">Two</option>
-                                <option value="3">Three</option>
-                            </select>
-                            <label class="input-group-text" for="inputGroupSelectSortBy">Sắp xếp theo</label>
-                        </div>
-                    </div>
-                    <div class="row g-3 mt-1">
-                        <div class="col-md-3 col-sm-4 col-6">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs10.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-4 col-6">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs10.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-4 col-6">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs10.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-4 col-6">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs10.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-4 col-6">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs10.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-4 col-6">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs10.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-4 col-6">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs10.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-4 col-6">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs10.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-4 col-6">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs10.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-4 col-6">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs10.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-4 col-6">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs10.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-4 col-6">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs10.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-4 col-6">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs10.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-4 col-6">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs10.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-4 col-6">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs10.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-4 col-6">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs10.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-4 col-6">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs10.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-4 col-6">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs10.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-4 col-6">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs10.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-4 col-6">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs10.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tiếng Anh Cho NgườI Bắt Đầu (Tái Bản 2023)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
+                    <div class="d-flex justify-content-end">
+                        <div>
+                            <div class="input-group">
+                                <select asp-for="SortBy" class="form-select">
+                                    <option value="">-- Sắp xếp theo --</option>
+                                    <option value="@nameof(BookModel.Price)">Theo Giá</option>
+                                    <option value="@nameof(BookModel.Name)">Theo Tên</option>
+                                    <option value="@nameof(BookModel.CreatedAt)">Sách Mới</option>
+                                </select>
                             </div>
                         </div>
                     </div>
-                    <div class="mt-3">
-                        <nav>
-                            <ul class="pagination justify-content-end">
-                                <li class="page-item disabled">
-                                    <a class="page-link">Previous</a>
-                                </li>
-                                <li class="page-item"><a class="page-link active" href="#">1</a></li>
-                                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                <li class="page-item">
-                                    <a class="page-link" href="#">Next</a>
-                                </li>
-                            </ul>
-                        </nav>
-                    </div>
+                    <div id="filterResults"></div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        submitForm(1);
+        function submitForm(page) {
+
+            const $form = $('#filterForm');
+            const formData = $form.serializeArray();
+            const sortBy = $('select[name="SortBy"]').val();
+            const search = $('input[name="Search"]').val();
+
+            formData.push({ name: "page", value: page });
+            formData.push({ name: "SortBy", value: sortBy });
+            formData.push({ name: "Search", value: search });
+
+            $.ajax({
+                url: $form.attr('action'),
+                type: $form.attr('method'),
+                data: formData,
+                success: function (html) {
+                    $('#filterResults').html(html);
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+        }
+
+        function resetFilter(filterName) {
+            $('input[name="' + filterName + '"]').prop('checked', false);
+            submitForm(1);
+        }
+
+        function resetAllFilters() {
+            $('input[type="radio"]').prop('checked', false);
+            submitForm(1);
+        }
+
+        // Attach event handlers
+        $(document).ready(function () {
+            $('input[type="radio"]').on('change', submitForm);
+            $('.reset-filter').on('click', function (e) {
+                e.preventDefault();
+                resetFilter($(this).data('filter'));
+                resetFilter($(this).data('subfilter'));
+            });
+            $('#resetAll').on('click', function (e) {
+                e.preventDefault();
+                resetAllFilters();
+            });
+            $('select[name="SortBy"]').change(function () {
+                submitForm(1);
+            });
+        });
+    </script>
+}
 

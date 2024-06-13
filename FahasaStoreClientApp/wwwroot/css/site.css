@@ -180,6 +180,14 @@
     background-color: var(--primary-color-fahasa) !important;
 }
 
+.user .dropdown-menu .dropdown-item:hover,
+.account .dropdown-menu .dropdown-item:hover,
+.cart .dropdown-menu .dropdown-item:hover,
+.notification .dropdown-menu .dropdown-item:hover {
+    background-color: #999;
+    color: #fff;
+}
+
 /*.category-menu .list-group-item.active,
 .category-menu .list-group-item:hover {
     color: var(--primary-color-fahasa) !important;

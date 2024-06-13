@@ -26,6 +26,9 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/FahasaStoreClientApp.styles.css" asp-append-version="true" />
 
+    <!-- toastr -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+
     @* custom css *@
     <style id="dynamic-keyframes"></style>
 </head>
@@ -50,12 +53,15 @@
 
                     <div class="search-box pe-0 pe-sm-3 flex-grow-1 order-1 order-sm-0 my-1">
                         <div class="border rounded-3 position-relative dropdown">
-                            <div class="p-1 d-flex">
-                                <input type="search" placeholder="Bạn muốn tìm kiếm gì?" class="border-0 flex-grow-1" style="outline: none;" />
-                                <button type="button" class="border-0 px-4 py-1 rounded-3 bg-primary-fahasa">
-                                    <i class="bi bi-search"></i>
-                                </button>
-                            </div>
+                            <form asp-action="Search" asp-controller="Home">
+                                <div class="p-1 d-flex">
+                                    <input type="search" name="Search" placeholder="Bạn muốn tìm kiếm gì?" class="border-0 flex-grow-1" value="@ViewData["Search"]" style="outline: none;" />
+                                    <button type="submit" class="border-0 px-4 py-1 rounded-3 bg-primary-fahasa">
+                                        <i class="bi bi-search"></i>
+                                    </button>
+                                </div>
+                            </form>
+                            
                             <div class="result-search position-absolute top-100 w-100 p-0 rounded-bottom dropdown-menu bg-white overflow-hidden">
                                 <div class="container py-2">
                                     <div class="row g-0">
@@ -97,7 +103,7 @@
                     </div>
                     
                     @{
-                        if (!string.IsNullOrEmpty(userLogin.FullName))
+                        if (userLogin.CurrentUser != null)
                         {
                             <div id="notification"></div>
                             <div class="ps-3 d-block d-lg-none"> </div>
@@ -106,8 +112,8 @@
                             <div class="ps-3 d-block d-lg-none"> </div>
                             <div class="dropdown user my-1">
                                 <div data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;" class="user-btn py-2 pe-3 d-flex flex-column align-items-center fw-bold text-black-50">
-                                    <img src="@userLogin.Avatar" height="25" width="25" class="rounded-circle" style="object-fit: cover;" />
-                                    <span class="dropdown-toggle d-none d-lg-block">@userLogin.FullName</span>
+                                    <img src="@userLogin.CurrentUser.ImageUrl" height="25" width="25" class="rounded-circle" style="object-fit: cover;" />
+                                    <span class="dropdown-toggle d-none d-lg-block">@userLogin.CurrentUser.FullName</span>
                                 </div>
                                 <ul class="dropdown-menu dropdown-menu-end shadow py-0">
                                     <li><a class="dropdown-item" href="/User/ControlPanel">Tài khoản</a></li>
@@ -130,10 +136,7 @@
 
     </header>
 
-
     @RenderBody()
-
-    @* @await Html.PartialAsync("~/Views/PartialView/ChatLayout.cshtml") *@
 
     @* chat *@
     <div class="position-fixed bottom-0 end-0 z-3">
@@ -290,13 +293,16 @@
     <script src="~/js/popper.min.js"></script>
     <script src="~/js/bootstrap.min.js"></script>
     @* Slick *@
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.min.js" integrity="sha512-HGOnQO9+SP1V92SrtZfjqxxtLmVzqZpjFFekvzZVWoiASSQgSr4cw9Kqd2+l8Llp4Gm0G8GIFJ4ddwZilcdb8A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.min.js"></script>
 
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 
     @* swiper *@
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+    <!-- toastr -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 
     @* chat *@
     <script>
@@ -313,13 +319,16 @@
 
     </script>
 
+    <script>
+        RenderPartialView("/Home/GetCategories", "category-menu");
+    </script>
+
     @{
-        if (!string.IsNullOrEmpty(userLogin.FullName))
+        if (userLogin.CurrentUser != null)
         {
             <script>
-                RenderPartialView("/Home/GetCart", "cart"); 
-                RenderPartialView("/Home/GetNotifications", "notification");
-                RenderPartialView("/Home/GetCategories", "category-menu");
+                RenderPartialView("/User/GetCart", "cart");
+                RenderPartialView("/User/GetNotifications", "notification");
             </script>
         }
     }

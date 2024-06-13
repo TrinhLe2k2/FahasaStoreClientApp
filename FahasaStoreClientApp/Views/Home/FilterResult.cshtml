@@ -1,0 +1,60 @@
+﻿@using FahasaStoreClientApp.Models.DTO
+@model FahasaStoreClientApp.Models.CustomModels.PaginatedResponse<BookDTO>
+@{
+    
+}
+
+<div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 g-4 mt-1 mb-3">
+    @{
+        foreach (var book in Model.Items)
+        {
+            <div>
+                <div class="card mx-2 position-relative overflow-hidden">
+                    <a href="/Home/Product/@book.Id" class="text-decoration-none mx-2" style="color: #000;" title="@book.Name">
+                        <div class="w-100 position-relative" style="padding-bottom: 100%;">
+                            <img src="@book.PosterImages.FirstOrDefault()?.ImageUrl" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
+                        </div>
+                        <div class="card-body p-1">
+                            <h6 class="card-title twoLine">@book.Name</h6>
+                            <div class="d-flex flex-column justify-content-start">
+                                <div>
+                                    <span class="card-text text-danger fw-bold">@((book.Price - book.Price * book.DiscountPercentage / 100).ToString("N0")) đ</span>
+                                    <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">- @book.DiscountPercentage %</small>
+                                </div>
+                                <small class="card-text text-decoration-line-through">@book.Price.ToString("N0") đ</small>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        }
+    }
+</div>
+@if (Model.PageCount > 1)
+{
+    <nav>
+        <ul class="pagination justify-content-end mb-0">
+            <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
+                <a class="page-link" href="#" onclick="submitForm(1)">First</a>
+            </li>
+            <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
+                <a class="page-link" href="#" onclick="submitForm(@Model.PageNumber - 1)">Previous</a>
+            </li>
+
+            @for (int i = Model.StartPage; i <= Model.EndPage; i++)
+            {
+                <li class="page-item">
+                    <a class="page-link @(Model.PageNumber == i ? "active" : "")" href="#" onclick="submitForm(@i)">@i</a>
+                </li>
+            }
+
+            <li class="page-item @(Model.PageNumber == Model.PageCount ? "disabled" : "")">
+                <a class="page-link" href="#" onclick="submitForm(@Model.PageNumber + 1)">Next</a>
+            </li>
+            <li class="page-item @(Model.PageNumber == Model.PageCount ? "disabled" : "")">
+                <a class="page-link" href="#" onclick="submitForm(@Model.PageCount)">Last</a>
+            </li>
+        </ul>
+    </nav>
+}
+

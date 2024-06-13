@@ -1,13 +1,11 @@
 ﻿@using FahasaStoreClientApp.Components
-@using FahasaStoreClientApp.Entities
-@using FahasaStoreClientApp.Models.Entities
-@using FahasaStoreClientApp.Models.ViewModels
+@using FahasaStoreClientApp.Models.DTO
 @{
     ViewData["Title"] = "Home Page";
-    var banners = ViewData["Banners"] as List<Banner>;
-    var banners5 = new List<Banner>();
-    var banners2 = new List<Banner>();
-    var banners4 = new List<Banner>();
+    var banners = ViewData["Banners"] as List<BannerDTO>;
+    var banners5 = new List<BannerDTO>();
+    var banners2 = new List<BannerDTO>();
+    var banners4 = new List<BannerDTO>();
     if (banners != null && banners.Count > 0)
     {
         var bannersCount = banners.Count;
@@ -16,16 +14,19 @@
         banners4 = bannersCount >= 12 ? banners.Skip(8).Take(4).ToList() : banners.Take(4).ToList();
     }
 
-    var menus = ViewData["Menus"] as List<Menu>;
+    var menus = ViewData["Menus"] as List<MenuDTO>;
 
-    var flashSale = ViewData["FlashSale"] as FlashSaleEntities;
+    var flashSale = ViewData["FlashSale"] as List<FlashSaleBookDTO>;
 
-    var trendOfDay = ViewData["TrendOfDay"] as List<BookVM>;
-    var trendOfMonth = ViewData["TrendOfMonth"] as List<BookVM>;
-    var trendOfYear = ViewData["TrendOfYear"] as List<BookVM>;
-    
-    var topSellingBooksDefault =  ViewData["TopSellingBooksDefault"] as List<BookVM>;
-    var trademarkProductDefault =  ViewData["TrademarkProductDefault"] as List<BookVM>;
+    var trendOfMonth = ViewData["TrendOfMonth"] as List<BookDTO>;
+    var trendOfYear = ViewData["TrendOfYear"] as List<BookDTO>;
+
+    var topSellingBooksDefault =  ViewData["TopSellingBooksDefault"] as List<BookDTO>;
+
+    var categories = ViewData["categories"] as List<CategoryDTO>;
+
+    var partners = ViewData["Partners"] as List<PartnerDTO>;
+
 }
 <div class="bg-black bg-opacity-10 rounded-3">
     @* banner top *@
@@ -154,13 +155,13 @@
                 </div>
                 <a href="" class="ms-auto d-flex text-decoration-none"><span class="d-none d-md-block">Xem tất cả</span> <i class="bi bi-chevron-right"></i></a>
             </div>
-            <div class="flashSaleMenu mt-4" countDownDate="10-10-2024">
+            <div class="flashSaleMenu mt-4" countDownDate="@flashSale?.FirstOrDefault()?.FlashSale.EndDate">
                 @{
-                    var bookFs = flashSale?.FlashSaleBook?.ToList();
-                    if(bookFs != null && bookFs.Count > 0) {
-                        foreach (var item in bookFs)
+                    if (flashSale != null && flashSale.Count > 0)
+                    {
+                        foreach (var item in flashSale)
                         {
-                            @(await Html.RenderComponentAsync<BookComponent>(RenderMode.ServerPrerendered, new { FlashSaleBook = item, Book = item.Book }))
+                            @(await Html.RenderComponentAsync<RenderBookFlashSaleComponent>(RenderMode.ServerPrerendered, new { FlashSaleBook = item }))
                         }
                     }
                 }
@@ -176,12 +177,7 @@
         <div class="bg-white p-3 rounded-bottom-3">
             <ul class="nav nav-tabs" id="shoppingTrendsTab" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="trendOfDay-tab" data-bs-toggle="tab" data-bs-target="#trendOfDay-tab-pane" type="button" role="tab" aria-controls="trendOfDay-tab-pane" aria-selected="true">
-                        Xu Hướng Theo Ngày
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="trendOfMonth-tab" data-bs-toggle="tab" data-bs-target="#trendOfMonth-tab-pane" type="button" role="tab" aria-controls="trendOfMonth-tab-pane" aria-selected="false">
+                    <button class="nav-link active" id="trendOfMonth-tab" data-bs-toggle="tab" data-bs-target="#trendOfMonth-tab-pane" type="button" role="tab" aria-controls="trendOfMonth-tab-pane" aria-selected="false">
                         Xu Hướng Theo Tháng
                     </button>
                 </li>
@@ -192,23 +188,11 @@
                 </li>
             </ul>
             <div class="tab-content" id="shoppingTrendsTab">
-                <div class="tab-pane fade show active" id="trendOfDay-tab-pane" role="tabpanel" aria-labelledby="trendOfDay-tab" tabindex="0">
-                    @await Html.PartialAsync("/Views/PartialViews/_BooksPartial.cshtml", trendOfDay)
-                    <div class="text-center mt-3">
-                        <a href="" class="btn btn-outline-danger px-5">Xem Thêm</a>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="trendOfMonth-tab-pane" role="tabpanel" aria-labelledby="trendOfMonth-tab" tabindex="0">
+                <div class="tab-pane fade show active" id="trendOfMonth-tab-pane" role="tabpanel" aria-labelledby="trendOfMonth-tab" tabindex="0">
                     @await Html.PartialAsync("/Views/PartialViews/_BooksPartial.cshtml", trendOfMonth)
-                    <div class="text-center mt-3">
-                        <a href="" class="btn btn-outline-danger px-5">Xem Thêm</a>
-                    </div>
                 </div>
                 <div class="tab-pane fade" id="trendOfYear-tab-pane" role="tabpanel" aria-labelledby="trendOfYear-tab" tabindex="0">
                     @await Html.PartialAsync("/Views/PartialViews/_BooksPartial.cshtml", trendOfYear)
-                    <div class="text-center mt-3">
-                        <a href="" class="btn btn-outline-danger px-5">Xem Thêm</a>
-                    </div>
                 </div>
             </div>
         </div>
@@ -222,1413 +206,83 @@
         <div class="p-3 bg-white rounded-bottom-3">
             <ul class="nav nav-tabs mb-1" id="rankingTab">
                 <li class="nav-item">
-                    <button class="nav-link active" data-bs-toggle="tab">
-                        Văn học
+                    <button class="nav-link active" data-bs-toggle="tab" CategoryId="0">
+                        Tất cả
                     </button>
                 </li>
-                <li class="nav-item">
-                    <button class="nav-link" data-bs-toggle="tab">
-                        Kinh tế
-                    </button>
-                </li>
-                <li class="nav-item">
-                    <button class="nav-link" data-bs-toggle="tab">
-                        Tâm lý - kỹ năng sống
-                    </button>
-                </li>
-                <li class="nav-item">
-                    <button class="nav-link" data-bs-toggle="tab">
-                        Sách học ngoại ngữ
-                    </button>
-                </li>
-                <li class="nav-item">
-                    <button class="nav-link" data-bs-toggle="tab">
-                        Thể loại khác
-                    </button>
-                </li>
+                @if (categories != null && categories.Count > 0)
+                {
+                    foreach (var category in categories)
+                    {
+                        <li class="nav-item">
+                            <button class="nav-link" data-bs-toggle="tab" CategoryId="@category.Id">
+                                @category.Name
+                            </button>
+                        </li>
+                    }
+                }
             </ul>
-            <div class="tab-content">
-                @await Html.PartialAsync("/Views/PartialViews/_TopSellingBooksPartial.cshtml", topSellingBooksDefault)
-            </div>
+            <div id="tab-content_rankingTab" class="tab-content"></div>
         </div>
     </div>
-    @* trademark product *@
-    <div class="container mt-4">
-        <div class="d-flex align-items-center p-3 rounded-top-3 bg-white">
-            <img src="~/image/icon_dealhot_new.png" width="32" height="32" class="object-fit-cover rounded-3" />
-            <h5 class="fw-bold mb-0 p-2">Thương Hiệu Nổi Bật</h5>
-        </div>
-        <div class="bg-white p-3 rounded-bottom-3">
-            <ul class="nav nav-tabs" id="shoppingTrendsTab" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="trendOfDay-tab" data-bs-toggle="tab" data-bs-target="#trendOfDay-tab-pane" type="button" role="tab" aria-controls="trendOfDay-tab-pane" aria-selected="true">
-                        Kim Đồng
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="trendOfMonth-tab" data-bs-toggle="tab" data-bs-target="#trendOfMonth-tab-pane" type="button" role="tab" aria-controls="trendOfMonth-tab-pane" aria-selected="false">
-                        Đinh Tị
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="trendOfYear-tab" data-bs-toggle="tab" data-bs-target="#trendOfYear-tab-pane" type="button" role="tab" aria-controls="trendOfYear-tab-pane" aria-selected="false">
-                        1980 books
-                    </button>
-                </li>
-            </ul>
-            <div class="tab-content" id="shoppingTrendsTab">
-                <div class="tab-pane fade show active" id="trendOfDay-tab-pane" role="tabpanel" aria-labelledby="trendOfDay-tab" tabindex="0">
-                    @await Html.PartialAsync("/Views/PartialViews/_BooksPartial.cshtml", trademarkProductDefault)
-                    <div class="text-center mt-3">
-                        <a href="" class="btn btn-outline-danger px-5">Xem Thêm</a>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="trendOfMonth-tab-pane" role="tabpanel" aria-labelledby="trendOfMonth-tab" tabindex="0">
-                    <div class="row row-cols-2 row-cols-sm-4 row-cols-md-5 g-3 mt-1">
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs3.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs3.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs3.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs3.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs3.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs3.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs3.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs3.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs3.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs3.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="text-center mt-3">
-                        <a href="" class="btn btn-outline-danger px-5">Xem Thêm</a>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="trendOfYear-tab-pane" role="tabpanel" aria-labelledby="trendOfYear-tab" tabindex="0">
-                    <div class="row row-cols-2 row-cols-sm-4 row-cols-md-5 g-3 mt-1">
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs4.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs4.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs4.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs4.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs4.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs4.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs4.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs4.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs4.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs4.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="text-center mt-3">
-                        <a href="" class="btn btn-outline-danger px-5">Xem Thêm</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+
     @* Category book *@
-    <div class="container mt-4">
-        <div class="d-flex align-items-center p-3 rounded-top-3 bg-white">
-            <img src="~/image/icon_dealhot_new.png" width="32" height="32" class="object-fit-cover rounded-3" />
-            <h5 class="fw-bold mb-0 p-2">Foreign Books</h5>
-        </div>
-        <div class="bg-white p-3 rounded-bottom-3">
-            <ul class="nav nav-tabs" id="shoppingTrendsTab" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="trendOfDay-tab" data-bs-toggle="tab" data-bs-target="#trendOfDay-tab-pane" type="button" role="tab" aria-controls="trendOfDay-tab-pane" aria-selected="true">
-                        Kim Đồng
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="trendOfMonth-tab" data-bs-toggle="tab" data-bs-target="#trendOfMonth-tab-pane" type="button" role="tab" aria-controls="trendOfMonth-tab-pane" aria-selected="false">
-                        Đinh Tị
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="trendOfYear-tab" data-bs-toggle="tab" data-bs-target="#trendOfYear-tab-pane" type="button" role="tab" aria-controls="trendOfYear-tab-pane" aria-selected="false">
-                        1980 books
-                    </button>
-                </li>
-            </ul>
-            <div class="tab-content" id="shoppingTrendsTab">
-                <div class="tab-pane fade show active" id="trendOfDay-tab-pane" role="tabpanel" aria-labelledby="trendOfDay-tab" tabindex="0">
-                    @await Html.PartialAsync("/Views/PartialViews/_BooksPartial.cshtml", trademarkProductDefault)
-                    <div class="text-center mt-3">
-                        <a href="" class="btn btn-outline-danger px-5">Xem Thêm</a>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="trendOfMonth-tab-pane" role="tabpanel" aria-labelledby="trendOfMonth-tab" tabindex="0">
-                    <div class="row row-cols-2 row-cols-sm-4 row-cols-md-5 g-3 mt-1">
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs3.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
+    <div id="booksCategoryTab">
+        @{
+            if (categories != null && categories.Count > 0)
+            {
+                foreach (var category in categories)
+                {
+                    <div class="container mt-4">
+                        <div class="d-flex align-items-center p-3 rounded-top-3 bg-white">
+                            <img src="~/image/icon_dealhot_new.png" width="32" height="32" class="object-fit-cover rounded-3" />
+                            <h5 class="fw-bold mb-0 p-2">@category.Name</h5>
                         </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs3.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs3.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs3.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs3.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs3.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs3.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs3.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs3.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs3.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
+                        <div class="bg-white p-3 rounded-bottom-3">
+                            <ul class="nav nav-tabs mb-1 ul-Tabs">
+                                <li class="nav-item">
+                                    <button class="nav-link active" data-bs-toggle="tab" CategoryId="@category.Id">
+                                        Tất cả
+                                    </button>
+                                </li>
+                                @{
+                                    if (category.Subcategories != null && category.Subcategories.Count > 0)
+                                    {
+                                        foreach (var subcategory in category.Subcategories.Take(5))
+                                        {
+                                            <li class="nav-item">
+                                                <button class="nav-link" data-bs-toggle="tab" CategoryId="@category.Id" SubcategoryId="@subcategory.Id">
+                                                    @subcategory.Name
+                                                </button>
+                                            </li>
+                                        }
+                                    }
+                                }
+                            </ul>
+                            <div class="tab-content" id="tab-content_@category.Id"></div>
                         </div>
                     </div>
-                    <div class="text-center mt-3">
-                        <a href="" class="btn btn-outline-danger px-5">Xem Thêm</a>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="trendOfYear-tab-pane" role="tabpanel" aria-labelledby="trendOfYear-tab" tabindex="0">
-                    <div class="row row-cols-2 row-cols-sm-4 row-cols-md-5 g-3 mt-1">
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs4.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs4.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs4.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs4.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs4.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs4.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs4.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs4.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs4.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs4.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="text-center mt-3">
-                        <a href="" class="btn btn-outline-danger px-5">Xem Thêm</a>
-                    </div>
-                </div>
-            </div>
-        </div>
+                }
+            }
+        }
     </div>
-    @* Manga *@
-    <div class="container mt-4">
-        <div class="d-flex align-items-center p-3 rounded-top-3 bg-white">
-            <img src="~/image/icon_dealhot_new.png" width="32" height="32" class="object-fit-cover rounded-3" />
-            <h5 class="fw-bold mb-0 p-2">Manga nổi bật</h5>
-        </div>
-        <div class="bg-white p-3 rounded-bottom-3">
-            <ul class="nav nav-tabs" id="shoppingTrendsTab" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="trendOfDay-tab" data-bs-toggle="tab" data-bs-target="#trendOfDay-tab-pane" type="button" role="tab" aria-controls="trendOfDay-tab-pane" aria-selected="true">
-                        Kim Đồng
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="trendOfMonth-tab" data-bs-toggle="tab" data-bs-target="#trendOfMonth-tab-pane" type="button" role="tab" aria-controls="trendOfMonth-tab-pane" aria-selected="false">
-                        Đinh Tị
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="trendOfYear-tab" data-bs-toggle="tab" data-bs-target="#trendOfYear-tab-pane" type="button" role="tab" aria-controls="trendOfYear-tab-pane" aria-selected="false">
-                        1980 books
-                    </button>
-                </li>
-            </ul>
-            <div class="tab-content" id="shoppingTrendsTab">
-                <div class="tab-pane fade show active" id="trendOfDay-tab-pane" role="tabpanel" aria-labelledby="trendOfDay-tab" tabindex="0">
-                    @await Html.PartialAsync("/Views/PartialViews/_BooksPartial.cshtml", trademarkProductDefault)
-                    <div class="text-center mt-3">
-                        <a href="" class="btn btn-outline-danger px-5">Xem Thêm</a>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="trendOfMonth-tab-pane" role="tabpanel" aria-labelledby="trendOfMonth-tab" tabindex="0">
-                    <div class="row row-cols-2 row-cols-sm-4 row-cols-md-5 g-3 mt-1">
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs3.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs3.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs3.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs3.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs3.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs3.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs3.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs3.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs3.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs3.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Tâm Lý Học Tội Phạm - Phác Họa Chân Dung Kẻ Phạm Tội</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="text-center mt-3">
-                        <a href="" class="btn btn-outline-danger px-5">Xem Thêm</a>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="trendOfYear-tab-pane" role="tabpanel" aria-labelledby="trendOfYear-tab" tabindex="0">
-                    <div class="row row-cols-2 row-cols-sm-4 row-cols-md-5 g-3 mt-1">
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs4.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs4.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs4.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs4.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs4.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs4.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs4.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs4.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs4.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card position-relative">
-                                <a href="~/Home/InfomationProduct" class="text-decoration-none mx-2" style="color: #000;" title="Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)">
-                                    <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                                        <img src="~/image/fs4.jpg" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h6 class="card-title twoLine">Thiên Tài Bên Trái, Kẻ Điên Bên Phải (Tái Bản 2021)</h6>
-                                        <div class="d-flex flex-column justify-content-start">
-                                            <div>
-                                                <span class="card-text text-danger fw-bold">62.780 đ</span>
-                                                <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">-75%</small>
-                                            </div>
-                                            <small class="card-text text-decoration-line-through">86.000 đ</small>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="text-center mt-3">
-                        <a href="" class="btn btn-outline-danger px-5">Xem Thêm</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    
     @* trademark *@
     <div class="container mt-4">
         <div class="trade-mark rounded-3 bg-white py-3">
-            <div>
-                <a href="">
-                    <img src="~/image/1_NCC_KimDong_115x115.png" class="object-fit-contain p-2" />
-                </a>
-            </div>
-            <div>
-                <a href="">
-                    <img src="~/image/2_NCC_DinhTi_115x115.png" class="object-fit-contain p-2" />
-                </a>
-            </div>
-            <div>
-                <a href="">
-                    <img src="~/image/3_NCC_TanViet_115x115.png" class="object-fit-contain p-2" />
-                </a>
-            </div>
-            <div>
-                <a href="">
-                    <img src="~/image/4_NCC_1980_115x115.png" class="object-fit-contain p-2" />
-                </a>
-            </div>
-            <div>
-                <a href="">
-                    <img src="~/image/5_NCC_McBook_115x115.png" class="object-fit-contain p-2" />
-                </a>
-            </div>
-            <div>
-                <a href="">
-                    <img src="~/image/6_NCC_HuyHoang_115x115.png" class="object-fit-contain p-2" />
-                </a>
-            </div>
-            <div>
-                <a href="">
-                    <img src="~/image/7_NCC_SGBook_115x115.png" class="object-fit-contain p-2" />
-                </a>
-            </div>
-            <div>
-                <a href="">
-                    <img src="~/image/8_NCC_ZenBooks_115x115.png" class="object-fit-contain p-2" />
-                </a>
-            </div>
-            <div>
-                <a href="">
-                    <img src="~/image/9_NCC_MinhLong_115x115.png" class="object-fit-contain p-2" />
-                </a>
-            </div>
-            <div>
-                <a href="">
-                    <img src="~/image/10_NCC_ThaiHa_115x115.png" class="object-fit-contain p-2" />
-                </a>
-            </div>
-            <div>
-                <a href="">
-                    <img src="~/image/11_NCC_BachViet_115x115.png" class="object-fit-contain p-2" />
-                </a>
-            </div>
-            <div>
-                <a href="">
-                    <img src="~/image/12_NCC_Duka_115x115.png" class="object-fit-contain p-2" />
-                </a>
-            </div>
-            <div>
-                <a href="">
-                    <img src="~/image/13_NCC_FirstNew_115x115.png" class="object-fit-contain p-2" />
-                </a>
-            </div>
-            <div>
-                <a href="">
-                    <img src="~/image/14_NCC_MuKi_115x115.png" class="object-fit-contain p-2" />
-                </a>
-            </div>
-            <div>
-                <a href="">
-                    <img src="~/image/15_NCC_MegaToy_115x115.png" class="object-fit-contain p-2" />
-                </a>
-            </div>
-            <div>
-                <a href="">
-                    <img src="~/image/16_NCC_MegaBooks_115x115.png" class="object-fit-contain p-2" />
-                </a>
-            </div>
-            <div>
-                <a href="">
-                    <img src="~/image/17_NCC_AZ_115x115.png" class="object-fit-contain p-2" />
-                </a>
-            </div>
-            <div>
-                <a href="">
-                    <img src="~/image/18_NCC_SkyBook_115x115.png" class="object-fit-contain p-2" />
-                </a>
-            </div>
+            @{
+                if (partners != null && partners.Count > 0)
+                {
+                    foreach(var item in partners)
+                    {
+                        <div class="position-relative" style="padding-bottom: 100%;">
+                            <a href="" class="position-absolute w-100 h-100">
+                                <img src="@item.ImageUrl" class="object-fit-cover p-2 w-100 h-100" />
+                            </a>
+                        </div>
+                    }
+                }
+            }
         </div>
     </div>
 </div>
@@ -1710,49 +364,28 @@
                     {
                         breakpoint: 992,
                         settings: {
-                            slidesToShow: 5,
-                            slidesToScroll: 5
-                        }
-                    },
-                    {
-                        breakpoint: 768,
-                        settings: {
                             slidesToShow: 4,
                             slidesToScroll: 4
                         }
                     },
                     {
-                        breakpoint: 576,
+                        breakpoint: 768,
                         settings: {
                             slidesToShow: 3,
                             slidesToScroll: 3
                         }
                     },
+                    {
+                        breakpoint: 576,
+                        settings: {
+                            slidesToShow: 2,
+                            slidesToScroll: 2
+                        }
+                    },
                 ]
             });
         });
-        // Ranking sell
-        $(document).ready(function () {
-            $('.ranking-slider-for').slick({
-                slidesToShow: 1,
-                slidesToScroll: 1,
-                arrows: false,
-                dots: false,
-                fade: true,
-                autoplay: true,
-                autoplaySpeed: 2000,
-                asNavFor: '.ranking-slider-nav',
-            });
-            $('.ranking-slider-nav').slick({
-                slidesToShow: 5,
-                slidesToScroll: 1,
-                asNavFor: '.ranking-slider-for',
-                dots: false,
-                arrows: false,
-                focusOnSelect: true,
-                vertical: true
-            });
-        });
+        
         // trade mark
         $(document).ready(function () {
             $('.trade-mark').slick({

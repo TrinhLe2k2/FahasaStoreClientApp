@@ -1,49 +1,37 @@
 ﻿@using FahasaStoreClientApp.Components
-@using FahasaStoreClientApp.Models;
-@model FahasaStoreClientApp.Models.User
-@{
-    var voucher = new Voucher(1, "code 2025", "2025code", "giam 50%", 10, new DateTime(2024, 4, 30), 10000, 200000, 99);
-    var voucher2 = new Voucher(2, "new code 2025", "2025codenew", "giam 50%", 10, new DateTime(2024, 4, 30), 10000, 200000, 99);
-}
-<div class="bg-black bg-opacity-10">
-    <div class="container pt-4">
-        <div class="bg-white rounded-3 py-3">
-            <div class="row">
-                <div class="col-lg-3">
-                    @(await Html.RenderComponentAsync<SideBarUser>(RenderMode.ServerPrerendered, new { active = 1 }))
-                </div>
-                <div class="col-lg-9 px-4">
-                    <h5 class="text-uppercase">Thông tin tài khoản</h5><hr />
-                    <form asp-action="Information">
-                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+@model FahasaStoreClientApp.Models.EModels.AspNetUserModel
+<div>
+    <!-- Button trigger modal -->
+    <button type="button" id="btn-toggle" class="btn btn-primary" hidden data-bs-toggle="modal" data-bs-target="#appModal">
+        Launch demo modal
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="appModal" tabindex="-1" aria-labelledby="appModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <form asp-action="Information" id="form-Information" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="appModalLabel">Chỉnh sửa</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
                         <div class="row">
-                            <div class="col-4">
-                                <div class="form-group">
-                                    <label asp-for="ImageUrl" class="control-label"></label>
-                                    <input asp-for="ImageUrl" type="file" hidden class="form-control" id="imageInput" />
-                                    <br />
-                                    <label for="imageInput" role="button" class="rounded-circle">
-                                        <div id="imagePreview" class="position-relative overflow-hidden rounded-circle">
-                                            <img src="https://images.fpt.shop/unsafe/filters:quality(90)/fptshop.com.vn/uploads/images/tin-tuc/169649/Originals/hinh-nen-anime-cute%20(3).jpg" width="120" height="120" class="object-fit-cover rounded-circle" />
-                                            <div class="overlay rounded-circle"><i class="bi bi-camera"></i></div>
-                                        </div>
-                                    </label>
-                                    <span asp-validation-for="ImageUrl" class="text-danger"></span>
-                                </div>
-                                <div class="form-group mt-3">
-                                    <input type="submit" value="Lưu lại" class="btn btn-outline-danger" />
+                            <div class="col-md-3">
+                                <div class="d-flex flex-md-column align-items-center justify-content-around">
+                                    <div class="form-group">
+                                        <label asp-for="ImageUrl" class="control-label text-center d-block"></label>
+                                        <input type="file" name="fileImage" class="form-control" id="fileImage" value="@Model.ImageUrl" hidden />
+                                        @(await Html.RenderComponentAsync<ImagePreviewComponent>(RenderMode.ServerPrerendered, new { idInputFile = "fileImage" }))
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-8">
+                            <div class="col-md-9">
                                 <div class="form-group">
-                                    <label asp-for="FirstName" class="control-label"></label>
-                                    <input asp-for="FirstName" class="form-control" />
-                                    <span asp-validation-for="FirstName" class="text-danger"></span>
-                                </div>
-                                <div class="form-group">
-                                    <label asp-for="LastName" class="control-label"></label>
-                                    <input asp-for="LastName" class="form-control" />
-                                    <span asp-validation-for="LastName" class="text-danger"></span>
+                                    <label asp-for="FullName" class="control-label"></label>
+                                    <input asp-for="FullName" class="form-control" />
+                                    <span asp-validation-for="FullName" class="text-danger"></span>
                                 </div>
                                 <div class="form-group">
                                     <label asp-for="Email" class="control-label"></label>
@@ -51,52 +39,41 @@
                                     <span asp-validation-for="Email" class="text-danger"></span>
                                 </div>
                                 <div class="form-group">
-                                    <label asp-for="Phone" class="control-label"></label>
-                                    <input asp-for="Phone" class="form-control" />
-                                    <span asp-validation-for="Phone" class="text-danger"></span>
-                                </div>
-                                <div class="form-group">
-                                    <label asp-for="Username" class="control-label"></label>
-                                    <input asp-for="Username" class="form-control" />
-                                    <span asp-validation-for="Username" class="text-danger"></span>
-                                </div>
-                                <div class="form-group">
-                                    <label asp-for="Password" class="control-label"></label>
-                                    <input asp-for="Password" class="form-control" />
-                                    <span asp-validation-for="Password" class="text-danger"></span>
-                                </div>
-                                <div class="form-group">
-                                    <label asp-for="ConfirmPassword" class="control-label"></label>
-                                    <input asp-for="ConfirmPassword" class="form-control" />
-                                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                                    <label asp-for="PhoneNumber" class="control-label"></label>
+                                    <input asp-for="PhoneNumber" class="form-control" />
+                                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                                 </div>
                             </div>
                         </div>
-                    </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                        <input type="submit" value="Cập Nhật" class="btn btn-danger" />
+                    </div>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 </div>
 
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            $('#imageInput').change(function (event) {
-                var input = event.target;
-                var reader = new FileReader();
-
-                reader.onload = function () {
-                    var dataURL = reader.result;
-                    $('#imagePreview img').attr('src', dataURL);
-                };
-
-                reader.readAsDataURL(input.files[0]);
-            });
-        });
-    </script>
-}
+<script>
+    $("#btn-toggle").click();
+    // $("#form-Information").submit(function (event) {
+    //     event.preventDefault();
+    //     var formData = $(this).serialize();
+    //     $.ajax({
+    //         url: $(this).attr('action'),
+    //         type: 'POST',
+    //         data: formData,
+    //         success: function (response) {
+    //             toastr.success(response.message);
+    //             window.location.reload();
+    //         },
+    //         error: function (xhr, status, error) {
+    //             alert("Đã xảy ra lỗi: " + error);
+    //         }
+    //     });
+    // });
+</script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>

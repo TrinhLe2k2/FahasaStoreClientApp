@@ -12,38 +12,6 @@ namespace FahasaStoreClientApp.Services
         {
             _httpClientFactory = httpClientFactory;
         }
-        public async Task<IEnumerable<District>> GetListDistrictByProvinceId(int provinceId)
-        {
-            try
-            {
-                var httpClient = _httpClientFactory.CreateClient();
-                var response = await httpClient.GetAsync("https://partner.viettelpost.vn/v2/categories/listDistrict?provinceId=" + provinceId);
-                response.EnsureSuccessStatusCode();
-                var content = await response.Content.ReadAsStringAsync();
-
-                // Chuyển đổi JSON thành đối tượng dynamic
-                var jsonResponse = JsonConvert.DeserializeObject<dynamic>(content);
-
-                // Kiểm tra cấu trúc của đối tượng JSON trả về
-                if (jsonResponse?.error == false && jsonResponse?.status == 200)
-                {
-                    var data = jsonResponse?.data as JArray;
-                    if (data != null)
-                    {
-                        var provinces = JsonConvert.DeserializeObject<List<District>>(jsonResponse?.data.ToString());
-
-                        return provinces;
-                    }
-                }
-
-                return new List<District>();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Error calling the API: {ex.Message}");
-            }
-        }
-
         public async Task<IEnumerable<Province>> GetListProvince()
         {
             try
@@ -83,8 +51,37 @@ namespace FahasaStoreClientApp.Services
                 throw new Exception($"Error calling the API: {ex.Message}");
             }
         }
+        public async Task<IEnumerable<District>> GetListDistrictByProvinceId(int provinceId)
+        {
+            try
+            {
+                var httpClient = _httpClientFactory.CreateClient();
+                var response = await httpClient.GetAsync("https://partner.viettelpost.vn/v2/categories/listDistrict?provinceId=" + provinceId);
+                response.EnsureSuccessStatusCode();
+                var content = await response.Content.ReadAsStringAsync();
 
+                // Chuyển đổi JSON thành đối tượng dynamic
+                var jsonResponse = JsonConvert.DeserializeObject<dynamic>(content);
 
+                // Kiểm tra cấu trúc của đối tượng JSON trả về
+                if (jsonResponse?.error == false && jsonResponse?.status == 200)
+                {
+                    var data = jsonResponse?.data as JArray;
+                    if (data != null)
+                    {
+                        var provinces = JsonConvert.DeserializeObject<List<District>>(jsonResponse?.data.ToString());
+
+                        return provinces;
+                    }
+                }
+
+                return new List<District>();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error calling the API: {ex.Message}");
+            }
+        }
         public async Task<IEnumerable<Ward>> GetListWardByDistrictId(int districtId)
         {
             try
