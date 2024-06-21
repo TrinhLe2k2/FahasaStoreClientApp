@@ -2,11 +2,14 @@
 using FahasaStoreClientApp.Filters;
 using FahasaStoreClientApp.Helpers;
 using FahasaStoreClientApp.Models;
+using FahasaStoreClientApp.Models.DTO;
 using FahasaStoreClientApp.Models.EModels;
 using FahasaStoreClientApp.Services;
 using FahasaStoreClientApp.Services.EntityService;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Newtonsoft.Json;
 
 namespace FahasaStoreClientApp.Controllers
 {
@@ -18,12 +21,15 @@ namespace FahasaStoreClientApp.Controllers
         private readonly ICartItemService _cartItemService;
         private readonly INotificationService _notificationService;
         private readonly IOrderService _orderService;
+        private readonly IOrderItemService _orderItemService;
+        private readonly IOrderStatusService _orderStatusService;
         private readonly IAddressService _addressService;
         private readonly IVoucherService _voucherService;
         private readonly IBookService _bookService;
+        private readonly IPaymentMethodService _paymentMethodService;
         private readonly IImageUploader _imageUploader;
 
-        public UserController(IUserService userService, UserLogined userLogined, IReviewService reviewService, ICartItemService cartItemService, INotificationService notificationService, IOrderService orderService, IImageUploader imageUploader, IAddressService addressService, IVoucherService voucherService, IBookService bookService)
+        public UserController(IUserService userService, UserLogined userLogined, IReviewService reviewService, ICartItemService cartItemService, INotificationService notificationService, IOrderService orderService, IImageUploader imageUploader, IAddressService addressService, IVoucherService voucherService, IBookService bookService, IPaymentMethodService paymentMethodService, IOrderStatusService orderStatusService, IOrderItemService orderItemService)
         {
             _userService = userService;
             _userLogined = userLogined;
@@ -35,6 +41,9 @@ namespace FahasaStoreClientApp.Controllers
             _addressService = addressService;
             _voucherService = voucherService;
             _bookService = bookService;
+            _paymentMethodService = paymentMethodService;
+            _orderStatusService = orderStatusService;
+            _orderItemService = orderItemService;
         }
 
         [Authorize(roles: AppRole.Customer)]
@@ -45,7 +54,7 @@ namespace FahasaStoreClientApp.Controllers
             ViewData["Orders"] = orders.Items;
             return View();
         }
-        [Authorize(roles: AppRole.Customer)]
+        //[Authorize(roles: AppRole.Customer)]
         public IActionResult Pay()
         {
             return View();
@@ -130,7 +139,7 @@ namespace FahasaStoreClientApp.Controllers
             if(_userLogined.CurrentUser == null || _userLogined.CurrentUser.Cart == null) return Json(new { success = false });
             model.CartId = _userLogined.CurrentUser.Cart.Id;
             var res = await _cartItemService.AddAsync(model);
-            return Json(new { CartItemModel = res });
+            return Json(new { success = true, cartItemId = res.Id });
         }
 
         [Authorize(roles: AppRole.Customer)]
@@ -180,6 +189,107 @@ namespace FahasaStoreClientApp.Controllers
         }
 
         [Authorize(roles: AppRole.Customer)]
+        [HttpPost]
+        public async Task<IActionResult> BuyNow(CartItemModel model)
+        {
+            var addCartResult = await AddCartItem(model) as JsonResult;
+
+            if (addCartResult?.Value is not null)
+            {
+                var successValue = addCartResult.Value.GetType().GetProperty("success")?.GetValue(addCartResult.Value);
+
+                if (successValue is bool success && success)
+                {
+                    var cartItemIdObj = addCartResult.Value.GetType().GetProperty("cartItemId")?.GetValue(addCartResult.Value);
+                    if (cartItemIdObj != null && cartItemIdObj is int cartItemId)
+                    {
+                        int[] cartItemIds = new int[] { cartItemId };
+                        return RedirectToAction("OrderPreview", new { cartItemIds });
+                    }
+                }
+            }
+
+            return RedirectToAction("Product", "Home", new {id = model .BookId});
+        }
+
+
+        [Authorize(roles: AppRole.Customer)]
+        [HttpGet]
+        public async Task<IActionResult> OrderPreview(int[] cartItemIds)
+        {
+            if (_userLogined.CurrentUser == null) return Json(new { ReviewModel = "failed" });
+            if (cartItemIds.Length == 0)
+            {
+                TempData["ErrorMessage"] = "Vui lòng chọn ít nhất 1 sản phẩm.";
+                return RedirectToAction("Cart");
+            }
+
+            var pageAddressTask = _addressService.GetListByAsync("UserId", _userLogined.CurrentUser.Id, 1, 20);
+            var paymentMethodsTask = _paymentMethodService.GetAllAsync();
+
+            // Sử dụng foreach để thu thập các tác vụ
+            var cartItemsTasks = new List<Task<CartItemDTO>>();
+            foreach (var cartItemId in cartItemIds)
+            {
+                cartItemsTasks.Add(_cartItemService.GetByIdAsync(cartItemId));
+            }
+
+            // Chờ tất cả các tác vụ hoàn thành
+            await Task.WhenAll(pageAddressTask, paymentMethodsTask, Task.WhenAll(cartItemsTasks));
+
+            var pageAddress = await pageAddressTask;
+            var addressSelectList = pageAddress.Items.Select(addr => new
+            {
+                Id = addr.Id,
+                DisplayText = $"{addr.ReceiverName}, {addr.Phone}, {addr.Detail}, {addr.Ward}, {addr.District}, {addr.Province}"
+            });
+            var paymentMethods = await paymentMethodsTask;
+            var cartItems = cartItemsTasks.Select(task => task.Result).ToList();
+
+            ViewData["address"] = new SelectList(addressSelectList, "Id", "DisplayText");
+            ViewData["paymentMethods"] = paymentMethods;
+            ViewData["cartItems"] = cartItems;
+            ViewData["totalMoney"] = await GetIntoMoney(cartItemIds);
+
+            return View();
+        }
+
+        [Authorize(roles: AppRole.Customer)]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Order(OrderModel model, int[] cartItemIds)
+        {
+            if (_userLogined.CurrentUser == null) return Json(new { ReviewModel = "failed" });
+            model.UserId = _userLogined.CurrentUser.Id;
+
+            if (cartItemIds.Length == 0)
+            {
+                TempData["ErrorMessage"] = "Vui lòng chọn ít nhất 1 sản phẩm.";
+                return RedirectToAction("Cart");
+            }
+
+            var resOrder = await _orderService.AddAsync(model);
+
+            var resStatusOrder = await _orderStatusService.AddAsync(new OrderStatusModel { OrderId = resOrder.Id, StatusId = 1 });
+
+            foreach(var cartItemId in cartItemIds)
+            {
+                var cartItem = await _cartItemService.GetByIdAsync(cartItemId);
+                var resOI = await _orderItemService.AddAsync(new OrderItemModel { OrderId = resOrder.Id , BookId = cartItem.BookId , Quantity = cartItem.Quantity });
+                var removeCartItem = await _cartItemService.DeleteAsync(cartItemId);
+            }
+
+            var notify = await _notificationService.AddAsync(new NotificationModel { NotificationTypeId = 1, UserId = _userLogined.CurrentUser.Id , Title = "Đơn hàng mới", Content = $"Đơn hàng #{resOrder.Id} đã được tạo thành công.", IsRead = false});
+
+            if (model.PaymentMethodId != 1)
+            {
+                return RedirectToAction("Pay");
+            }
+
+            return RedirectToAction("Orders");
+        }
+
+        [Authorize(roles: AppRole.Customer)]
         public async Task<IActionResult> OrderDetail(int id)
         {
             var od = await _orderService.GetByIdAsync(id);
@@ -196,22 +306,20 @@ namespace FahasaStoreClientApp.Controllers
         }
 
         [Authorize(roles: AppRole.Customer)]
-        public IActionResult AddReview(int id)
+        public IActionResult AddReview(ReviewModel model)
         {
-            return PartialView();
+            return PartialView(model);
         }
 
         [Authorize(roles: AppRole.Customer)]
-        [HttpPost]
+        [HttpPost, ActionName("AddReview")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddReview(int id, ReviewModel model)
+        public async Task<IActionResult> AddNewReview(ReviewModel model)
         {
             if (_userLogined.CurrentUser == null)
             {
                 return Json(new { ReviewModel = "failed" });
             }
-            model.Id = 0;
-            model.BookId = id;
             model.UserId = _userLogined.CurrentUser.Id ;
             model.Active = true;
 
@@ -232,14 +340,10 @@ namespace FahasaStoreClientApp.Controllers
         public async Task<IActionResult> EditReview(int id, ReviewModel model)
         {
             var reviewEdit = await _reviewService.GetItemUpdateByIdAsync(id);
+            reviewEdit.Rating = model.Rating;
+            reviewEdit.Comment = model.Comment;
 
-            model.Id = reviewEdit.Id;
-            model.BookId = reviewEdit.BookId;
-            model.UserId = reviewEdit.UserId;
-            model.Active = reviewEdit.Active;
-            model.CreatedAt = reviewEdit.CreatedAt;
-
-            var res = await _reviewService.UpdateAsync(id, model);
+            var res = await _reviewService.UpdateAsync(id, reviewEdit);
             return RedirectToAction("Reviews");
         }
 

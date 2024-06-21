@@ -99,8 +99,10 @@
             type: 'POST',
             data: formData,
             success: function (response) {
-                window.location.reload();
                 toastr.success("Chỉnh sửa đánh giá thành công");
+                setTimeout(function () {
+                    window.location.reload();
+                }, 1000);
             },
             error: function (xhr, status, error) {
                 alert("Đã xảy ra lỗi: " + error);

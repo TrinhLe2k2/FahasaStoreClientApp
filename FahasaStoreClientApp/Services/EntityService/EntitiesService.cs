@@ -3,6 +3,7 @@ using FahasaStoreClientApp.Models;
 using FahasaStoreClientApp.Models.CustomModels;
 using FahasaStoreClientApp.Models.DTO;
 using FahasaStoreClientApp.Models.EModels;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -137,6 +138,7 @@ namespace FahasaStoreClientApp.Services.EntityService
         Task<PaginatedResponse<BookDTO>> GetFilteredBooks(BookFilterOptions filterOptions, int page = 1, int size = 10);
         Task<ICollection<BookDTO>> SimilarBooks(int id, int size = 10);
         Task<bool> HasUserPurchasedBook(string userId, int bookId);
+        Task<PaginatedResponse<BookDTO>> FindSimilarBooksBasedOnCart(int cartId, int page = 1, int size = 10, string aggregationMethod = "average");
     }
     public class BookService : GenericService<Book, BookModel, BookDTO, int>, IBookService
     {
@@ -333,6 +335,30 @@ namespace FahasaStoreClientApp.Services.EntityService
                 throw new Exception("Error occurred while parsing JSON response.", ex);
             }
         }
+
+        public async Task<PaginatedResponse<BookDTO>> FindSimilarBooksBasedOnCart(int cartId, int page = 1, int size = 10, string aggregationMethod = "average")
+        {
+            try
+            {
+                using (var httpClient = _httpClientFactory.CreateClient())
+                {
+                    var response = await httpClient.GetAsync($"{_apiUrl}/FindSimilarBooksBasedOnCart/{cartId}?page={page}&size={size}&aggregationMethod={aggregationMethod}");
+                    response.EnsureSuccessStatusCode();
+                    var content = await response.Content.ReadAsStringAsync();
+                    var data = JsonConvert.DeserializeObject<PaginatedResponse<BookDTO>>(content);
+                    return data ?? new PaginatedResponse<BookDTO>();
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                throw new Exception($"Error occurred while fetching list from API.", ex);
+            }
+            catch (JsonException ex)
+            {
+                throw new Exception("Error occurred while parsing JSON response.", ex);
+            }
+        }
+
     }
 
     public interface IBookPartnerService : IGenericService<BookPartner, BookPartnerModel, BookPartnerDTO, int> { }

@@ -1,4 +1,5 @@
-﻿using FahasaStoreClientApp.Models.EModels;
+﻿using FahasaStoreClientApp.Entities;
+using FahasaStoreClientApp.Models.EModels;
 using System.ComponentModel;
 
 namespace FahasaStoreClientApp.Models.DTO
@@ -123,6 +124,7 @@ namespace FahasaStoreClientApp.Models.DTO
         public double? Weight { get; set; }
         public int? PageCount { get; set; }
         public DateTime? CreatedAt { get; set; }
+	public int? QuantitySold { get; set; }
 
         public virtual AuthorModel Author { get; set; } = null!;
         public virtual CoverTypeModel CoverType { get; set; } = null!;
@@ -286,6 +288,7 @@ namespace FahasaStoreClientApp.Models.DTO
         {
             OrderItems = new HashSet<OrderItemDTO>();
             OrderStatuses = new HashSet<OrderStatusDTO>();
+            Reviews = new HashSet<ReviewDTO>();
         }
 
         public int Id { get; set; }
@@ -299,6 +302,7 @@ namespace FahasaStoreClientApp.Models.DTO
         public virtual PaymentModel? Payment { get; set; }
         public virtual ICollection<OrderItemDTO> OrderItems { get; set; }
         public virtual ICollection<OrderStatusDTO> OrderStatuses { get; set; }
+        public virtual ICollection<ReviewDTO> Reviews { get; set; }
     }
     public partial class OrderItemDTO
     {
@@ -396,12 +400,14 @@ namespace FahasaStoreClientApp.Models.DTO
         public int Id { get; set; }
         public int BookId { get; set; }
         public string UserId { get; set; } = null!;
+        public int OrderId { get; set; }
         public int Rating { get; set; }
         public string? Comment { get; set; }
         public bool Active { get; set; }
         public DateTime? CreatedAt { get; set; }
 
         public virtual BookModel Book { get; set; } = null!;
+        public virtual OrderModel Order { get; set; } = null!;
         public virtual AspNetUserModel User { get; set; } = null!;
     }
     public partial class StatusDTO

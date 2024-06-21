@@ -37,7 +37,9 @@
             data: formData,
             success: function (response) {
                 toastr.success("Đánh giá thành công");
-                window.location.reload();
+                setTimeout(function () {
+                    window.location.reload();
+                }, 1000);
             },
             error: function (xhr, status, error) {
                 alert("Đã xảy ra lỗi: " + error);

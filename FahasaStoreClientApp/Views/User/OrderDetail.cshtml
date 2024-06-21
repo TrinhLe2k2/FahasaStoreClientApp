@@ -96,7 +96,37 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-5">
-                                                        <span class="text-truncatet-row-double">@oi.Book.Name</span>
+                                                        <a href="/Home/Product/@oi.Book.Id" class="nav-link">
+                                                            <span class="text-truncatet-row-double">@oi.Book.Name</span>
+                                                        </a>
+                                                        
+                                                        @if (Model.OrderStatuses.LastOrDefault()?.Id == 2)
+                                                        {
+                                                            var hasReview = false;
+                                                            if (Model.Reviews != null && Model.Reviews.Count > 0)
+                                                            {
+                                                                foreach (var re in Model.Reviews)
+                                                                {
+                                                                    if (re.BookId == oi.Book.Id)
+                                                                    {
+                                                                        hasReview = true;
+                                                                        <div class="d-flex flex-column justify-content-around align-items-start h-100">
+                                                                            <div class="btn-group" role="group">
+                                                                                <a href="/User/EditReview" IdValue="@re.Id" onclick="HandlerCRUD(this, event)" data-bs-dismiss="modal" aria-label="Close" class="btn btn-outline-danger"><i class="bi bi-pen"></i></a>
+                                                                                <a href="/User/DeleteReview" IdValue="@re.Id" onclick="HandlerCRUD(this, event)" data-bs-dismiss="modal" aria-label="Close" class="btn btn-outline-danger"><i class="bi bi-trash3"></i></a>
+                                                                            </div>
+                                                                        </div>
+                                                                    }
+                                                                }
+                                                            }
+                                                            
+                                                            if (!hasReview)
+                                                            {
+                                                                <div class="d-flex flex-column justify-content-around align-items-start h-100">
+                                                                    <a href="/User/AddReview?OrderId=@oi.Order.Id&BookId=@oi.Book.Id" onclick="HandlerCRUD(this, event)" data-bs-dismiss="modal" aria-label="Close" class="btn btn-outline-danger">Đánh giá</a>
+                                                                </div>
+                                                            }
+                                                        }
                                                     </div>
                                                     <div class="col-2 text-center">
                                                         <span class="fw-bold">@currentPrice.ToString("N0") đ</span> <br class="d-none d-md-block" />

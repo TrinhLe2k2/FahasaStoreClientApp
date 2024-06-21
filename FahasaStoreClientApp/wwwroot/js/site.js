@@ -1,12 +1,14 @@
 ﻿
 
-
 const HandlerCRUD = (e, event) => {
     event.preventDefault();
     let href = $(e).attr("href");
     let id = $(e).attr("IdValue");
+    if (id) {
+        href = `${href}/${id}`;
+    }
     $.ajax({
-        url: `${href}/${id}`,
+        url: href,
         type: 'GET',
         success: function (data) {
             $('#modal-for-crud').html(data);

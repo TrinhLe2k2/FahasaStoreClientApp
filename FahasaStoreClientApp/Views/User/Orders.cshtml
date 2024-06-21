@@ -30,8 +30,8 @@
                                 {
                                     index = index + 1;
                                     <div class="row my-3">
-                                        <div class="col-1">@index</div>
-                                        <div class="col-2">@((order.CreatedAt != null) ? order.CreatedAt.Value.ToString("dd/MM/yyyy") : "Không có ngày tạo")</div>
+                                        <div class="col-1">#@order.Id</div>
+                                        <div class="col-2">@((order.CreatedAt != null) ? order.CreatedAt.Value.ToString("dd/MM/yyyy (HH:mm)") : "Không có ngày tạo")</div>
                                         <div class="col-3">@order.Address.ReceiverName</div>
                                         <div class="col-3">@order.OrderItems.Sum(e => (e.Book.Price - e.Book.Price * e.Book.DiscountPercentage / 100) * e.Quantity).ToString("N0") đ</div>
                                         <div class="col-2">@order.OrderStatuses.LastOrDefault()?.Status.Name</div>

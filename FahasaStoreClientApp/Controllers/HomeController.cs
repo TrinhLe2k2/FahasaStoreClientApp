@@ -91,11 +91,17 @@ namespace FahasaStoreClientApp.Controllers
             var topSellingBooksDefault = await _bookService.GetTopSellingBooksByCategory(1, 1, 5);
             ViewData["TopSellingBooksDefault"] = topSellingBooksDefault.Items;
 
-            var categories = await _categoryService.GetPagination(1, 5);
+            var categories = await _categoryService.GetPagination(1, 3);
             ViewData["categories"] = categories.Items;
 
             var partners = await _partnerService.GetPagination(1, 100);
             ViewData["Partners"] = partners.Items;
+
+            if(_userLogined.CurrentUser != null && _userLogined.CurrentUser.Cart != null)
+            {
+                var pageFindSimilarBooksBasedOnCart = await _bookService.FindSimilarBooksBasedOnCart(_userLogined.CurrentUser.Cart.Id);
+                ViewData["pageFindSimilarBooksBasedOnCart"] = pageFindSimilarBooksBasedOnCart;
+            }
 
             return View();
         }
@@ -110,10 +116,13 @@ namespace FahasaStoreClientApp.Controllers
             var pageReview = await _reviewService.GetListByAsync("BookId", id.ToString());
             ViewData["Reviews"] = pageReview.Items;
 
-            if (_userLogined.CurrentUser != null)
+            if (_userLogined.CurrentUser != null && _userLogined.CurrentUser.Cart != null)
             {
                 var hasOrder = await _bookService.HasUserPurchasedBook(_userLogined.CurrentUser.Id, id);
                 ViewData["HasOrder"] = hasOrder;
+
+                var pageFindSimilarBooksBasedOnCart = await _bookService.FindSimilarBooksBasedOnCart(_userLogined.CurrentUser.Cart.Id, aggregationMethod : "minking");
+                ViewData["pageFindSimilarBooksBasedOnCart"] = pageFindSimilarBooksBasedOnCart;
             }
 
             return View(await _bookService.GetByIdAsync(id));
@@ -150,7 +159,7 @@ namespace FahasaStoreClientApp.Controllers
         {
             return PartialView(await _categoryService.GetAllAsync());
         }
-        public async Task<IActionResult> Filter()
+        public async Task<IActionResult> Filter(BookFilterOptions filterOptions)
         {
             var categories = await _categoryService.GetAllAsync();
             ViewData["categories"] = categories;
@@ -166,11 +175,13 @@ namespace FahasaStoreClientApp.Controllers
 
             ViewData["Search"] = TempData["Search"];
 
+            ViewData["filterOptions"] = filterOptions;
+
             return View();
         }
         //[HttpPost]
         //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> FilterResult(BookFilterOptions filterOptions, int page = 1, int size = 3)
+        public async Task<IActionResult> FilterResult(BookFilterOptions filterOptions, int page = 1, int size = 20)
         {
             var result = await _bookService.GetFilteredBooks(filterOptions, page, size);
             return PartialView(result);

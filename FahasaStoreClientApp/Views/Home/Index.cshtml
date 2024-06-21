@@ -1,4 +1,5 @@
 ﻿@using FahasaStoreClientApp.Components
+@using FahasaStoreClientApp.Models.CustomModels
 @using FahasaStoreClientApp.Models.DTO
 @{
     ViewData["Title"] = "Home Page";
@@ -27,6 +28,8 @@
 
     var partners = ViewData["Partners"] as List<PartnerDTO>;
 
+    var pageFindSimilarBooksBasedOnCart = ViewData["pageFindSimilarBooksBasedOnCart"] as PaginatedResponse<BookDTO>;
+
 }
 <div class="bg-black bg-opacity-10 rounded-3">
     @* banner top *@
@@ -53,7 +56,7 @@
                         {
                             <div class="carousel-item active" style="padding-bottom: 38%;">
                                 <a href="/Home/Banner/@banners[0].Id">
-                                    <img src="@banners[0].ImageUrl" class="w-100 h-100 position-absolute" alt="slide @banners[0].Id" style="object-fit: cover;">
+                                    <img src="@banners[0].ImageUrl" class="w-100 h-100 position-absolute object-fit-cover" alt="slide @banners[0].Id">
                                 </a>
                             </div>
                         }
@@ -65,7 +68,7 @@
                                 {
                                     <div class="carousel-item" style="padding-bottom: 38%;">
                                         <a href="/Home/Banner/@item.Id">
-                                            <img src="@item.ImageUrl" class="w-100 h-100 position-absolute" alt="slide @item.Id" style="object-fit: cover;">
+                                            <img src="@item.ImageUrl" class="w-100 h-100 position-absolute object-fit-cover" alt="slide @item.Id">
                                         </a>
                                     </div>
                                 }
@@ -89,7 +92,7 @@
                         foreach(var item in banners2) {
                             <div class="h-50 w-100 pb-1">
                                 <div class="position-relative w-100 h-100">
-                                    <a href="/Home/Banner/@item.Id"><img src="@item.ImageUrl" class="rounded-3 w-100 h-100 position-absolute" style="object-fit: cover;" /></a>
+                                    <a href="/Home/Banner/@item.Id"><img src="@item.ImageUrl" class="rounded-3 w-100 h-100 position-absolute object-fit-cover" /></a>
                                 </div>
                             </div>
                         }
@@ -168,6 +171,48 @@
             </div>
         </div>
     </div>
+    
+    @{
+        if (pageFindSimilarBooksBasedOnCart != null && pageFindSimilarBooksBasedOnCart.Items.Count > 0)
+        {
+            <div class="container mt-4">
+                <div class="d-flex align-items-center p-3 rounded-top-3" style="background-color: #FCDDEF;">
+                    <img src="~/image/icon_dealhot_new.png" width="32" height="32" class="object-fit-cover rounded-3" />
+                    <h5 class="mb-0 p-2">Sản Phẩm Gợi Ý Cho Bạn</h5>
+                </div>
+                <div class="bg-white p-3 rounded-bottom-3">
+                    <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-4 mt-1">
+                        @foreach (var book in pageFindSimilarBooksBasedOnCart.Items)
+                        {
+                            <div>
+                                <div class="card mx-2 position-relative overflow-hidden">
+                                    <a href="/Home/Product/@book.Id" class="text-decoration-none mx-2" style="color: #000;" title="@book.Name">
+                                        <div class="w-100 position-relative" style="padding-bottom: 100%;">
+                                            <img src="@book.PosterImages.LastOrDefault()?.ImageUrl" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
+                                        </div>
+                                        <div class="card-body p-1">
+                                            <h6 class="card-title twoLine">@book.Name</h6>
+                                            <div class="d-flex flex-column justify-content-start">
+                                                <div>
+                                                    <span class="card-text text-danger fw-bold">@((book.Price - book.Price * book.DiscountPercentage / 100).ToString("N0")) đ</span>
+                                                    <small class="position-absolute top-0 end-0 bg-danger text-white px-2 ms-2 rounded-start">- @book.DiscountPercentage %</small>
+                                                </div>
+                                                <small class="card-text text-decoration-line-through">@book.Price.ToString("N0") đ</small>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="text-center mt-3">
+                        <a href="#" class="btn btn-outline-danger px-5">Xem Thêm</a>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    
     @* Shopping trends *@
     <div class="container mt-4">
         <div class="d-flex align-items-center p-3 rounded-top-3" style="background-color: #FCDDEF;">

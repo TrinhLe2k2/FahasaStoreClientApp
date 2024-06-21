@@ -1,4 +1,5 @@
-﻿@using FahasaStoreClientApp.Models.DTO
+﻿@using FahasaStoreClientApp.Models.CustomModels
+@using FahasaStoreClientApp.Models.DTO
 @using FahasaStoreClientApp.Models.EModels
 @model FahasaStoreClientApp.Models.CustomModels.BookFilterOptions
 @{
@@ -6,6 +7,21 @@
     var partnerTypes = ViewData["partnerTypes"] as List<PartnerTypeDTO>; 
     var authors = ViewData["authors"] as List<AuthorDTO>;
     var coverTypes = ViewData["coverTypes"] as List<CoverTypeDTO>;
+    var filterOptions = ViewData["filterOptions"] as BookFilterOptions;
+
+    var categoryChecked = 0;
+    var subCategoryChecked = 0;
+    if (filterOptions != null)
+    {
+        if (filterOptions.CategoryId != null && filterOptions.CategoryId.HasValue)
+        {
+            categoryChecked = (int)filterOptions.CategoryId;
+        }
+        if (filterOptions.SubcategoryId != null && filterOptions.SubcategoryId.HasValue)
+        {
+            subCategoryChecked = (int)filterOptions.SubcategoryId;
+        }
+    }
 }
 <div id="Fillter" class="bg-black bg-opacity-10">
     <div class="container">
@@ -56,7 +72,15 @@
                                                                     @{
                                                                         <div class="form-group form-check">
                                                                             <label class="form-check-label w-100 py-2">
-                                                                                <input class="form-check-input" asp-for="CategoryId" type="radio" value="@category.Id" /> @category.Name
+                                                                                @if (categoryChecked == category.Id)
+                                                                                {
+                                                                                    <input class="form-check-input" asp-for="CategoryId" type="radio" value="@category.Id" checked /> @category.Name
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <input class="form-check-input" asp-for="CategoryId" type="radio" value="@category.Id"/> @category.Name
+                                                                                }
+
                                                                             </label>
                                                                         </div>
                                                                         if (category.Subcategories.Count > 0)
@@ -65,7 +89,14 @@
                                                                             {
                                                                                 <div class="form-group form-check">
                                                                                     <label class="form-check-label w-100 py-2">
-                                                                                        <input class="form-check-input" asp-for="SubcategoryId" type="radio" value="@subcategory.Id" /> @subcategory.Name
+                                                                                        @if (subCategoryChecked == subcategory.Id)
+                                                                                        {
+                                                                                            <input class="form-check-input" asp-for="SubcategoryId" type="radio" value="@subcategory.Id" checked /> @subcategory.Name
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <input class="form-check-input" asp-for="SubcategoryId" type="radio" value="@subcategory.Id" /> @subcategory.Name
+                                                                                        }
                                                                                     </label>
                                                                                 </div>
                                                                             }
@@ -212,6 +243,27 @@
 @section Scripts {
     <script>
         submitForm(1);
+        UpdateFormFilter();
+
+        function UpdateFormFilter() {
+            $('input[type="radio"]').each(function () {
+                if ($(this).is(':checked')) {
+                    var parentAccordionItem = $(this).closest('.accordion-item');
+
+                    if (parentAccordionItem.length) {
+                        var accordionButton = parentAccordionItem.find('button.accordion-button.collapsed');
+
+                        accordionButton.removeClass('collapsed');
+
+                        var accordionCollapse = parentAccordionItem.find('div.accordion-collapse.collapse');
+
+                        accordionCollapse.addClass('show');
+                    }
+                }
+            });
+        }
+
+
         function submitForm(page) {
 
             const $form = $('#filterForm');

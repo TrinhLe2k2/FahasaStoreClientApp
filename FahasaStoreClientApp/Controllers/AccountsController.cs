@@ -60,7 +60,9 @@ namespace FahasaStoreClientApp.Controllers
             var userClaims = _jwtTokenDecoder.DecodeToken(accessToken).Claims;
             var UserId = userClaims.FirstOrDefault(c => c.Type == "UserId")?.Value;
 
-            var currentUser = await _userService.GetByIdAsync(UserId ?? "");
+            if (UserId == null) { return RedirectToAction("LogOut"); }
+
+            var currentUser = await _userService.GetByIdAsync(UserId);
             _userLogined.CurrentUser = currentUser;
             _userLogined.JWToken = accessToken;
 
@@ -76,17 +78,6 @@ namespace FahasaStoreClientApp.Controllers
                 HttpContext.Session.Clear();
             }
             TempData["SuccessMessage"] = "Bạn đã đăng xuất thành công.";
-            return RedirectToAction("Index", "Home");
-        }
-
-        public IActionResult FormBool()
-        {
-            return View();
-        }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult FormBool(BoolModel model)
-        {
             return RedirectToAction("Index", "Home");
         }
     }

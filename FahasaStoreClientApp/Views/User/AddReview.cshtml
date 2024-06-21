@@ -17,6 +17,8 @@
                 <div class="modal-body">
                     <form asp-action="AddReview" id="form-AddReview">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input asp-for="BookId" hidden />
+                        <input asp-for="OrderId" hidden />
                         <div class="mb-3 d-flex flex-column align-items-center">
                             <input asp-for="Rating" min="1" max="5" value="5" hidden />
                             <div class="stars fs-3">
@@ -100,7 +102,9 @@
             data: formData,
             success: function (response) {
                 toastr.success("Đánh giá thành công");
-                window.location.reload();
+                setTimeout(function () {
+                    window.location.reload();
+                }, 1000);
             },
             error: function (xhr, status, error) {
                 alert("Đã xảy ra lỗi: " + error);

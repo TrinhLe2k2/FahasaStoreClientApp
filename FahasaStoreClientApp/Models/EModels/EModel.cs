@@ -201,6 +201,7 @@ namespace FahasaStoreClientApp.Models.EModels
         public int Id { get; set; }
         public string UserId { get; set; } = null!;
         public int? VoucherId { get; set; }
+        [Display(Name = "Địa chỉ giao hàng")]
         public int AddressId { get; set; }
         public int PaymentMethodId { get; set; }
         public string? Note { get; set; }
@@ -276,6 +277,7 @@ namespace FahasaStoreClientApp.Models.EModels
     {
         public int Id { get; set; }
         public int BookId { get; set; }
+        public int OrderId { get; set; }
         public string UserId { get; set; } = null!;
         public int Rating { get; set; }
         public string? Comment { get; set; }

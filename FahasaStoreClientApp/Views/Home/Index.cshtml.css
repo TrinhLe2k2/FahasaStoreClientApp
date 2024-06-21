@@ -56,10 +56,10 @@
     padding: 6px;
 }
 
-.card {
+/*.card {
     border: none;
     overflow: hidden;
-}
+}*/
 .card:hover {
     border: 1px solid var(--primary-color-fahasa);
 }

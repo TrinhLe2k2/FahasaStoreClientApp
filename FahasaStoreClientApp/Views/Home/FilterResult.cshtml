@@ -12,7 +12,7 @@
                 <div class="card mx-2 position-relative overflow-hidden">
                     <a href="/Home/Product/@book.Id" class="text-decoration-none mx-2" style="color: #000;" title="@book.Name">
                         <div class="w-100 position-relative" style="padding-bottom: 100%;">
-                            <img src="@book.PosterImages.FirstOrDefault()?.ImageUrl" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
+                            <img src="@book.PosterImages.LastOrDefault()?.ImageUrl" class="card-img-top position-absolute w-100 h-100 object-fit-cover" alt="...">
                         </div>
                         <div class="card-body p-1">
                             <h6 class="card-title twoLine">@book.Name</h6>
