@@ -7,12 +7,19 @@ namespace FahasaStoreClientApp.Models.EModels
     {
         public int Id { get; set; }
         public string UserId { get; set; } = null!;
+        [Display(Name = "Tên người nhận")]
         public string ReceiverName { get; set; } = null!;
+        [Display(Name = "Số điện thoại")]
         public string Phone { get; set; } = null!;
+        [Display(Name = "Tỉnh / Thành Phố")]
         public string Province { get; set; } = null!;
+        [Display(Name = "Quận / Huyện")]
         public string District { get; set; } = null!;
+        [Display(Name = "Phường / Xã")]
         public string Ward { get; set; } = null!;
+        [Display(Name = "Địa chỉ chi tiết")]
         public string Detail { get; set; } = null!;
+        [Display(Name = "Đặt làm mặc định")]
         public bool DefaultAddress { get; set; }
         public DateTime? CreatedAt { get; set; }
     }
@@ -203,7 +210,9 @@ namespace FahasaStoreClientApp.Models.EModels
         public int? VoucherId { get; set; }
         [Display(Name = "Địa chỉ giao hàng")]
         public int AddressId { get; set; }
+        [Display(Name = "Phương Thức Thanh Toán")]
         public int PaymentMethodId { get; set; }
+        [Display(Name = "Ghi Chú")]
         public string? Note { get; set; }
         public DateTime? CreatedAt { get; set; }
     }

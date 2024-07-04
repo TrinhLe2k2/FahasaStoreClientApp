@@ -99,8 +99,8 @@
                                                         <a href="/Home/Product/@oi.Book.Id" class="nav-link">
                                                             <span class="text-truncatet-row-double">@oi.Book.Name</span>
                                                         </a>
-                                                        
-                                                        @if (Model.OrderStatuses.LastOrDefault()?.Id == 2)
+
+                                                        @if (Model.OrderStatuses.Any(status => status.Status.Id == 2))
                                                         {
                                                             var hasReview = false;
                                                             if (Model.Reviews != null && Model.Reviews.Count > 0)

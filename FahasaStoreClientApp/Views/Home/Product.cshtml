@@ -6,6 +6,7 @@
 @model BookDTO
 
 @{
+    ViewData["Title"] = Model.Name;
     var userLogin = new UserLogined(HttpContextAccessor);
 
     var vouchers = ViewData["Vouchers"] as List<VoucherDTO>;
@@ -21,7 +22,7 @@
 <div id="InfomationProduct" class="bg-black bg-opacity-10">
     @* breadcrumb - view product *@
     <div class="container">
-        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="pt-2">
+        <nav class="pt-2">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="/">Home</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Product</li>

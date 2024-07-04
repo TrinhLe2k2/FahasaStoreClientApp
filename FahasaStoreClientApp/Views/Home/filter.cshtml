@@ -3,6 +3,8 @@
 @using FahasaStoreClientApp.Models.EModels
 @model FahasaStoreClientApp.Models.CustomModels.BookFilterOptions
 @{
+    ViewData["Title"] = "Bộ Lọc";
+
     var categories = ViewData["categories"] as List<CategoryDTO>;
     var partnerTypes = ViewData["partnerTypes"] as List<PartnerTypeDTO>; 
     var authors = ViewData["authors"] as List<AuthorDTO>;

@@ -2,6 +2,7 @@
 using FahasaStoreClientApp.Helpers;
 using FahasaStoreClientApp.Interfaces;
 using FahasaStoreClientApp.Services;
+using Microsoft.AspNetCore.Localization;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);

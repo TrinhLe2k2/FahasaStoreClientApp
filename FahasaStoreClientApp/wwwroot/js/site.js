@@ -309,6 +309,69 @@ function resetAllFilters() {
     submitForm();
 }
 
+function GetWebsiteInfo() {
+    $.ajax({
+        url: "/Home/GetWebsiteInfo",
+        type: 'GET',
+        success: function (data) {
+            var iconTag = `<link rel="icon" href="${data.iconUrl}" type="image/x-icon" />`;
+            $('head').append(iconTag);
+            $(".fahasa-logo").attr('src', data.logoUrl);
+            $(".fahasa-name").text(data.name);
+            $(".fahasa-address").text(data.address);
+            $(".fahasa-description").text(data.description);
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            var errorMessage = `Error fetching data: ${jqXHR.status} ${jqXHR.statusText}`;
+            if (jqXHR.responseText) {
+                errorMessage += `\nResponse: ${jqXHR.responseText}`;
+            }
+            alert(errorMessage);
+        }
+    });
+}
+GetWebsiteInfo();
+
+function GetTopics() {
+    $.ajax({
+        url: "/Home/GetTopics",
+        type: 'GET',
+        success: function (data) {
+            $("#topics").html(data);
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            var errorMessage = `Error fetching data: ${jqXHR.status} ${jqXHR.statusText}`;
+            if (jqXHR.responseText) {
+                errorMessage += `\nResponse: ${jqXHR.responseText}`;
+            }
+            alert(errorMessage);
+        }
+    });
+}
+GetTopics();
+
+function GetPlatforms() {
+    $.ajax({
+        url: "/Home/GetPlatforms",
+        type: 'GET',
+        success: function (data) {
+            var html = ``;
+            for (var item of data) {
+                html += `<a href="${item.link}" class="p-2 fs-3"><img src="${item.imageUrl}" width="28" height="28" class="object-fit-contain" /></a>`;
+            }
+            $("#platforms").html(html);
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            var errorMessage = `Error fetching data: ${jqXHR.status} ${jqXHR.statusText}`;
+            if (jqXHR.responseText) {
+                errorMessage += `\nResponse: ${jqXHR.responseText}`;
+            }
+            alert(errorMessage);
+        }
+    });
+}
+GetPlatforms();
+
 
 
 

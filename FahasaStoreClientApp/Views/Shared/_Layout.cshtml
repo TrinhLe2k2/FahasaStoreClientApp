@@ -9,7 +9,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - FahasaBookstore</title>
+    <title>@ViewData["Title"] - Fahasa</title>
 
     @* bootstrap *@
     <link href="~/js/bootstrapv53.min.css" rel="stylesheet" />
@@ -36,7 +36,7 @@
     <header class="pt-2">
         <div class="container-xl position-relative d-lg-flex align-items-center">
             <a class="navbar-brand" title="Fahasa" asp-area="" asp-controller="Home" asp-action="Index">
-                <img src="~/image/fahasa-logo.png" height="38" />
+                <img src="" height="38" class="fahasa-logo" />
             </a>
             <div class="flex-grow-1">
                 <div class="d-flex w-100 align-items-center flex-wrap justify-content-center mt-3 mt-lg-0">
@@ -62,7 +62,7 @@
                                 </div>
                             </form>
                             
-                            <div class="result-search position-absolute top-100 w-100 p-0 rounded-bottom dropdown-menu bg-white overflow-hidden">
+                            @* <div class="result-search position-absolute top-100 w-100 p-0 rounded-bottom dropdown-menu bg-white overflow-hidden">
                                 <div class="container py-2">
                                     <div class="row g-0">
                                         <div class="col-sm-6">
@@ -99,6 +99,7 @@
                                 </div>
                             </div>
                             <div class="shadowBox vh-100 vw-100 position-fixed start-0 mt-2 bg-opacity-50 bg-black" style="display: none; z-index: 998;"></div>
+                         *@
                         </div>
                     </div>
                     
@@ -219,70 +220,21 @@
             <div class="row">
                 <div class="col-sm-6 col-md-5">
                     <div>
-                        <img src="~/image/fahasa-logo.png" width="300" height="50" class="object-fit-contain mw-100" />
+                        <img src="" width="300" height="50" class="object-fit-contain mw-100 fahasa-logo" />
                         <div class="my-2">
-                            <small>Công Ty Cổ Phần Phát Hành Sách TP HCM - FAHASA</small><br />
-                            <small>60 - 62 Lê Lợi, Quận 1, TP. HCM, Việt Nam</small>
+                            <small class="fahasa-name fw-bold"></small><br />
+                            <small class="fahasa-address"></small>
                         </div>
-                        <small class="my-2">
-                            Fahasa.com nhận đặt hàng trực tuyến và giao hàng tận nơi. KHÔNG hỗ trợ đặt mua và nhận hàng trực tiếp tại văn phòng cũng như tất cả Hệ Thống Fahasa trên toàn quốc.
-                        </small>
-                        <div>
-                            <a href="" class="p-2 fs-3"><i class="bi bi-facebook"></i></a>
-                            <a href="" class="p-2 fs-3 text-danger"><i class="bi bi-instagram"></i></a>
-                            <a href="" class="p-2 fs-3 text-danger"><i class="bi bi-youtube"></i></a>
-                            <a href="" class="p-2 fs-3 text-black"><i class="bi bi-twitter-x"></i></a>
-                            <a href="" class="p-2 fs-3 text-danger"><i class="bi bi-pinterest"></i></a>
-                        </div>
+                        <small><p class="my-2 fahasa-description" style="text-align: justify;"></p></small>
+                        <div id="platforms"></div>
                         <div>
                             <img src="~/image/android1.png" width="100" height="50" class="object-fit-contain p-2" />
                             <img src="~/image/appstore1.png" width="100" height="50" class="object-fit-contain p-2" />
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-6 col-md-7">
-                    <div class="row row-cols-auto row-cols-lg-2 g-4 justify-content-between">
-                        <div class="col">
-                            <h6 class="text-uppercase">dịch vụ</h6>
-                            <div class="list-group">
-                                <a href="" class="list-group-item list-group-item-action">Điều khoản sử dụng</a>
-                                <a href="" class="list-group-item list-group-item-action">Chính sách bảo mật thông tin cá nhân</a>
-                                <a href="" class="list-group-item list-group-item-action">Chính sách bảo mật thanh toán</a>
-                                <a href="" class="list-group-item list-group-item-action">Giới thiệu Fahasa</a>
-                                <a href="" class="list-group-item list-group-item-action">Hệ thống trung tâm - nhà sách</a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <h6 class="text-uppercase">Hỗ trợ</h6>
-                            <div class="list-group">
-                                <a href="" class="list-group-item list-group-item-action">Điều khoản sử dụng</a>
-                                <a href="" class="list-group-item list-group-item-action">Chính sách bảo mật thông tin cá nhân</a>
-                                <a href="" class="list-group-item list-group-item-action">Chính sách bảo mật thanh toán</a>
-                                <a href="" class="list-group-item list-group-item-action">Giới thiệu Fahasa</a>
-                                <a href="" class="list-group-item list-group-item-action">Hệ thống trung tâm - nhà sách</a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <h6 class="text-uppercase">tài khoản của tôi</h6>
-                            <div class="list-group">
-                                <a href="" class="list-group-item list-group-item-action">Điều khoản sử dụng</a>
-                                <a href="" class="list-group-item list-group-item-action">Chính sách bảo mật thông tin cá nhân</a>
-                                <a href="" class="list-group-item list-group-item-action">Chính sách bảo mật thanh toán</a>
-                                <a href="" class="list-group-item list-group-item-action">Giới thiệu Fahasa</a>
-                                <a href="" class="list-group-item list-group-item-action">Hệ thống trung tâm - nhà sách</a>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <h6 class="text-uppercase">liên hệ</h6>
-                            <div class="list-group">
-                                <a href="" class="list-group-item list-group-item-action">Điều khoản sử dụng</a>
-                                <a href="" class="list-group-item list-group-item-action">Chính sách bảo mật thông tin cá nhân</a>
-                                <a href="" class="list-group-item list-group-item-action">Chính sách bảo mật thanh toán</a>
-                                <a href="" class="list-group-item list-group-item-action">Giới thiệu Fahasa</a>
-                                <a href="" class="list-group-item list-group-item-action">Hệ thống trung tâm - nhà sách</a>
-                            </div>
-                        </div>
-                    </div>
+                <div id="topics" class="col-sm-6 col-md-7">
+                    
                 </div>
             </div>
         </div>

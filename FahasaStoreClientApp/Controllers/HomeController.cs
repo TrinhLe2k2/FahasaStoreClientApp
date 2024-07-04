@@ -1,5 +1,6 @@
 using AutoMapper;
 using FahasaStoreClientApp.DataTemp.DataVM;
+using FahasaStoreClientApp.Entities;
 using FahasaStoreClientApp.Helpers;
 using FahasaStoreClientApp.Models.CustomModels;
 using FahasaStoreClientApp.Models.DTO;
@@ -192,6 +193,27 @@ namespace FahasaStoreClientApp.Controllers
         {
             TempData["Search"] = Search;
             return RedirectToAction("Filter");
+        }
+
+        [HttpGet]
+        public async Task<Website> GetWebsiteInfo()
+        {
+            var data = await _homeService.GetWebsiteInfoAsync();
+            return data;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetTopics()
+        {
+            var data = await _homeService.GetTopicsAsync();
+            return PartialView(data);
+        }
+
+        [HttpGet]
+        public async Task<IEnumerable<Platform>> GetPlatforms()
+        {
+            var data = await _homeService.GetPlatformsAsync();
+            return data;
         }
     }
 }

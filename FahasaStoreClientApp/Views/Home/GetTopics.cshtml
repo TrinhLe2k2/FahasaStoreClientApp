@@ -1,0 +1,27 @@
+﻿@model List<FahasaStoreClientApp.Entities.Topic>
+
+<div class="row row-cols-auto row-cols-lg-2 g-4 justify-content-between">
+    @{
+        if (Model.Count > 0)
+        {
+            foreach (var topic in Model)
+            {
+                <div class="col">
+                    <h6 class="text-uppercase">@topic.TopicName</h6>
+                    <div class="list-group">
+                        @{
+                            if (topic.TopicContents.Count > 0)
+                            {
+                                foreach (var content in topic.TopicContents)
+                                {
+                                    <a href="" class="list-group-item list-group-item-action">@content.Title</a>
+                                }
+                            }
+                        }
+                    </div>
+                </div>
+            }
+        }
+        
+    }
+</div>

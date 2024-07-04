@@ -1,5 +1,6 @@
 ﻿using FahasaStoreClientApp.Entities;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
 
 namespace FahasaStoreClientApp.Services
 {
@@ -12,6 +13,9 @@ namespace FahasaStoreClientApp.Services
         Task<FlashSale> GetFlashSaleTodayAsync();
         Task<IEnumerable<Book>> GetShoppingTrendByDayMonthYearAsync();
         Task<IEnumerable<Banner>> GetPartnersAsync();
+        Task<Website> GetWebsiteInfoAsync();
+        Task<IEnumerable<Platform>> GetPlatformsAsync();
+        Task<IEnumerable<Topic>> GetTopicsAsync();
     }
     public class HomeService : IHomeService
     {
@@ -110,10 +114,85 @@ namespace FahasaStoreClientApp.Services
         {
             throw new NotImplementedException();
         }
-
+        
         public Task<IEnumerable<Book>> GetShoppingTrendByDayMonthYearAsync()
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<IEnumerable<Platform>> GetPlatformsAsync()
+        {
+            try
+            {
+                using (var httpClient = _httpClientFactory.CreateClient())
+                {
+                    var response = await httpClient.GetAsync("https://localhost:7069/api/Platforms");
+                    response.EnsureSuccessStatusCode();
+                    var content = await response.Content.ReadAsStringAsync();
+                    var data = JsonConvert.DeserializeObject<IEnumerable<Platform>>(content);
+                    return data ?? new List<Platform>();
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                // Xử lý exception, có thể ghi log hoặc thực hiện các hành động phù hợp khác
+                throw new Exception("Error occurred while fetching Platforms from API.", ex);
+            }
+            catch (JsonException ex)
+            {
+                // Xử lý exception phân tích cú pháp JSON
+                throw new Exception("Error occurred while parsing JSON response.", ex);
+            }
+        }
+
+        public async Task<Website> GetWebsiteInfoAsync()
+        {
+            try
+            {
+                using (var httpClient = _httpClientFactory.CreateClient())
+                {
+                    var response = await httpClient.GetAsync("https://localhost:7069/api/Websites/1");
+                    response.EnsureSuccessStatusCode();
+                    var content = await response.Content.ReadAsStringAsync();
+                    var data = JsonConvert.DeserializeObject<Website>(content);
+                    return data ?? new Website();
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                // Xử lý exception, có thể ghi log hoặc thực hiện các hành động phù hợp khác
+                throw new Exception("Error occurred while fetching Websites from API.", ex);
+            }
+            catch (JsonException ex)
+            {
+                // Xử lý exception phân tích cú pháp JSON
+                throw new Exception("Error occurred while parsing JSON response.", ex);
+            }
+        }
+
+        public async Task<IEnumerable<Topic>> GetTopicsAsync()
+        {
+            try
+            {
+                using (var httpClient = _httpClientFactory.CreateClient())
+                {
+                    var response = await httpClient.GetAsync("https://localhost:7069/api/Topics");
+                    response.EnsureSuccessStatusCode();
+                    var content = await response.Content.ReadAsStringAsync();
+                    var data = JsonConvert.DeserializeObject<IEnumerable<Topic>>(content);
+                    return data ?? new List<Topic>();
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                // Xử lý exception, có thể ghi log hoặc thực hiện các hành động phù hợp khác
+                throw new Exception("Error occurred while fetching Topics from API.", ex);
+            }
+            catch (JsonException ex)
+            {
+                // Xử lý exception phân tích cú pháp JSON
+                throw new Exception("Error occurred while parsing JSON response.", ex);
+            }
         }
     }
 }

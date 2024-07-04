@@ -1,6 +1,8 @@
 ﻿@using FahasaStoreClientApp.Components
 @model List<FahasaStoreClientApp.Models.DTO.CartItemDTO>
-
+@{
+    ViewData["Title"] = "Giỏ Hàng";
+}
 @Html.AntiForgeryToken()
 <partial name="_ToastrMessage" />
 <div id="Cart" class="bg-black bg-opacity-10">

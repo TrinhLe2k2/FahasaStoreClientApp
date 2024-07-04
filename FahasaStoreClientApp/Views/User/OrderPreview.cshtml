@@ -2,6 +2,7 @@
 @using FahasaStoreClientApp.Models.EModels
 @model OrderModel
 @{
+    ViewData["Title"] = "Đặt Hàng";
     var paymentMethods = ViewData["paymentMethods"] as List<PaymentMethodDTO>;
     var cartItems = ViewData["cartItems"] as List<CartItemDTO>;
     var totalMoney = ViewData["totalMoney"] as int?;
@@ -37,15 +38,15 @@
                                     <input class="form-check-input" asp-for="PaymentMethodId" type="radio" checked value="@paymentMethods.FirstOrDefault()?.Id" /> @paymentMethods.FirstOrDefault()?.Name
                                 </label>
                             </div>
-                            foreach (var paymentMethod in paymentMethods.Skip(1).Take(4))
-                            {
-                                <div class="form-group form-check">
-                                    <label class="form-check-label w-100 py-2">
-                                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTz5ldDnp_AyQBZVfsCFGCTsl0Bm7VfqpuNMdwp7h8ElQ&s" width="30" height="30" class="object-fit-contain mx-2" />
-                                        <input class="form-check-input" asp-for="PaymentMethodId" type="radio" value="@paymentMethod.Id" /> @paymentMethod.Name
-                                    </label>
-                                </div>
-                            }
+                            // foreach (var paymentMethod in paymentMethods.Skip(1).Take(4))
+                            // {
+                            //     <div class="form-group form-check">
+                            //         <label class="form-check-label w-100 py-2">
+                            //             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTz5ldDnp_AyQBZVfsCFGCTsl0Bm7VfqpuNMdwp7h8ElQ&s" width="30" height="30" class="object-fit-contain mx-2" />
+                            //             <input class="form-check-input" asp-for="PaymentMethodId" type="radio" value="@paymentMethod.Id" /> @paymentMethod.Name
+                            //         </label>
+                            //     </div>
+                            // }
                         }
                     }
                     <span asp-validation-for="PaymentMethodId" class="text-danger"></span>
